@@ -6,6 +6,11 @@
 
     <title>eyeForm Report - Neurobit AI</title>
 
+    <link rel="apple-touch-icon" sizes="180x180" href="../../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../../favicon/site.webmanifest">
+    
     <link rel="stylesheet" href="../../css/bootstrap.513.min.css">
     <link rel="stylesheet" href="../../css/style.css">
     <script src="../../js/jquery-3.3.1.min.js"></script>
@@ -17,10 +22,10 @@
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <py-config>
-      packages = ["pandas", "matplotlib"]
+      packages = ["pandas", "matplotlib" , "Jinja2"]
 
       [[fetch]]
-      files = ["./data_to_plot.pkl"]
+      files = ["./data_to_plot.pkl","msyhbd.ttc","msyh.ttc"]
     </py-config>
   </head>
   <body class="p-3 m-0 border-0 bd-example">
@@ -67,11 +72,12 @@
         </tr>
         <tr>
           <th scope="row">危险度分析</th>
-          <td><span id="age"></span> / <span id="sex"></span></td>
+          <td><span id="age_tr"></span> / <span id="sex_tr"></span></td>
           <td><span id="now"></span></td>
         </tr>
         <tr>
           <td colspan="3" align="left"><div id="advice"></div></td>
+          <td><span id="age" style="display:none;"></span> <span id="sex" style="display:none;"></span></td>
         </tr>
         <tr>
           <td colspan="3" align="center"><div id="plot"></div></td>
@@ -83,6 +89,7 @@
       <tbody class="table-group-divider">
         <tr>
           <td colspan="3" align="center">版权声明 © 2023 神经元科技股份有限公司 版权所有</td>
+          <td><span id="copyrightid"></span></td>
         </tr>
       </tbody>
     </table>
@@ -103,7 +110,27 @@
       os4 = document.getElementById('os4').innerHTML = parseFloat(localStorage.getItem('os4'));
       od5 = document.getElementById('od5').innerHTML = parseFloat(localStorage.getItem('od5')).toFixed(2);
       os5 = document.getElementById('os5').innerHTML = parseFloat(localStorage.getItem('os5')).toFixed(2);
+      
+      if(od5 == 19.5)
+        document.getElementById("od5").textContent="< 20";
+      else  if(od5 == 30.5)
+        document.getElementById("od5").textContent="> 30";
+
+      if(os5 == 19.5)
+        document.getElementById("os5").textContent="< 20";
+      else  if(os5 == 30.5)
+        document.getElementById("os5").textContent="> 30";
+
       report = localStorage.getItem('report');
+      var age_content = document.getElementById("age").textContent;
+      document.getElementById("age_tr").textContent=age_content.replace("歲" , "岁");
+      document.getElementById("age_tr").textContent=document.getElementById("age_tr").textContent.replace("個月" , "个月");
+      var sex_content = document.getElementById("sex").textContent;
+      if( sex_content=="男" || sex_content=="Male")
+        document.getElementById("sex_tr").textContent="男"
+      else
+      document.getElementById("sex_tr").textContent="女"
+
       if (report == '軸長') {
         y1 = parseFloat(od5);
         y2 = parseFloat(os5);
@@ -124,14 +151,28 @@
         complete: function(data) {
           suggestion = data['responseText'];
           console.log(suggestion);
-          if (suggestion == '不處置') $('#suggestion').html('無需處置');
-          if (suggestion == '一般眼鏡') $('#suggestion').html('配戴一般眼鏡');
-          if (suggestion == '散瞳劑') $('#suggestion').html('點散瞳劑');
-          if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('配戴一般眼鏡、點散瞳劑');
-          if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
+
+          if (suggestion == '不處置') $('#suggestion').html('无需处置');
+          else if (suggestion == '一般眼鏡') $('#suggestion').html('配戴一般眼镜');
+          else if (suggestion == '散瞳劑') $('#suggestion').html('点散瞳剂');
+          else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('配戴一般眼镜+点散瞳剂');
+          else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
+          else $('#suggestion').html('无需处置');
+          /*
+          if (suggestion == '不處置') $('#suggestion').html('无需处置');
+          else if (suggestion == '低散瞳劑')$('#suggestion').html('点低浓度散瞳剂');
+          else if (suggestion == '中散瞳劑')$('#suggestion').html('点中浓度散瞳剂');
+          else if (suggestion == '高散瞳劑')$('#suggestion').html('点高浓度散瞳剂');
+          else if (suggestion == '一般眼鏡')$('#suggestion').html('配戴一般眼镜');
+          else if (suggestion == '一般眼鏡＋中散瞳劑')$('#suggestion').html('配戴一般眼镜+点中浓度散瞳剂');
+          else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
+          else $('#suggestion').html('无需处置');
+          */
         }
       });
+      language_type=2;
       records = localStorage.getItem('records');
+      //var records=[[1,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2010-08-31T16:00:00.000Z","9歲7個月",138,"",0.7,-2.5,-0.75,10,25.14,"",0.5,-3.25,-1.25,90,25.52]];
     </script>
     <py-script src="../../plot.py"></py-script>
     <py-script src="../../table.py"></py-script>

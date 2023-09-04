@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="manifest" href="../../favicon/site.webmanifest">
 
     <!-- <link href="https://fonts.googleapis.com/css?family=Oswald:300,400|Roboto+Mono&display=swap" rel="stylesheet"> -->
     <!-- <link rel="stylesheet" href="fonts/icomoon/style.css"> -->
@@ -19,11 +19,50 @@
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/jquery.validate.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/myopia-main.js"></script>
+    
+    <style>
+      .warning_msg {
+        color: red;
+        font-size: 10px;
+        margin-left: 5px;
+      }
+      datalist {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      }
+
+      option {
+      padding: 0;
+      }
+
+      input[type="range"] {
+      width: 100%;
+      margin: 0;
+      }
+      
+      .right-aligned {
+            text-align: right;
+        }
+
+      #customDate_dateOfBirth::-webkit-calendar-picker-indicator{
+          padding-left: 23px;
+          padding-right:22px;
+
+      }
+      #dateOfVisit::-webkit-calendar-edit,
+      #dateOfBirth::-webkit-calendar-edit{
+          display:none;
+      }
+      #dateOfBirth::-webkit-calendar-picker-indicator{
+          display:none;
+      }
+    </style>
   </head>
 
   <body class="bg-light">
-    <script src="js/jwt-decode.js"></script>
+    <script src="../../js/jwt-decode.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
       function handleCredentialResponse(response) {
@@ -31,6 +70,11 @@
         var decoded = jwt_decode(token);
         console.log(decoded.name);
         console.log(decoded.email);
+        if(decoded.name !=="Aleistar Chan" && decoded.email !=="neurobit.tech@gmail.com")
+        {
+        document.getElementById("suggestion").style.display = "none";
+        document.getElementById("uploadform").style.display = "none";
+        }
         document.getElementById('name').value = decoded.name;
         document.getElementById('email').value = decoded.email;
         $('#staticBackdrop').modal('hide');
@@ -46,7 +90,8 @@
       }
       window.onload = function () {
         google.accounts.id.initialize({
-          client_id: "804327021269-tvgs2une4gdpepaslb7niggg1c0pldjp.apps.googleusercontent.com",
+          //client_id: "804327021269-tvgs2une4gdpepaslb7niggg1c0pldjp.apps.googleusercontent.com",
+          client_id: "548675093385-83kct4sbdrg4pf538u5i0j973vpcbp1m.apps.googleusercontent.com",
           callback: handleCredentialResponse
         });
         google.accounts.id.renderButton(
@@ -65,14 +110,14 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">eyeForm學齡兒童近視追蹤</h5>
+            <h5 class="modal-title" id="staticBackdropLabel">eyeForm: 學齡兒童近視追蹤</h5>
             <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
           </div>
           <div class="modal-body" id="buttonDiv">
             ...
           </div>
           <div class="modal-footer">
-            ©2023神經元科技
+            版權聲明 © 2023 神經元科技股份有限公司 版權所有
             <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary">Understood</button> -->
           </div>
@@ -101,14 +146,17 @@
                   <div class="col-6 form-group">
                     <label class="form-label" for="medRecNo">病歷號</label>
                     <input type="text" class="form-control" name="medRecNo" id="medRecNo">
+                    <span class="warning_msg" id="medRecNo_warning"> </span>
                   </div>
                   <div class="col-3 form-group">
-                    <label class="form-label" for="site">院所</label>
+                    <label class="form-label" for="site" id="site_info">院所</label>
                     <select class="form-select" name="site" id="site">
                       <option value=""></option>
-                      <option value="三總">三總</option>
-                      <option value="皓明">皓明</option>
+                      <option value="Neurobit">Neurobit</option>
+                      <option value="TTT">TTT</option>
+                      <option value="HHH">HHH</option>
                     </select>
+                    <span class="warning_msg" id="site_warning"> </span>
                   </div>
                   <div class="col-3 form-group">
                     <label class="form-label" for="caseNo">案號</label>
@@ -120,10 +168,16 @@
                   <div class="col-6 form-group">
                     <label class="form-label" for="dateOfVisit">就診西元年/月/日</label>
                     <input type="date" class="form-control" name="dateOfVisit" id="dateOfVisit">
+                    <span class="warning_msg" id="dateOfVisit_warning"></span>
                   </div>
-                  <div class="col-6 form-group">
+                  <div class="col-5 form-group">
                     <label class="form-label" for="dateOfBirth">出生西元年/月/日</label>
                     <input type="date" class="form-control" name="dateOfBirth" id="dateOfBirth">
+                    <span class="warning_msg" id="dateOfBirth_warning"></span>
+                  </div>                  
+                  <div class="col-1 form-group">
+                    <label class="form-label" for="dateOfBirth"></label>
+                    <input type="date" class="form-control" name="customDate_dateOfBirth" id="customDate_dateOfBirth" tabindex="-1">
                   </div>
                 </div>
 
@@ -146,7 +200,8 @@
                         <label class="form-label" for="pretermW">週</label>
                       </div>
                       <div class="col-5 form-group">
-                        <input type="number" min=0 step=1 max=6 class="form-control" name="pretermD" id="pretermD">
+                        <input type="text" class="form-control" name="pretermD" id="pretermD" >
+                        <span id="day_errorMsg" class="warning_msg"></span>
                       </div>
                       <div class="col-1 form-group">
                         <label class="form-label" for="pretermD">天</label>
@@ -162,6 +217,7 @@
                     <label class="form-label" for="sexM">男　</label>
                     <input type="radio" class="form-check-input" name="sex" id="sexF" value="女">
                     <label class="form-label" for="sexF">女　</label>
+                    <span class="warning_msg" id="sex_warning"></span>
                   </div>
                   <div class="col-6 form-group">
                     <label class="form-label">胎別</label>
@@ -187,38 +243,72 @@
 
                 <div class="row">
                   <div class="col-6 form-group">
-                    <label class="form-label" for="od1">右眼最佳矯正視力<span class="form-range-value" id="od1value"></span></label>
-                    <label class="form-label" for="od0">戴眼鏡</label>
-                    <input type="checkbox" class="form-check-input" name="od0" id="od0" value="G">
-                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="od1" id="od1">
+                    <label class="form-label" for="od1" >右眼最佳矯正視力</label>
+                    <label class="form-label" for="od0"> ( 戴眼鏡</label>
+                    <input type="checkbox" class="form-check-input" name="od0" id="od0" value="G" text-sm-right>
+                    <label class="form-label" for="od0" text-sm-right> ) :</label>
+                    <span class="form-range-value" id="od1value" style="width: 50px; display: inline-block;"></span>
+                    <span class="warning_msg" id="od1_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="od1" id="od1" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
                   </div>
                   <div class="col-6 form-group">
-                    <label class="form-label" for="os1">左眼最佳矯正視力<span class="form-range-value" id="os1value"></span></label>
-                    <label class="form-label" for="os0">戴眼鏡</label>
+                    <label class="form-label" for="os1">左眼最佳矯正視力</label>
+                    <label class="form-label" for="os0"> ( 戴眼鏡</label>
                     <input type="checkbox" class="form-check-input" name="os0" id="os0" value="G">
-                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="os1" id="os1">
+                    <label class="form-label" for="os0"> ) :</label>
+                    <span class="form-range-value" id="os1value" style="width: 50px; display: inline-block;"></span>
+                    <span class="warning_msg" id="os1_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="os1" id="os1" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-6 form-group">
-                    <label class="form-label" for="od2">右眼球面度數 <span class="form-range-value" id="od2value"></span></label>
-                    <input type="range" class="form-range" min=-10 max=10 step=0.25 name="od2" id="od2">
+                    <label class="form-label" for="od2">右眼球面度數 <span class="form-range-value" id="od2value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="od2_warning"> </span>
+                    <input type="range" class="form-range" min=-10 max=10 step=0.25 name="od2" id="od2" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-10"></option>
+                      <option value="10" label="10"></option>
+                    </datalist>
                   </div>
                   <div class="col-6 form-group">
-                    <label class="form-label" for="os2">左眼球面度數 <span class="form-range-value" id="os2value"></span></label>
-                    <input type="range" class="form-range" min=-10 max=10 step=0.25 name="os2" id="os2">
+                    <label class="form-label" for="os2">左眼球面度數 <span class="form-range-value" id="os2value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="os2_warning"> </span>
+                    <input type="range" class="form-range" min=-10 max=10 step=0.25 name="os2" id="os2" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-10"></option>
+                      <option value="10" label="10"></option>
+                    </datalist>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-6 form-group">
-                    <label class="form-label" for="od3">右眼散光度數 <span class="form-range-value" id="od3value"></span></label>
-                    <input type="range" class="form-range" min=-7 max=0 step=0.25 name="od3" id="od3">
+                    <label class="form-label" for="od3">右眼散光度數 <span class="form-range-value" id="od3value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="od3_warning"> </span>
+                    <input type="range" class="form-range" min=-7 max=0 step=0.25 name="od3" id="od3" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-7.0"></option>
+                      <option value="10" label="0.0"></option>
+                    </datalist>
                   </div>
                   <div class="col-6 form-group">
-                    <label class="form-label" for="os3">左眼散光度數 <span class="form-range-value" id="os3value"></span></label>
-                    <input type="range" class="form-range" min=-7 max=0 step=0.25 name="os3" id="os3">
+                    <label class="form-label" for="os3">左眼散光度數 <span class="form-range-value" id="os3value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="os3_warning"> </span>
+                    <input type="range" class="form-range" min=-7 max=0 step=0.25 name="os3" id="os3" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-7.0"></option>
+                      <option value="10" label="0.0"></option>
+                    </datalist>
                   </div>
                 </div>
 
@@ -274,6 +364,7 @@
                         <option value="175">175</option>
                       </optgroup>
                     </select>
+                    <span class="warning_msg" id="od4ID_warning"> </span>
                   </div>
                   <div class="col-6 form-group">
                     <label class="form-label" for="os4">左眼軸度</label>
@@ -326,6 +417,7 @@
                         <option value="175">175</option>
                       </optgroup>
                     </select>
+                    <span class="warning_msg" id="os4ID_warning"> </span>
                   </div>
                 </div>
 
@@ -350,6 +442,7 @@
                           <option value="30">30</option>
                           <option value="> 30">> 30</option>
                         </select>
+                        <span class="warning_msg" id="od5int_warning"> </span>
                       </div>
                       <div class="col-6 form-group">
                         <select class="form-select" name="od5dec" id="od5dec">
@@ -477,6 +570,7 @@
                           <option value="30">30</option>
                           <option value="> 30">> 30</option>
                         </select>
+                        <span class="warning_msg" id="os5int_warning"></span>
                       </div>
                       <div class="col-6 form-group">
                         <select class="form-select" name="os5dec" id="os5dec">
@@ -613,15 +707,9 @@
                     <label class="form-label" for="treatment2">散瞳劑</label>
                     <select class="form-select" name="treatment2" id="treatment2" disabled>
                       <option value=""></option>
-                      <option value="短效">短效</option>
-                      <option value="0.01%">0.01%</option>
-                      <option value="0.02%">0.02%</option>
-                      <option value="0.03%">0.03%</option>
-                      <option value="0.05%">0.05%</option>
-                      <option value="0.1%">0.1%</option>
-                      <option value="0.3%">0.3%</option>
-                      <option value="0.5%">0.5%</option>
-                      <option value="1.0%">1.0%</option>
+                      <option value="低散瞳劑">低散瞳劑</option>
+                      <option value="中散瞳劑">中散瞳劑</option>
+                      <option value="高散瞳劑">高散瞳劑</option>
                     </select>
                   </div>
                   <div class="col-4 form-group">
@@ -637,7 +725,9 @@
 
                 <div class="col">
                   <div class="float-end form-group">
-                    <label class="form-label">提醒您，自動填入的最近就診日期要更新喔👆</label><br>
+                    <label id="notification01" class="form-label">提醒您，自動填入的最近就診日期要更新喔👆</label><br>
+                    <input type="submit" id="submit" value="上傳" style="display:none;" class="btn btn-outline-primary btn-rounded py-0 px-4">
+                    <span class="submitting"></span>
                     <button type="button" id="suggestion" class="btn btn-outline-primary btn-rounded py-0 px-4">
                       處置建議
                     </button>
@@ -647,14 +737,14 @@
                     <button type="button" id="report2" class="btn btn-outline-primary btn-rounded py-0 px-4">
                       球面度數危險度分析
                     </button>
-                    <input type="submit" id="submit" value="上傳" class="btn btn-outline-primary btn-rounded py-0 px-4">
-                    <span class="submitting"></span>
+                    <button type="button" id="uploadform" onclick="check_submit_form_integrity();" class="btn btn-outline-primary btn-rounded py-0 px-4">
+                      上傳
+                    </button>
                   </div>
                 </div>
                 <br><br>
 
               </form>
-
               <div id="form-message-warning mt-4"></div> 
               <div id="form-message-success">
                 上傳完畢！
@@ -688,12 +778,15 @@
     site.onchange = function() {
       localStorage.clear();
       if (document.getElementById('email').value)
+      {
+      (document.getElementById('site_info')).textContent="院所(讀取中...)";
       $.ajax({
-        url: `https://script.google.com/macros/s/AKfycbx75LIQkagfyeoMc6Uu9sLrHZF0cZOtSdyXhTanCmr5D0UxJd5PMO0VwjaFx6ppWZf49Q/exec?medRecNo=${medRecNo.value}&site=${site.value}`,
+        url: `https://script.google.com/macros/s/AKfycby1eLmiT7l1x7UQ6hB2KxHTlYmXpkm87t3Zn4NH5A2Btqo-knqaC5NzLT09X5mo6Mss/exec?medRecNo=${medRecNo.value}&site=${site.value}`,
         type: 'GET',
         dataType: 'json',
         success: function(data) {
           if (typeof data === 'object') {
+            (document.getElementById('site_info')).textContent="院所(已找到過往病歷資料。)";
             localStorage.setItem('records', JSON.stringify(data));
             document.getElementById('caseNo').value = data[0][0];
             document.getElementById('dateOfBirth').value = new Date(Date.parse(data[0][2])+8*60*60*1000).toISOString().split('T')[0];
@@ -702,13 +795,13 @@
             document.getElementById('height').value = data[0][12];
             document.getElementById('pretermW').value = data[0][6];
             document.getElementById('pretermD').value = data[0][7];
-            if (data[0][3] == '男')
+            if (data[0][3] == '男' || data[0][3] == 'Male')
               document.getElementById('sexM').checked = true;
-            if (data[0][3] == '女')
+            if (data[0][3] == '女' || data[0][3] == 'Female')
               document.getElementById('sexF').checked = true;
-            if (data[0][4] == '單')
+            if (data[0][4] == '單' || data[0][4] == 'Single')
               document.getElementById('birth').checked = true;
-            if (data[0][4] == '多')
+            if (data[0][4] == '多' || data[0][4] == 'Multiple')
               document.getElementById('births').checked = true;
             document.getElementById('fatherD').value = data[0][8];
             document.getElementById('motherD').value = data[0][9];
@@ -734,17 +827,58 @@
             outputs['os1value'].innerHTML = (data[0][20] === '')?'❓':data[0][20].toFixed(1);
             outputs['os2value'].innerHTML = (data[0][21] === '')?'❓':data[0][21].toFixed(2);
             outputs['os3value'].innerHTML = (data[0][22] === '')?'❓':data[0][22].toFixed(2);
+            document.getElementById('dateOfBirth').oninput();
           }
           else {
+            (document.getElementById('site_info')).textContent="院所(請填寫新的病歷資料！)";
             localStorage.setItem('records', JSON.stringify([]));
             document.getElementById('caseNo').value = data;
           }
         }
       });
+      }
     }
+
+    var pretermDValid=document.getElementById('pretermD');
+    pretermDValid.addEventListener('input', function() {
+    const inputValue = parseInt(this.value, 10);
+    if (isNaN(inputValue)) {
+      day_errorMsg.textContent= '請輸入有效的數字。';
+      pretermDValid.value=''
+    } else if (inputValue < 0 || inputValue > 6) {
+      day_errorMsg.textContent= '請輸入 0 到 6 之間的數字。';
+      if (inputValue < 0)
+        pretermDValid.value='0';
+      if (inputValue > 6)
+        pretermDValid.value='6';      
+    } else {
+      day_errorMsg.textContent= '';
+    }
+  });
 
     var dateOfVisit = document.getElementById('dateOfVisit');
     var dateOfBirth = document.getElementById('dateOfBirth');
+    var customDate_dateOfBirth = document.getElementById('customDate_dateOfBirth');
+      const threeYearsAgo = new Date();
+      const current_day = threeYearsAgo.toISOString().split('T')[0];
+      customDate_dateOfBirth.max = current_day;
+      dateOfBirth.max = current_day;
+      dateOfVisit.max = current_day;
+      threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
+      threeYearsAgo.setMonth(0); 
+      threeYearsAgo.setDate(1); 
+      const formattedDate = threeYearsAgo.toISOString().split('T')[0];
+      customDate_dateOfBirth.value=  formattedDate;
+
+    customDate_dateOfBirth.oninput = function() {
+      if (!isNaN(Date.parse(customDate_dateOfBirth.value)))
+      {
+        dateOfBirth.value=customDate_dateOfBirth.value;
+        dateOfBirth.oninput();
+      }
+    
+    }
+
     dateOfVisit.oninput = function() {
       if (!isNaN(Date.parse(dateOfVisit.value)) && !isNaN(Date.parse(dateOfBirth.value))) {
         var dov = dateOfVisit.value.split('-');
@@ -764,6 +898,9 @@
       }
     }
     dateOfBirth.oninput = function() {
+      if( !isNaN(Date.parse(dateOfBirth.value)) )
+        customDate_dateOfBirth.value=dateOfBirth.value
+
       if (!isNaN(Date.parse(dateOfVisit.value)) && !isNaN(Date.parse(dateOfBirth.value))) {
         var dov = dateOfVisit.value.split('-');
         var dob = dateOfBirth.value.split('-');
@@ -820,8 +957,242 @@
       document.getElementById('treatment2').value = treatment2;
       document.getElementById('treatment3').value = treatment3;
     }
+    
+    var label = document.getElementById("notification01");
+
+    function check_value_func(check_value)
+    {
+      if (check_value == '' || check_value == null) 
+        return true;
+     else 
+        return false;
+    }
+
+    function check_submit_form_integrity()
+    {
+      var check=true;
+      if(check_value_func(document.getElementById('medRecNo').value))
+          { 
+            check=false;
+            (document.getElementById('medRecNo_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('medRecNo_warning')).textContent="";
+          }
+      if(check_value_func(document.getElementById('site').value))
+          { 
+            check=false;
+            (document.getElementById('site_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('site_warning')).textContent="";     
+          }
+          if (isNaN(Date.parse(dateOfVisit.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfVisit_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('dateOfVisit_warning')).textContent="";
+          }
+          if (isNaN(Date.parse(dateOfBirth.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfBirth_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('dateOfBirth_warning')).textContent="";
+          }
+          (document.getElementById('sex_warning')).textContent="";
+          (document.getElementById('od4ID_warning')).textContent="";
+          (document.getElementById('os4ID_warning')).textContent="";
+          (document.getElementById('od5int_warning')).textContent="";
+          (document.getElementById('os5int_warning')).textContent="";
+
+    var submitbotton=document.getElementById('submit');
+          if(check)
+          submitbotton.click();
+          else
+          window.scrollTo(0, 0);
+      return check;
+    }
+
+    function check_spherical_diopter_form_integrity()
+    {
+      var check=true;
+
+      if(check_value_func(document.getElementById('od4').value))
+          { 
+            check=false;
+            (document.getElementById('od4ID_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od4ID_warning')).textContent="";
+          }       
+      if(check_value_func(document.getElementById('os4').value))
+          { 
+            check=false;
+            (document.getElementById('os4ID_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os4ID_warning')).textContent="";
+          }
+      (document.getElementById('od5int_warning')).textContent="";
+      (document.getElementById('os5int_warning')).textContent="";
+      return check;
+    }
+
+    function check_axial_length_form_integrity()
+    {
+      var check=true;
+
+      (document.getElementById('od4ID_warning')).textContent="";
+      (document.getElementById('os4ID_warning')).textContent="";
+      if(check_value_func(document.getElementById('od5int').value))
+      { 
+            check=false;
+            (document.getElementById('od5int_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od5int_warning')).textContent="";
+          }  
+      if(check_value_func(document.getElementById('os5int').value))
+      { 
+            check=false;
+            (document.getElementById('os5int_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os5int_warning')).textContent="";
+          }  
+
+       return check;
+    }
+
+    function check_form_integrity()
+    {
+      var check=true;
+      if(check_value_func(document.getElementById('medRecNo').value))
+          { 
+            check=false;
+            (document.getElementById('medRecNo_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('medRecNo_warning')).textContent="";
+          }
+      if(check_value_func(document.getElementById('site').value))
+          { 
+            check=false;
+            (document.getElementById('site_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('site_warning')).textContent="";     
+          }
+  
+      if (isNaN(Date.parse(dateOfVisit.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfVisit_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('dateOfVisit_warning')).textContent="";
+          }
+          if (isNaN(Date.parse(dateOfBirth.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfBirth_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('dateOfBirth_warning')).textContent="";
+          } 
+      hasChecked = Array.from(document.querySelectorAll('input[name="sex"]')).some(function(element) {
+        return element.checked;
+      });
+      if(!hasChecked)
+          { 
+            check=false;
+            (document.getElementById('sex_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('sex_warning')).textContent="";
+          }
+
+      if (check_value_func(document.getElementById('od1value').textContent))
+      { 
+            check=false;
+            (document.getElementById('od1_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od1_warning')).textContent="";
+          }
+          if (check_value_func(document.getElementById('os1value').textContent))
+      { 
+            check=false;
+            (document.getElementById('os1_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os1_warning')).textContent="";
+          }
+
+          if (check_value_func(document.getElementById('od2value').textContent))
+      { 
+            check=false;
+            (document.getElementById('od2_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od2_warning')).textContent="";
+          }
+          if (check_value_func(document.getElementById('os2value').textContent))
+      { 
+            check=false;
+            (document.getElementById('os2_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os2_warning')).textContent="";
+          }
+
+          if (check_value_func(document.getElementById('od3value').textContent))
+      { 
+            check=false;
+            (document.getElementById('od3_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od3_warning')).textContent="";
+          }
+          if (check_value_func(document.getElementById('os3value').textContent))
+      { 
+            check=false;
+            (document.getElementById('os3_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os3_warning')).textContent="";
+          }
+          
+      return check;
+    }
+
     var suggestion = document.getElementById("suggestion");
     suggestion.onclick = function() {
+    if(check_form_integrity() & check_spherical_diopter_form_integrity())
+    {
       features = [];
       if (document.getElementById('sexM').checked) features.push(1);
       if (document.getElementById('sexF').checked) features.push(0);
@@ -849,18 +1220,40 @@
           $('#treatment1').prop('disabled', false);
           $('#treatment2').prop('disabled', false);
           $('#treatment3').prop('disabled', false);
+          
           if (suggestion == '不處置') treatments('', '', '');
-          if (suggestion == '一般眼鏡') treatments('一般眼鏡', '', '');
-          if (suggestion == '散瞳劑') treatments('', '0.1%', '');
-          if (suggestion == '一般眼鏡散瞳劑') treatments('一般眼鏡', '0.1%', '');
-          if (suggestion == '角膜塑型片') treatments('', '', '角膜塑型片');
-          // if (suggestion == '散瞳劑角膜塑型片') treatments('', '0.1%', '角膜塑型片');
+          else if (suggestion == '一般眼鏡') treatments('一般眼鏡', '', '');
+          else if (suggestion == '散瞳劑') treatments('', '中散瞳劑', '');
+          else if (suggestion == '一般眼鏡散瞳劑') treatments('一般眼鏡', '中散瞳劑', '');
+          else if (suggestion == '角膜塑型片') treatments('', '', '角膜塑型片');
+          else treatments('', '', '');
+          
+          /*
+          if (suggestion == '不處置') treatments('', '', '');
+          else if (suggestion == '低散瞳劑') treatments('', '低散瞳劑', '');
+          else if (suggestion == '中散瞳劑') treatments('', '中散瞳劑', '');
+          else if (suggestion == '高散瞳劑') treatments('', '高散瞳劑', '');
+          else if (suggestion == '一般眼鏡') treatments('一般眼鏡', '', '');
+          else if (suggestion == '一般眼鏡＋中散瞳劑') treatments('一般眼鏡', '中散瞳劑', '');
+          else if (suggestion == '角膜塑型片') treatments('', '', '角膜塑型片');
+          else treatments('', '', '');
+          */
+         
         }
       });
+      label.textContent = "資料填寫完整，提供醫療處置建議";
+    }
+    else
+      {
+        window.scrollTo(0, 0);
+        label.textContent = "再檢查一下，確保資料沒有漏填";
+      }
     }
 
     var report1 = document.getElementById("report1");
     report1.onclick = function() {
+      if(check_form_integrity() & check_axial_length_form_integrity())
+      {
       localStorage.setItem('medRecNo', medRecNo.value);
       localStorage.setItem('site', site.value);
       localStorage.setItem('age', document.getElementById('age').value);
@@ -873,15 +1266,38 @@
       localStorage.setItem('os3', document.getElementById('os3').value);
       localStorage.setItem('od4', document.getElementById('od4').value);
       localStorage.setItem('os4', document.getElementById('os4').value);
-      localStorage.setItem('od5', (od5int.value >= 20 && od5int.value <= 30)?od5int.value+od5dec.value:0);
-      localStorage.setItem('os5', (os5int.value >= 20 && os5int.value <= 30)?os5int.value+os5dec.value:0);
-      localStorage.setItem('Y', year);
+
+      if(document.getElementById('od5int').value == "< 20")
+        localStorage.setItem('od5', '19.5');
+      else if (document.getElementById('od5int').value == "> 30")
+        localStorage.setItem('od5', '30.5');
+      else
+        localStorage.setItem('od5',od5int.value+od5dec.value);
+
+      if(document.getElementById('os5int').value  == "< 20")
+       localStorage.setItem('os5', '19.5');
+      else if (document.getElementById('os5int').value == "> 30")
+        localStorage.setItem('os5', '30.5');
+      else
+        localStorage.setItem('os5',os5int.value+os5dec.value);
+
+     localStorage.setItem('Y', year);
       localStorage.setItem('M', month);
       localStorage.setItem('report', '軸長');
+      label.textContent = "資料填寫完整，開啟軸長危險度分析";
       window.open('report.html');
     }
+      else
+      {
+        window.scrollTo(0, 0);
+        label.textContent = "再檢查一下，確保資料沒有漏填";
+      }
+    }
+
     var report2 = document.getElementById("report2");
     report2.onclick = function() {
+      if(check_form_integrity() & check_spherical_diopter_form_integrity())
+      {
       localStorage.setItem('medRecNo', medRecNo.value);
       localStorage.setItem('site', site.value);
       localStorage.setItem('age', document.getElementById('age').value);
@@ -894,12 +1310,33 @@
       localStorage.setItem('os3', document.getElementById('os3').value);
       localStorage.setItem('od4', document.getElementById('od4').value);
       localStorage.setItem('os4', document.getElementById('os4').value);
-      localStorage.setItem('od5', (od5int.value >= 20 && od5int.value <= 30)?od5int.value+od5dec.value:0);
-      localStorage.setItem('os5', (os5int.value >= 20 && os5int.value <= 30)?os5int.value+os5dec.value:0);
-      localStorage.setItem('Y', year);
+
+
+      if(document.getElementById('od5int').value == "< 20")
+        localStorage.setItem('od5', '19.5');
+      else if (document.getElementById('od5int').value == "> 30")
+        localStorage.setItem('od5', '30.5');
+      else
+        localStorage.setItem('od5',od5int.value+od5dec.value);
+
+      if(document.getElementById('os5int').value  == "< 20")
+       localStorage.setItem('os5', '19.5');
+      else if (document.getElementById('os5int').value == "> 30")
+        localStorage.setItem('os5', '30.5');
+      else
+        localStorage.setItem('os5',os5int.value+os5dec.value);
+
+  localStorage.setItem('Y', year);
       localStorage.setItem('M', month);
       localStorage.setItem('report', '球面度數');
+      label.textContent = "資料填寫完整，開啟球面度數危險度分析";
       window.open('report.html');
+    }
+      else
+      {
+        window.scrollTo(0, 0);
+        label.textContent = "再檢查一下，確保資料沒有漏填";
+      }
     }
   </script>
   </body>
