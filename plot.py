@@ -184,7 +184,7 @@ for record in records:
         else :
             plt.scatter(x(record[11]), record[os], color='blue', marker='.')
         #print("os is : " + str(record[os]))
-#plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
+plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.19, 0.25),fontsize=8)
 if report == '球面度數':
