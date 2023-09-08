@@ -1191,11 +1191,31 @@
       return check;
     }
 
+    function check_server_live()
+    {
+      $.ajax({
+      url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+          type: 'POST',
+          dataType: 'json',
+          data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
+          complete: function(data) {
+            suggestion = data['responseText'];
+            console.log(suggestion);
+          }
+      });
+      return suggestion;
+    }
+
+    function delay_3_sceonds()
+    {
+      console.log("Yeah! 3 seconds");
+    }
     var suggestion = document.getElementById("suggestion");
     suggestion.onclick = function() {
     if(check_form_integrity() & check_spherical_diopter_form_integrity())
     {
       features = [];
+      var counter=0;
       if (document.getElementById('sexM').checked) features.push(1);
       if (document.getElementById('sexF').checked) features.push(0);
       if (document.getElementById('age').value) features.push(year + month/12);
@@ -1209,6 +1229,25 @@
       features.push(parseFloat(document.getElementById('os3').value));
       if (document.getElementById('os4').value)
       features.push(parseFloat(document.getElementById('os4').value));
+
+      now_state=check_server_live();
+      console.log(now_state);
+      if(now_state != "Internal Server Error")
+        counter= counter+3;
+      else
+      {
+        while(counter<3)
+        {
+          setTimeout(delay_3_sceonds, 3000);
+          now_state=check_server_live();
+          console.log(now_state);
+          if(now_state != "Internal Server Error")
+           counter = counter+3;
+          else
+           counter = counter+1;
+        } 
+      }
+
       if (features.length == 10)
       $.ajax({
         url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
