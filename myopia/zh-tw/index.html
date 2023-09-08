@@ -1232,7 +1232,7 @@
 
       now_state=check_server_live();
       console.log(now_state);
-      if(now_state != "Internal Server Error")
+      if(now_state !== "Internal Server Error")
         counter= counter+3;
       else
       {
@@ -1241,7 +1241,7 @@
           setTimeout(delay_3_sceonds, 3000);
           now_state=check_server_live();
           console.log(now_state);
-          if(now_state != "Internal Server Error")
+          if(now_state !== "Internal Server Error")
            counter = counter+3;
           else
            counter = counter+1;
