@@ -1200,9 +1200,25 @@
           data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
           complete: function(data) {
             suggestion = data['responseText'];
+            console.log("check server livr is  " + suggestion);
+            if (suggestion === "Internal Server Error")
+            {
+              console.log("MATCH WITH  1st");
+              matchstate=false;
+            }
+            else if (suggestion === "Internal Server Error")
+            {
+              console.log("MATCH WITH  2nd");
+              matchstate=false;
+            }
+            else
+            {
+              console.log("MATCH WITH  3rd");
+              matchstate=true;
+            }
           }
       });
-      return suggestion;
+      return matchstate;
     }
 
     function delay_3_sceonds()
@@ -1230,15 +1246,13 @@
       features.push(parseFloat(document.getElementById('os4').value));
 
       now_state=check_server_live();
-      console.log("State is  : " +now_state);
-      if(now_state === "Internal Server Error")
+      if(!now_state)
       {
         while(counter<3)
         {
           setTimeout(delay_3_sceonds, 3000);
           now_state=check_server_live();
-          console.log("State in while is  : " +now_state);
-          if(now_state !== "Internal Server Error")
+          if(!now_state)
            counter = counter+3;
           else
            counter = counter+1;
