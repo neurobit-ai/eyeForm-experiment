@@ -88,13 +88,15 @@
             suggestion = data['responseText'];
             const dataresponse=data['responseText'];
             console.log("suggestion is :  " + data['responseText']);
-            console.log("Message  is :  " + dataresponse.message);
+            console.log("Message  is :  " + suggestion.indexOf('{"message":"Internal Server Error"}'));
             if (suggestion.message === "Internal Server Error")
               console.log("MATCH WITH  1st");
             else if (suggestion.message === '{"message":"Internal Server Error"}')
               console.log("MATCH WITH  2nd");
             else if (dataresponse.message === "Internal Server Error")
               console.log("MATCH WITH  3rd");
+            else if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
+              console.log("MATCH WITH  4th");
           }
         });
       }
