@@ -87,11 +87,12 @@
             console.log(data['responseText']);
             suggestion = data['responseText'];
             console.log("suggestion is :  " + data['responseText']);
+            console.log("Message  is :  " + data['message']);
             if (suggestion.message === "Internal Server Error")
               console.log("MATCH WITH  1st");
             else if (suggestion.message === '{"message":"Internal Server Error"}')
               console.log("MATCH WITH  2nd");
-            else if (suggestion.message === "Internal Server Error")
+            else if (suggestion === "Internal Server Error")
               console.log("MATCH WITH  3rd");
           }
         });
