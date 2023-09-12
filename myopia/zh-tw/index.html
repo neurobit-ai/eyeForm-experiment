@@ -85,6 +85,10 @@
           data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
           complete: function(data) {
             console.log(data['responseText']);
+            if (data['responseText'].message === "Internal Server Error")
+              console.log("MATCH WITH  1st");
+            else if (data['responseText'].message === '{"message":"Internal Server Error"}')
+              console.log("MATCH WITH  2nd");
           }
         });
       }
@@ -1202,12 +1206,12 @@
           complete: function(data) {
             suggestion = data['responseText'];
             console.log("check server live is  " + suggestion);
-            if (suggestion === "Internal Server Error")
+            if (suggestion.message === "Internal Server Error")
             {
               console.log("MATCH WITH  1st");
               matchstate=false;
             }
-            else if (suggestion === '{"message":"Internal Server Error"}')
+            else if (suggestion.message === '{"message":"Internal Server Error"}')
             {
               console.log("MATCH WITH  2nd");
               matchstate=false;
