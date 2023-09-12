@@ -85,18 +85,6 @@
           data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
           complete: function(data) {
             console.log(data['responseText']);
-            suggestion = data['responseText'];
-            const dataresponse=data['responseText'];
-            console.log("suggestion is :  " + data['responseText']);
-            console.log("Message  is :  " + suggestion.indexOf('{"message":"Internal Server Error"}'));
-            if (suggestion.message === "Internal Server Error")
-              console.log("MATCH WITH  1st");
-            else if (suggestion.message === '{"message":"Internal Server Error"}')
-              console.log("MATCH WITH  2nd");
-            else if (dataresponse.message === "Internal Server Error")
-              console.log("MATCH WITH  3rd");
-            else if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
-              console.log("MATCH WITH  4th");
           }
         });
       }
@@ -1203,9 +1191,14 @@
       return check;
     }
 
-    function check_server_live()
+
+    async function check_server_live()
     {
       var matchstate=true;
+      var counter = 0;
+      while (counter < 3 )
+      {
+
       $.ajax({
       url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
           type: 'POST',
@@ -1213,31 +1206,30 @@
           data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
           complete: function(data) {
             suggestion = data['responseText'];
-            console.log("check server live is  " + suggestion);
-            if (suggestion.message === "Internal Server Error")
+            if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
             {
-              console.log("MATCH WITH  1st");
+              console.log("Server is going to live.");
               matchstate=false;
-            }
-            else if (suggestion.message === '{"message":"Internal Server Error"}')
-            {
-              console.log("MATCH WITH  2nd");
-              matchstate=false;
-            }
-            else
-            {
-              console.log("MATCH WITH  3rd");
-              matchstate=true;
             }
           }
       });
-      return matchstate;
+      
+      if(matchstate)
+      counter = counter + 3;
+      else
+      {
+      await delay(5000);
+      counter = counter + 1;
+      label.textContent = "伺服器分析中";
+      }
+      }
+      return 0;
     }
 
-    function delay_3_sceonds()
-    {
-      console.log("Yeah! 3 seconds");
+    function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
     }
+
     var suggestion = document.getElementById("suggestion");
     suggestion.onclick = function() {
     if(check_form_integrity() & check_spherical_diopter_form_integrity())
@@ -1258,19 +1250,7 @@
       if (document.getElementById('os4').value)
       features.push(parseFloat(document.getElementById('os4').value));
 
-      now_state=check_server_live();
-      if(!now_state)
-      {
-        while(counter<3)
-        {
-          setTimeout(delay_3_sceonds, 3000);
-          now_state=check_server_live();
-          if(!now_state)
-           counter = counter+1;
-          else
-           counter = counter+3;
-        } 
-      }
+      check_server_live();
 
       if (features.length == 10)
       $.ajax({
