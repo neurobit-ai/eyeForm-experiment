@@ -1242,8 +1242,8 @@
       });
       }
       catch (error) {
-        $('#server_state_text').text('false');
-        console.log("Server is fail." ,$('#server_state_text').text());
+        //$('#server_state_text').text('false');
+        console.log("Server state is  " , error );
       }
       console.log(" check_server_live 單次分析結尾" , server_state_t.textContent);
       if(server_state_t.textContent === "true")
