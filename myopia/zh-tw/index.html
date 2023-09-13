@@ -1230,7 +1230,7 @@
           data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
           complete: function(data) {
             suggestion = data['responseText'];
-
+            console.log(suggestion);
             if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
             {
               $('#server_state_text').text('false');
@@ -1329,9 +1329,11 @@
     }
 
     var report1 = document.getElementById("report1");
-    report1.onclick = function() {
+    report1.onclick =async function() {
       if(check_form_integrity() & check_axial_length_form_integrity())
       {
+      await check_server_live();
+
       localStorage.setItem('medRecNo', medRecNo.value);
       localStorage.setItem('site', site.value);
       localStorage.setItem('age', document.getElementById('age').value);
@@ -1373,9 +1375,11 @@
     }
 
     var report2 = document.getElementById("report2");
-    report2.onclick = function() {
+    report2.onclick =async function() {
       if(check_form_integrity() & check_spherical_diopter_form_integrity())
       {
+      await check_server_live();
+
       localStorage.setItem('medRecNo', medRecNo.value);
       localStorage.setItem('site', site.value);
       localStorage.setItem('age', document.getElementById('age').value);
