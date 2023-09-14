@@ -1192,27 +1192,6 @@
       return check;
     }
 
-    function check_server_state(callback) {
-      var statement=true;
-      $.ajax({
-      url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
-          type: 'POST',
-          dataType: 'json',
-          data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
-          complete: function(data) {
-            suggestion = data['responseText'];
-            if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
-            {
-              console.log("Server is going to live.");
-              callback(false);
-            }
-          },
-          error: function(error) {
-            callback(true);
-          }
-      });
-    } 
-
     var server_state_t=document.getElementById('server_state_text');
 
     async function check_server_live()
@@ -1241,9 +1220,9 @@
           }
       });
       }
-      catch (error) {
+      catch (error_message) {
         //$('#server_state_text').text('false');
-        console.log("Server state is  " , error );
+        console.log("Server state is  " , error_message );
       }
       console.log(" check_server_live 單次分析結尾" , server_state_t.textContent);
       if(server_state_t.textContent === "true")

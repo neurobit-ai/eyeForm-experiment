@@ -728,6 +728,7 @@
 
                 <div class="col">
                   <div class="float-end form-group">
+                    <p style="display: none;" id = "server_state_text">true</p>
                     <label id="notification01" class="form-label">Reminder: Please update the automatically filled recent visit date👆</label><br>
                     <input type="submit" id="submit" value="上傳" style="display:none;" class="btn btn-outline-primary btn-rounded py-0 px-4">
                     <span class="submitting"></span>
@@ -1194,8 +1195,58 @@
       return check;
     }
 
+    var server_state_t=document.getElementById('server_state_text');
+
+    async function check_server_live()
+    {
+      var counter = 0;
+      server_state_t.textContent="true";
+      console.log(' 分析前狀態    ', server_state_t.textContent);
+      while (counter < 3 )
+      {
+        try{
+        await $.ajax({
+          url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+          type: 'POST',
+          dataType: 'json',
+          data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
+          complete: function(data) {
+            suggestion = data['responseText'];
+            console.log(suggestion);
+            if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
+            {
+              $('#server_state_text').text('false');
+              console.log("Server is going to live.",$('#server_state_text').text());
+            }
+            else
+              $('#server_state_text').text('true');
+          }
+      });
+      }
+      catch (error_message) {
+        //$('#server_state_text').text('false');
+        console.log("Server state is  " , error_message );
+      }
+      console.log(" check_server_live 單次分析結尾" , server_state_t.textContent);
+      if(server_state_t.textContent === "true")
+        counter = counter + 3;
+      else
+      {
+        await delay(5000);
+        counter = counter + 1;
+        label.textContent = "Server analysis in progress.";
+        console.log(" check_server_live 單次分析結尾",server_state_t.textContent);
+      }
+      }
+      return 0;
+    }
+
+    function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     var suggestion = document.getElementById("suggestion");
-    suggestion.onclick = function() {
+    suggestion.onclick = async function() {
       if(check_form_integrity() & check_spherical_diopter_form_integrity())
     {
       features = [];
@@ -1212,6 +1263,8 @@
       features.push(parseFloat(document.getElementById('os3').value));
       if (document.getElementById('os4').value)
       features.push(parseFloat(document.getElementById('os4').value));
+      await check_server_live();
+
       if (features.length == 10)
       $.ajax({
         url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
@@ -1256,9 +1309,11 @@
     }
 
     var report1 = document.getElementById("report1");
-    report1.onclick = function() {
+    report1.onclick = async function() {
       if(check_form_integrity() & check_axial_length_form_integrity())
       {
+      await check_server_live();
+
       localStorage.setItem('medRecNo', medRecNo.value);
       localStorage.setItem('site', site.value);
       localStorage.setItem('age', document.getElementById('age').value);
@@ -1300,9 +1355,11 @@
     }
 
     var report2 = document.getElementById("report2");
-    report2.onclick = function() {
+    report2.onclick = async function() {
       if(check_form_integrity() & check_spherical_diopter_form_integrity())
       {
+      await check_server_live();
+      
       localStorage.setItem('medRecNo', medRecNo.value);
       localStorage.setItem('site', site.value);
       localStorage.setItem('age', document.getElementById('age').value);
