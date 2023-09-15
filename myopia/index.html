@@ -190,13 +190,15 @@
                   </div>
                   <div class="col-3 form-group">
                     <label class="form-label" for="height">Height (cm)</label>
-                    <input type="number" min=1 step=0.1 class="form-control" name="height" id="height">
+                    <input type="text"  class="form-control" name="height" id="height">
+                    <span id="height_errorMsg" class="warning_msg"></span>
                   </div>
                   <div class="col-6 form-group">
                     <label class="form-label" for="pretermW">Preterm week</label>
                     <div class="row g-0">
                       <div class="col-5 form-group">
-                        <input type="number" min=0 step=1 class="form-control" name="pretermW" id="pretermW">
+                        <input type="text"  class="form-control" name="pretermW" id="pretermW">
+                        <span id="week_errorMsg" class="warning_msg"></span>
                       </div>
                       <div class="col-1 form-group">
                         <label class="form-label" for="pretermW">Week</label>
@@ -844,23 +846,206 @@
       }
     }
 
-    var pretermDValid=document.getElementById('pretermD');
-    pretermDValid.addEventListener('input', function() {
-    const inputValue = parseInt(this.value, 10);
-    if (isNaN(inputValue)) {
-      day_errorMsg.textContent= 'Please enter a valid number.';
-      pretermDValid.value=''
-    } else if (inputValue < 0 || inputValue > 6) {
-      day_errorMsg.textContent= 'Please enter a value less than or equal to 6.';
-      if (inputValue < 0)
-        pretermDValid.value='0';
-      if (inputValue > 6)
-        pretermDValid.value='6';      
-    } else {
-      day_errorMsg.textContent= '';
+    var heightValid=document.getElementById('height');
+    heightValid.addEventListener('input', function() {
+    const pattern=/^(\d{1,4})(\.\d{0,4})?$/;
+    if(!pattern.test(this.value))
+    {
+      height_errorMsg.textContent= '请输入大于或等于 0 的有效数字。';
+      heightValid.value=this.value.slice(0,this.value.length-1);
+    }
+    else 
+    {
+      let [, integerPart, decimalPart] = this.value.match(pattern);
+      if (integerPart.length > 3) 
+      {
+        height_errorMsg.textContent = "整数部分最多3位";
+        heightValid.value=integerPart.slice(0, 3);
+      } 
+      else 
+      {
+        if (decimalPart && decimalPart.length > 3) 
+        {
+          
+          height_errorMsg.textContent = "小数部分最多2位";
+          decimalPart=decimalPart.slice(0, 3);
+          heightValid.value=integerPart+decimalPart;
+        } 
+        else 
+        {
+          height_errorMsg.textContent = "";
+        }
+      }
+    }
+
+    });
+
+    var pretermWValid=document.getElementById('pretermW');
+    pretermWValid.addEventListener('input', function() {
+    const pattern=/^\d{1,2}$/;
+    if(!pattern.test(this.value))
+    {
+      if(isNaN(this.value))
+      {
+        week_errorMsg.textContent= '请输入有效数字';
+        pretermWValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else 
+      {
+        if(parseInt(this.value)>42)
+        {
+          week_errorMsg.textContent= '请输入 0 到 42 之间的整数。';
+          pretermWValid.value='42';
+        }
+        else if(parseInt(this.value)<0)
+        {
+          week_errorMsg.textContent= '请输入 0 到 42 之间的整数。';
+          pretermWValid.value='0';
+        }
+      }
+    }
+    else
+    {
+      if(parseInt(this.value)>42)
+        {
+          week_errorMsg.textContent= '请输入 0 到 42 之间的整数。';
+          pretermWValid.value='42';
+        }
+        else if(parseInt(this.value)<0)
+        {
+          week_errorMsg.textContent= '请输入 0 到 42 之间的整数。';
+          pretermWValid.value='0';
+        }
+        else
+          week_errorMsg.textContent= '';
     }
   });
 
+    var pretermDValid=document.getElementById('pretermD');
+    pretermDValid.addEventListener('input', function() {
+    const pattern=/^[0-6]$/;
+    if(!pattern.test(this.value))
+    {
+      if(isNaN(this.value))
+      {
+        day_errorMsg.textContent= '请输入有效数字。';
+        pretermDValid.value='';
+      }
+      else 
+      {
+        if(parseInt(this.value)>6)
+        {
+        day_errorMsg.textContent= '请输入 0 到 6 之间的整数。';
+        pretermDValid.value='6';
+        }
+        else if (parseInt(this.value)<0)
+        {
+          day_errorMsg.textContent= '请输入 0 到 6 之间的整数。';
+          pretermDValid.value='0';
+        }
+        else if (this.value.length>1)
+          pretermDValid.value='0';
+      }
+      //pretermDValid.value=''
+    }
+    else
+      day_errorMsg.textContent= '';
+  });
+
+  var fatherDValid=document.getElementById('fatherD');
+    fatherDValid.addEventListener('input', function() {
+    const pattern=/^([\-])(\d{1,4})(\.\d{0,4})?$/;
+    if (this.value != '-')
+    {
+      if(!pattern.test(this.value))
+      {
+        fatherD_errorMsg.textContent= '请输入有效数字。';
+        //fatherDValid.value=''
+        fatherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else
+      {
+        let [,minusPart, integerPart, decimalPart] = this.value.match(pattern);
+      if (integerPart.length > 3) 
+      {
+        fatherD_errorMsg.textContent = "整数部分最多3位";
+        fatherDValid.value=minusPart+integerPart.slice(0, 3);
+
+      } 
+      else 
+      {
+        if (decimalPart && decimalPart.length > 3) 
+        {
+          
+          fatherD_errorMsg.textContent = "小数部分最多2位";
+          decimalPart=decimalPart.slice(0, 3);
+          fatherDValid.value=minusPart+integerPart+decimalPart;
+        } 
+        else 
+        {
+            if(parseFloat(this.value)>-5)
+            {
+              fatherDValid.value=-5;
+              fatherD_errorMsg.textContent =  "请输入小于或等于 -5 的数字";
+            }
+            else
+              fatherD_errorMsg.textContent =  "";
+        }
+          
+      }
+      }
+      }
+      else
+        fatherD_errorMsg.textContent = "";
+      
+  });
+
+  var motherDValid=document.getElementById('motherD');
+    motherDValid.addEventListener('input', function() {
+      const pattern=/^([\-])(\d{1,4})(\.\d{0,4})?$/;
+    if (this.value != '-')
+    {
+      if(!pattern.test(this.value))
+      {
+        motherD_errorMsg.textContent= '请输入有效数字。';
+        //fatherDValid.value=''
+        motherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else
+      {
+        let [,minusPart, integerPart, decimalPart] = this.value.match(pattern);
+      if (integerPart.length > 3) 
+      {
+        motherD_errorMsg.textContent = "整数部分最多3位";
+        motherDValid.value=minusPart+integerPart.slice(0, 3);
+
+      } 
+      else 
+      {
+        if (decimalPart && decimalPart.length > 3) 
+        {
+          
+          motherD_errorMsg.textContent = "小数部分最多2位";
+          decimalPart=decimalPart.slice(0, 3);
+          motherDValid.value=minusPart+integerPart+decimalPart;
+        } 
+        else 
+        {
+            if(parseInt(this.value)>-5)
+            {
+              motherDValid.value=-5;
+              motherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+            }
+            else
+              motherD_errorMsg.textContent =  "";
+        }
+      }
+      }
+      }
+      else
+      motherD_errorMsg.textContent = "";
+  });
+ 
     var dateOfVisit = document.getElementById('dateOfVisit');
     var dateOfBirth = document.getElementById('dateOfBirth');
     var customDate_dateOfBirth = document.getElementById('customDate_dateOfBirth');
