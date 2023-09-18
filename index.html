@@ -940,13 +940,26 @@
           day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
           pretermDValid.value='0';
         }
-        else if (this.value.length>1)
-          pretermDValid.value='0';
+        else 
+        day_errorMsg.textContent= '';
       }
       //pretermDValid.value=''
     }
     else
-      day_errorMsg.textContent= '';
+    {
+        if(parseInt(this.value)>6)
+        {
+        day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
+        pretermDValid.value='6';
+        }
+        else if (parseInt(this.value)<0)
+        {
+          day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
+          pretermDValid.value='0';
+        }
+        else if (this.value.length>1)
+          pretermDValid.value='0';
+      }
   });
 
   var fatherDValid=document.getElementById('fatherD');

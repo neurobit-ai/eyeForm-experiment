@@ -951,7 +951,21 @@
       //pretermDValid.value=''
     }
     else
-      day_errorMsg.textContent= '';
+    {
+        if(parseInt(this.value)>6)
+        {
+        day_errorMsg.textContent= '请输入 0 到 6 之间的整数。';
+        pretermDValid.value='6';
+        }
+        else if (parseInt(this.value)<0)
+        {
+          day_errorMsg.textContent= '请输入 0 到 6 之间的整数。';
+          pretermDValid.value='0';
+        }
+        else 
+        day_errorMsg.textContent= '';
+      }
+      
   });
 
   var fatherDValid=document.getElementById('fatherD');
