@@ -1415,7 +1415,7 @@
           complete: function(data) {
             suggestion = data['responseText'];
             console.log(suggestion);
-            if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)
+            if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)//"{\"message\":\"Internal Server Error\"}"
             {
               $('#server_state_text').text('false');
               console.log("Server is going to live.",$('#server_state_text').text());
