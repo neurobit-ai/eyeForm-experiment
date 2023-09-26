@@ -248,7 +248,7 @@
                 <br><hr style="color:red"><br>
 
                 <div class="row">
-                  <div class="col-6 form-group">
+                  <div class="col-6 form-group" style="display: none;">
                     <label class="form-label" for="od1">OD BCVA </label>
                     <label class="form-label" for="od0"> ( with glasses</label>
                     <input type="checkbox" class="form-check-input" name="od0" id="od0" value="G">
@@ -261,7 +261,7 @@
                       <option value="10" label="1.0"></option>
                     </datalist>
                   </div>
-                  <div class="col-6 form-group">
+                  <div class="col-6 form-group" style="display: none;">
                     <label class="form-label" for="os1">OS BCVA </label>
                     <label class="form-label" for="os0"> ( with glasses</label>
                     <input type="checkbox" class="form-check-input" name="os0" id="os0" value="G">
@@ -269,6 +269,27 @@
                     <span class="form-range-value" id="os1value" style="width: 50px; display: inline-block;"></span>
                     <span class="warning_msg" id="os1_warning"> </span>
                     <input type="range" class="form-range" min=0 max=1 step=0.1 name="os1" id="os1" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
+                  </div>
+                </div>
+                
+                <div class="row" style="display: none;">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="od6">OS VABC <span class="form-range-value" id="od6value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="od6_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="od6" id="od6" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="os6">OD VABC <span class="form-range-value" id="os6value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="o62_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="os6" id="os6" list="tickmarks">
                     <datalist id="tickmarks">
                       <option value="1" label="0.0"></option>
                       <option value="10" label="1.0"></option>
@@ -764,6 +785,10 @@
     </div>
     
   <script>
+    document.getElementById('os1value').textContent="1.0";
+    document.getElementById('os1').value=1.0;
+    document.getElementById('od1value').textContent="1.0";
+    document.getElementById('od1').value=1.0;
     var darkMode = document.getElementById('darkMode');
     darkMode.onclick = function() {
       if (darkMode.checked) {
