@@ -216,7 +216,7 @@ if y1 != "" and slope_groupby[sex].get(suggestion):
         else :
             x_stdu_value_series[1] = y1 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
         x_stdd_value_series[1] = y1 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OD in 1 yr ')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#AC92EB', alpha=0.4, label=' OD in 1 yr ')
     #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y2
@@ -233,7 +233,7 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
         else :
             x_stdu_value_series[1] = y2 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
         x_stdd_value_series[1] = y2 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#AC92EB', alpha=0.4, label=' OS in 1 yr')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 
 import json
@@ -285,7 +285,7 @@ if report == '軸長':
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, 18.8 if sex=='女' else 19.2, f'', horizontalalignment='right', fontsize=8)
 if report == '球面度數':
-    plt.ylim(-8.5, 7.5)
+    plt.ylim(-9, 5)
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -8.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
 display(plt, target='plot')
