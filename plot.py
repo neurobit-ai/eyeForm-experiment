@@ -3,8 +3,9 @@ if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
 #print(language_type)
 import pandas as pd
-
+import numpy as np
 import pickle
+from scipy.interpolate import make_interp_spline
 with open('data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area = pickle.load(f)[report]
 display(f'{db_version}', target='copyrightid')
@@ -33,15 +34,29 @@ def plot(sex, report):
     area = stacked_area.loc[sex].loc[3:16]
     MorF = {'男': 'Male', '女': 'Female'}[sex]
     if report == '軸長':
-        plt.fill_between(area.index, area['P100'], area['P90'], color='red', alpha=0.6, label='90~100%')
-        plt.fill_between(area.index, area['P90'], area['P75'], color='orange', alpha=0.6, label='75~90%')
-        plt.fill_between(area.index, area['P75'], area['P50'], color='yellow', alpha=0.6, label='50~75%')
-        plt.fill_between(area.index, area['P50'], area['P0'], color='lightgreen', alpha=0.6, label='0~50%')
-    if report == '球面度數':
-        plt.fill_between(area.index, area['P50'], area['P100'], color='lightgreen', alpha=0.6, label='50~100%')
-        plt.fill_between(area.index, area['P25'], area['P50'], color='yellow', alpha=0.6, label='25~50%')
-        plt.fill_between(area.index, area['P10'], area['P25'], color='orange', alpha=0.6, label='10~25%')
-        plt.fill_between(area.index, area['P0'], area['P10'], color='red', alpha=0.6, label='0~10%')
+        area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
+        splP90 = make_interp_spline(area.index, area['P90'], k=3)
+        splP75 = make_interp_spline(area.index, area['P75'], k=3)
+        splP50 = make_interp_spline(area.index, area['P50'], k=3)
+        area_90_smooth = splP90(area_index_smooth)
+        area_75_smooth = splP75(area_index_smooth)
+        area_50_smooth = splP50(area_index_smooth)
+        plt.fill_between(area_index_smooth, 30.5, area_90_smooth, color='red', alpha=0.2, label='90~100%')
+        plt.fill_between(area_index_smooth, area_90_smooth, area_75_smooth, color='orange', alpha=0.2, label='75~90%')
+        plt.fill_between(area_index_smooth, area_75_smooth, area_50_smooth, color='yellow', alpha=0.2, label='50~75%')
+        plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
+    else :
+        area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
+        splP50 = make_interp_spline(area.index, area['P50'], k=3)
+        splP25 = make_interp_spline(area.index, area['P25'], k=3)
+        splP10 = make_interp_spline(area.index, area['P10'], k=3)
+        area_50_smooth = splP50(area_index_smooth)
+        area_25_smooth = splP25(area_index_smooth)
+        area_10_smooth = splP10(area_index_smooth)
+        plt.fill_between(area_index_smooth, area_50_smooth, 5, color='lightgreen', alpha=0.2, label='50~100%')
+        plt.fill_between(area_index_smooth, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
+        plt.fill_between(area_index_smooth, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
+        plt.fill_between(area_index_smooth, -9, area_10_smooth, color='red', alpha=0.2, label='0~10%')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
     if language_type== 0 :
         plt.title(f"台灣{sex}童趨勢", fontproperties=custom_font, fontsize=16)
@@ -55,6 +70,15 @@ def plot(sex, report):
 
 risk = [...] * 4
 eye_word = [...] * 2
+#x_label=[ "ortho-k" ,"glasses" ,"multiple treatment" ,"no treatment", "atropine" ]
+sdl_coef=[ -0.54 ,-0.357 ,-0.392 , -0.696 , -0.424 ]
+sdl_coef_d=[ 0.944 ,0.968 ,0.694 , 1.007 , 0.73 ]
+sdr_coef=[ -0.685 ,-0.282 ,-0.617 , -0.419 , -0.436 ]
+sdr_coef_d=[ 1.178 , 0.658 , 0.617 , 0.84 , 0.817 ]
+all_coef=[ 0.092 , 0.14 , 0.13 , 0.141 , 0.253 ]
+all_coef_d=[ 0.169 , 0.331 , 0.17 , 0.203 , 1.178 ]
+alr_coef=[ 0.097 , 0.1 , 0.156 , 0.124 , 0.116 ]
+alr_coef_d=[ 0.213 , 0.185 , 0.236 , 0.18 , 0.173 ]
 
 if language_type== 0 :
     if report == '軸長':
@@ -149,6 +173,24 @@ else:
 
 #plt.figure(figsize=(7.5, 7.5))
 plot(sex, report)
+if suggestion == None :
+    suggestion='不處置'
+if suggestion == '不處置' :
+    label_index = 3
+elif suggestion == '低散瞳劑' or suggestion == '中散瞳劑' or suggestion == '高散瞳劑' :
+    label_index = 4
+elif suggestion == '一般眼鏡' :
+    label_index = 1
+elif suggestion == '一般眼鏡＋中散瞳劑' :
+    label_index = 2
+else :
+    label_index = 0
+x_age_series=[0]*2#this is for initial
+x_stdu_value_series=[0]*2#this is for initial
+x_stdd_value_series=[0]*2#this is for initial
+x_age_series[0]=x(age)
+x_age_series[1]=x(age)+1
+
 if y1 != "":
     if y1 == 0 :
         y1 = 19.5
@@ -160,9 +202,39 @@ if y2 != "":
     plt.scatter(x(age), y2, color='blue', label='OS' , marker='D')
     #print("os is : " + str(y2))
 if y1 != "" and slope_groupby[sex].get(suggestion):
-    plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
+    x_stdu_value_series[0] = y1
+    x_stdd_value_series[0] = y1
+    if report == '軸長':
+        x_stdu_value_series[1] = y1 + (all_coef[label_index] + all_coef_d[label_index])
+        if all_coef[label_index] - all_coef_d[label_index] < 0 :
+            x_stdd_value_series[1] = y1
+        else :
+            x_stdd_value_series[1] = y1 + (all_coef[label_index] - all_coef_d[label_index])
+    else :
+        if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
+            x_stdu_value_series[1] = y1
+        else :
+            x_stdu_value_series[1] = y1 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
+        x_stdd_value_series[1] = y1 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OD in 1 yr ')
+    #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
-    plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
+    x_stdu_value_series[0] = y2
+    x_stdd_value_series[0] = y2
+    if report == '軸長':
+        x_stdu_value_series[1] = y2 + (all_coef[label_index] + all_coef_d[label_index])
+        if all_coef[label_index] - all_coef_d[label_index] < 0 :
+            x_stdd_value_series[1] = y2
+        else :
+            x_stdd_value_series[1] = y2 + (all_coef[label_index] - all_coef_d[label_index])
+    else :
+        if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
+            x_stdu_value_series[1] = y2
+        else :
+            x_stdu_value_series[1] = y2 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
+        x_stdd_value_series[1] = y2 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#AC92EB', alpha=0.4, label=' OS in 1 yr')
+    #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 
 import json
 records = json.loads(records)
