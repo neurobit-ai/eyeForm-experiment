@@ -202,39 +202,39 @@ if y2 != "":
     plt.scatter(x(age), y2, color='blue', label='OS' , marker='D')
     #print("os is : " + str(y2))
 if y1 != "" and slope_groupby[sex].get(suggestion):
-    x_stdu_value_series[0] = y1
-    x_stdd_value_series[0] = y1
-    if report == '軸長':
-        x_stdu_value_series[1] = y1 + (all_coef[label_index] + all_coef_d[label_index])
-        if all_coef[label_index] - all_coef_d[label_index] < 0 :
-            x_stdd_value_series[1] = y1
-        else :
-            x_stdd_value_series[1] = y1 + (all_coef[label_index] - all_coef_d[label_index])
-    else :
-        if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
-            x_stdu_value_series[1] = y1
-        else :
-            x_stdu_value_series[1] = y1 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
-        x_stdd_value_series[1] = y1 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#AC92EB', alpha=0.4, label=' OD in 1 yr ')
-    #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
+    #x_stdu_value_series[0] = y1
+    #x_stdd_value_series[0] = y1
+    #if report == '軸長':
+        #x_stdu_value_series[1] = y1 + (all_coef[label_index] + all_coef_d[label_index])
+        #if all_coef[label_index] - all_coef_d[label_index] < 0 :
+            #x_stdd_value_series[1] = y1
+        #else :
+            #x_stdd_value_series[1] = y1 + (all_coef[label_index] - all_coef_d[label_index])
+    #else :
+        #if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
+            #x_stdu_value_series[1] = y1
+        #else :
+            #x_stdu_value_series[1] = y1 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
+        #x_stdd_value_series[1] = y1 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
+    #plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#AC92EB', alpha=0.4, label=' OD in 1 yr ')
+    plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
-    x_stdu_value_series[0] = y2
-    x_stdd_value_series[0] = y2
-    if report == '軸長':
-        x_stdu_value_series[1] = y2 + (all_coef[label_index] + all_coef_d[label_index])
-        if all_coef[label_index] - all_coef_d[label_index] < 0 :
-            x_stdd_value_series[1] = y2
-        else :
-            x_stdd_value_series[1] = y2 + (all_coef[label_index] - all_coef_d[label_index])
-    else :
-        if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
-            x_stdu_value_series[1] = y2
-        else :
-            x_stdu_value_series[1] = y2 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
-        x_stdd_value_series[1] = y2 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
-    #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
+    #x_stdu_value_series[0] = y2
+    #x_stdd_value_series[0] = y2
+    #if report == '軸長':
+        #x_stdu_value_series[1] = y2 + (all_coef[label_index] + all_coef_d[label_index])
+        #if all_coef[label_index] - all_coef_d[label_index] < 0 :
+            #x_stdd_value_series[1] = y2
+        #else :
+            #x_stdd_value_series[1] = y2 + (all_coef[label_index] - all_coef_d[label_index])
+    #else :
+        #if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
+            #x_stdu_value_series[1] = y2
+        #else :
+            #x_stdu_value_series[1] = y2 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
+        #x_stdd_value_series[1] = y2 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
+    #plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
+    plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 
 import json
 records = json.loads(records)
