@@ -306,6 +306,7 @@ for record in records:
             plt.scatter(x(record[11]), record[os], color='blue', marker='.')
         #print("os is : " + str(record[os]))
 plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
+print("309")
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.19, 0.25),fontsize=8)
 if report == '球面度數':
@@ -319,6 +320,7 @@ elif language_type== 2:
 else :
     plt.xlabel("Age (years)", fontsize=12)
 #plt.xlabel('Age', fontsize=12)
+print("330")
 if language_type== 0 :
     plt.ylabel('軸長 (mm)' if report == '軸長' else '球面度數 (度)', fontproperties=custom_font_s, fontsize=12)
 elif language_type== 2:
