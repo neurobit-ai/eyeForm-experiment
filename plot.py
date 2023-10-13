@@ -1,6 +1,9 @@
 from js import sex, age, y1, y2, records, suggestion, localStorage, report , language_type
+print("welcome to  plot")
+print(sex)
 if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
+print(sex)
 #print(language_type)
 import pandas as pd
 import numpy as np
@@ -305,6 +308,7 @@ for record in records:
         else :
             plt.scatter(x(record[11]), record[os], color='blue', marker='.')
         #print("os is : " + str(record[os]))
+print("308")
 plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 print("309")
 if report == '軸長':

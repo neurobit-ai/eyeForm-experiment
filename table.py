@@ -1,5 +1,9 @@
 from js import sex, age, y1, y2, records, report , language_type, suggestion
-
+print("welcome to  plot")
+print(sex)
+if 'ale' in sex:
+    sex = {'Male': '男', 'Female': '女'}[sex]
+print(sex)
 import re
 import pickle
 with open('data_to_plot.pkl', 'rb') as f:
