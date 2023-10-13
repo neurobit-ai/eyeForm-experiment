@@ -96,7 +96,6 @@ def plot(sex, report):
         plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
         plt.fill_between(area.index, area_0_smooth, area_10_smooth, color='red', alpha=0.2, label='0~10%')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
-print("100")
     if language_type== 0 :
         if report == '軸長':
             plt.title(f"{sex}童軸長成長趨勢", fontproperties=custom_font, fontsize=16)
@@ -117,7 +116,7 @@ print("100")
             plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
         if report == '球面度數':
             plt.title(f"Trend in spherical diopter of {MorF} children", fontsize=16)
-
+print("119")
 
 risk = [...] * 4
 eye_word = [...] * 2
