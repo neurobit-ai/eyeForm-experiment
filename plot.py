@@ -73,7 +73,7 @@ def plot(sex, report):
         area_75_smooth = splP75(area_index_smooth)
         area_50_smooth = splP50(area_index_smooth)
         plt.fill_between(area_index_smooth, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
-        plt.fill_between(area_index_smooth, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Moderate Risk')#orange
+        plt.fill_between(area_index_smooth, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Medium Risk')#orange
         plt.fill_between(area_index_smooth, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
         #plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
     else :
