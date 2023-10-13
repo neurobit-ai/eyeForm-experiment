@@ -1,6 +1,7 @@
 from js import sex, age, y1, y2, records, report , language_type
 
 import re
+import pickle
 with open('data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area = pickle.load(f)[report]
 
