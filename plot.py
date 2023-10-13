@@ -288,8 +288,8 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
     plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 print("288")
-#import json
-#records = json.loads(records)
+import json
+records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
 odp_first=True
 osp_first=True

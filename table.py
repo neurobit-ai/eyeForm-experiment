@@ -91,8 +91,7 @@ for age_index in range(1,agecounter):
 #print(type(records))
 
 import json
-#json_string = str(records)
-#records = json.loads(json_string)
+records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
 for record in records:
     if record[od] or record[os]:
