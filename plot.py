@@ -96,6 +96,7 @@ def plot(sex, report):
         plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
         plt.fill_between(area.index, area_0_smooth, area_10_smooth, color='red', alpha=0.2, label='0~10%')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
+print("100")
     if language_type== 0 :
         if report == '軸長':
             plt.title(f"{sex}童軸長成長趨勢", fontproperties=custom_font, fontsize=16)
@@ -179,7 +180,7 @@ else :
     risk[3] = f' far beyond the normal age range, it is considered extremely high risk with a significant potential for severe myopia progression. Quarterly follow-up check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences (e.g., being mindful of screen time for computers and phones and taking breaks, maintaining proper posture, wearing sunglasses to protect against blue light and UV rays during outdoor activities). Additionally, consider supplementing with lutein or fish oil, and adopting proactive treatment measures for control.'
     samples_not_enought = 'The number of cases within this age group is insufficient to provide statistically significant risk classification.'
 Risk = {}
-
+print("183")
 import re
 def x(age):
     m = re.match('(\d+)歲(\d+)', age)
@@ -284,7 +285,7 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
             plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
     plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
-
+print("288")
 #import json
 #records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
@@ -326,7 +327,7 @@ elif language_type== 2:
 else :
     plt.ylabel('Axial Length (mm)' if report == '軸長' else 'SPH (degrees)', fontsize=12)
 #plt.ylabel('Axial Length' if report == '軸長' else 'SPH', fontsize=12)
-
+print("330")
 plt.margins(0)
 plt.subplots_adjust(left=0.1, right=0.86, bottom=0.1, top=0.9, wspace=0.8, hspace=0.2)
 if report == '軸長':
