@@ -6,8 +6,10 @@ import pandas as pd
 import numpy as np
 import pickle
 from scipy.interpolate import make_interp_spline
-with open('data_to_plot.pkl', 'rb') as f:
-    db_version, slope_groupby, stacked_area = pickle.load(f)[report]
+#with open('data_to_plot.pkl', 'rb') as f:
+    #db_version, slope_groupby, stacked_area = pickle.load(f)[report]
+with open('data_to_plot_20231013.pkl', 'rb') as f:
+    db_version, slope_groupby,results_groupby, stacked_area = pickle.load(f)[report]
 display(f'{db_version}', target='copyrightid')
 
 import matplotlib.pyplot as plt
@@ -29,6 +31,33 @@ custom_font_s = FontProperties(fname=font_paht_s)
 
 plt.figure(figsize=(8, 6))
 
+def moving_average_cal(data):
+  moving_average = []
+  window_sum = 0
+  window_count=0
+  length= len(data)
+  #print(data)
+  for index in range(0,length):
+    window_count = 0
+    window_sum = 0
+    if index - 2 >= 0:
+       window_sum += data.iloc[index - 2]
+       window_count+=1
+    if index - 1 >= 0:
+       window_sum += data.iloc[index - 1]
+       window_count+=1
+    window_sum += data.iloc[index]
+    window_count+=1
+    #print(data.iloc[index])
+    if index + 1 < length:
+       window_sum += data.iloc[index + 1]
+       window_count+=1
+    if index + 2 < length:
+       window_sum += data.iloc[index + 2]
+       window_count+=1
+    moving_average.append(window_sum/window_count)
+  #print(moving_average)
+  return moving_average
 
 def plot(sex, report):
     area = stacked_area.loc[sex].loc[3:16]
@@ -46,26 +75,47 @@ def plot(sex, report):
         plt.fill_between(area_index_smooth, area_75_smooth, area_50_smooth, color='yellow', alpha=0.2, label='50~75%')
         plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
     else :
-        area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
-        splP50 = make_interp_spline(area.index, area['P50'], k=3)
-        splP25 = make_interp_spline(area.index, area['P25'], k=3)
-        splP10 = make_interp_spline(area.index, area['P10'], k=3)
-        area_50_smooth = splP50(area_index_smooth)
-        area_25_smooth = splP25(area_index_smooth)
-        area_10_smooth = splP10(area_index_smooth)
-        plt.fill_between(area_index_smooth, area_50_smooth, 5, color='lightgreen', alpha=0.2, label='50~100%')
-        plt.fill_between(area_index_smooth, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
-        plt.fill_between(area_index_smooth, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
-        plt.fill_between(area_index_smooth, -9, area_10_smooth, color='red', alpha=0.2, label='0~10%')
+        #area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
+        #splP50 = make_interp_spline(area.index, area['P50'], k=3)
+        #splP25 = make_interp_spline(area.index, area['P25'], k=3)
+        #splP10 = make_interp_spline(area.index, area['P10'], k=3)
+        #area_50_smooth = splP50(area_index_smooth)
+        #area_25_smooth = splP25(area_index_smooth)
+        #area_10_smooth = splP10(area_index_smooth)
+        #plt.fill_between(area_index_smooth, area_50_smooth, 5, color='lightgreen', alpha=0.2, label='50~100%')
+        #plt.fill_between(area_index_smooth, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
+        #plt.fill_between(area_index_smooth, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
+        #plt.fill_between(area_index_smooth, -9, area_10_smooth, color='red', alpha=0.2, label='0~10%')
+        area_100_smooth = moving_average_cal(area['P100'])
+        area_50_smooth = moving_average_cal(area['P50'])
+        area_25_smooth = moving_average_cal(area['P25'])
+        area_10_smooth = moving_average_cal(area['P10'])
+        area_0_smooth = moving_average_cal(area['P0'])
+        plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='50~100%')
+        plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
+        plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
+        plt.fill_between(area.index, area_0_smooth, area_10_smooth, color='red', alpha=0.2, label='0~10%')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
     if language_type== 0 :
-        plt.title(f"台灣{sex}童趨勢", fontproperties=custom_font, fontsize=16)
+        if report == '軸長':
+            plt.title(f"{sex}童軸長成長趨勢", fontproperties=custom_font, fontsize=16)
+        if report == '球面度數':
+            plt.title(f"{sex}童球面度數成長趨勢", fontproperties=custom_font, fontsize=16)
     elif language_type== 1:
-        plt.title(f"Trend of {MorF} Children in Taiwan", fontsize=16)
+        if report == '軸長':
+            plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
+        if report == '球面度數':
+            plt.title(f"Trend in spherical diopter of {MorF}children", fontsize=16)
     elif language_type== 2:
-        plt.title(f"台湾{sex}童趋势", fontproperties=custom_font, fontsize=16)
+        if report == '軸長':
+            plt.title(f"{sex}童轴长成长趋势", fontproperties=custom_font, fontsize=16)
+        if report == '球面度數':
+            plt.title(f"{sex}童球面度数成长趋势", fontproperties=custom_font, fontsize=16)
     else :
-        plt.title(f"Trend of {MorF} Children in Taiwan", fontsize=16)
+        if report == '軸長':
+            plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
+        if report == '球面度數':
+            plt.title(f"Trend in spherical diopter of {MorF} children", fontsize=16)
 
 
 risk = [...] * 4
@@ -183,13 +233,20 @@ elif suggestion == '一般眼鏡' :
     label_index = 1
 elif suggestion == '一般眼鏡＋中散瞳劑' :
     label_index = 2
+elif suggestion == '一般眼鏡散瞳劑' :
+    label_index = 2
 else :
     label_index = 0
-x_age_series=[0]*2#this is for initial
-x_stdu_value_series=[0]*2#this is for initial
-x_stdd_value_series=[0]*2#this is for initial
+agecounter = int(16-x(age))+2
+x_age_series=[0]*agecounter#this is for initial
+x_stdu_value_series=[0]*agecounter#this is for initial
+x_stdd_value_series=[0]*agecounter#this is for initial
 x_age_series[0]=x(age)
-x_age_series[1]=x(age)+1
+odp_first=True
+osp_first=True
+
+for age_index in range(1,agecounter):
+    x_age_series[age_index] = x_age_series[age_index-1] + 1
 
 if y1 != "":
     if y1 == 0 :
@@ -202,42 +259,34 @@ if y2 != "":
     plt.scatter(x(age), y2, color='blue', label='OS' , marker='D')
     #print("os is : " + str(y2))
 if y1 != "" and slope_groupby[sex].get(suggestion):
-    #x_stdu_value_series[0] = y1
-    #x_stdd_value_series[0] = y1
-    #if report == '軸長':
-        #x_stdu_value_series[1] = y1 + (all_coef[label_index] + all_coef_d[label_index])
-        #if all_coef[label_index] - all_coef_d[label_index] < 0 :
-            #x_stdd_value_series[1] = y1
-        #else :
-            #x_stdd_value_series[1] = y1 + (all_coef[label_index] - all_coef_d[label_index])
-    #else :
-        #if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
-            #x_stdu_value_series[1] = y1
-        #else :
-            #x_stdu_value_series[1] = y1 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
-        #x_stdd_value_series[1] = y1 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
-    #plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#AC92EB', alpha=0.4, label=' OD in 1 yr ')
-    plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
+    x_stdu_value_series[0] = y1
+    x_stdd_value_series[0] = y1
+    for age_index in range(1,agecounter):
+        x_stdu_value_series[age_index] =  y1 + slope_groupby[sex][suggestion] * age_index + results_groupby[sex][suggestion] * 1.96
+        x_stdd_value_series[age_index] =  y1 + slope_groupby[sex][suggestion] * age_index - results_groupby[sex][suggestion] * 1.96
+        if odp_first :
+            plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in future', marker='*')
+            odp_first=False
+        else :
+            plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label=' OD in 1 yr ')##AC92EB
+    #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
-    #x_stdu_value_series[0] = y2
-    #x_stdd_value_series[0] = y2
-    #if report == '軸長':
-        #x_stdu_value_series[1] = y2 + (all_coef[label_index] + all_coef_d[label_index])
-        #if all_coef[label_index] - all_coef_d[label_index] < 0 :
-            #x_stdd_value_series[1] = y2
-        #else :
-            #x_stdd_value_series[1] = y2 + (all_coef[label_index] - all_coef_d[label_index])
-    #else :
-        #if sdl_coef[label_index] + sdl_coef_d[label_index]/2 >0 :
-            #x_stdu_value_series[1] = y2
-        #else :
-            #x_stdu_value_series[1] = y2 + (sdl_coef[label_index] + sdl_coef_d[label_index]/2)
-        #x_stdd_value_series[1] = y2 + (sdl_coef[label_index] - sdl_coef_d[label_index]/2)
-    #plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
-    plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
+    x_stdu_value_series[0] = y2
+    x_stdd_value_series[0] = y2
+    for age_index in range(1,agecounter):
+        x_stdu_value_series[age_index] = y2 + slope_groupby[sex][suggestion] * age_index + results_groupby[sex][suggestion] * 1.96
+        x_stdd_value_series[age_index] = y2 + slope_groupby[sex][suggestion] * age_index - results_groupby[sex][suggestion] * 1.96
+        if osp_first :
+            plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in future', marker='*')
+            osp_first=False
+        else :
+            plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
+    #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 
-import json
-records = json.loads(records)
+#import json
+#records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
 odp_first=True
 osp_first=True
@@ -279,7 +328,7 @@ else :
 #plt.ylabel('Axial Length' if report == '軸長' else 'SPH', fontsize=12)
 
 plt.margins(0)
-plt.subplots_adjust(left=0.1, right=0.85, bottom=0.1, top=0.9, wspace=0.8, hspace=0.2)
+plt.subplots_adjust(left=0.1, right=0.86, bottom=0.1, top=0.9, wspace=0.8, hspace=0.2)
 if report == '軸長':
     plt.ylim(19.5, 30.5)
     plt.xlim(3, 16)
@@ -287,5 +336,5 @@ if report == '軸長':
 if report == '球面度數':
     plt.ylim(-9, 5)
     plt.xlim(3, 16)
-    plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -8.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
+    plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -10.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
 display(plt, target='plot')
