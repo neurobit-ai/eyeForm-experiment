@@ -1,9 +1,6 @@
 from js import sex, age, y1, y2, records, suggestion, localStorage, report , language_type
-print("welcome to  plot")
-print(sex)
 if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
-print(sex)
 #print(language_type)
 import pandas as pd
 import numpy as np
@@ -67,16 +64,18 @@ def plot(sex, report):
     MorF = {'男': 'Male', '女': 'Female'}[sex]
     if report == '軸長':
         area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
+        splP100 = make_interp_spline(area.index, area['P100'], k=3)
         splP90 = make_interp_spline(area.index, area['P90'], k=3)
         splP75 = make_interp_spline(area.index, area['P75'], k=3)
         splP50 = make_interp_spline(area.index, area['P50'], k=3)
+        area_100_smooth = splP100(area_index_smooth)
         area_90_smooth = splP90(area_index_smooth)
         area_75_smooth = splP75(area_index_smooth)
         area_50_smooth = splP50(area_index_smooth)
-        plt.fill_between(area_index_smooth, 30.5, area_90_smooth, color='red', alpha=0.2, label='90~100%')
-        plt.fill_between(area_index_smooth, area_90_smooth, area_75_smooth, color='orange', alpha=0.2, label='75~90%')
-        plt.fill_between(area_index_smooth, area_75_smooth, area_50_smooth, color='yellow', alpha=0.2, label='50~75%')
-        plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
+        plt.fill_between(area_index_smooth, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
+        plt.fill_between(area_index_smooth, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Moderate Risk')#orange
+        plt.fill_between(area_index_smooth, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
+        #plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
     else :
         #area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
         #splP50 = make_interp_spline(area.index, area['P50'], k=3)
@@ -119,7 +118,6 @@ def plot(sex, report):
             plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
         if report == '球面度數':
             plt.title(f"Trend in spherical diopter of {MorF} children", fontsize=16)
-print("119")
 
 risk = [...] * 4
 eye_word = [...] * 2
@@ -182,7 +180,6 @@ else :
     risk[3] = f' far beyond the normal age range, it is considered extremely high risk with a significant potential for severe myopia progression. Quarterly follow-up check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences (e.g., being mindful of screen time for computers and phones and taking breaks, maintaining proper posture, wearing sunglasses to protect against blue light and UV rays during outdoor activities). Additionally, consider supplementing with lutein or fish oil, and adopting proactive treatment measures for control.'
     samples_not_enought = 'The number of cases within this age group is insufficient to provide statistically significant risk classification.'
 Risk = {}
-print("183")
 import re
 def x(age):
     m = re.match('(\d+)歲(\d+)', age)
@@ -287,7 +284,6 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
             plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
     plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
-print("288")
 import json
 records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
@@ -308,9 +304,7 @@ for record in records:
         else :
             plt.scatter(x(record[11]), record[os], color='blue', marker='.')
         #print("os is : " + str(record[os]))
-print("308")
 plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
-print("309")
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.19, 0.25),fontsize=8)
 if report == '球面度數':
@@ -324,7 +318,6 @@ elif language_type== 2:
 else :
     plt.xlabel("Age (years)", fontsize=12)
 #plt.xlabel('Age', fontsize=12)
-print("330")
 if language_type== 0 :
     plt.ylabel('軸長 (mm)' if report == '軸長' else '球面度數 (度)', fontproperties=custom_font_s, fontsize=12)
 elif language_type== 2:
@@ -332,7 +325,6 @@ elif language_type== 2:
 else :
     plt.ylabel('Axial Length (mm)' if report == '軸長' else 'SPH (degrees)', fontsize=12)
 #plt.ylabel('Axial Length' if report == '軸長' else 'SPH', fontsize=12)
-print("330")
 plt.margins(0)
 plt.subplots_adjust(left=0.1, right=0.86, bottom=0.1, top=0.9, wspace=0.8, hspace=0.2)
 if report == '軸長':
