@@ -1,4 +1,4 @@
-from js import sex, age, y1, y2, records, report , language_type
+from js import sex, age, y1, y2, records, report , language_type, suggestion
 
 import re
 import pickle
