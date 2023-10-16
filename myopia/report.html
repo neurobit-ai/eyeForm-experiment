@@ -97,8 +97,20 @@
           <td colspan="3" align="left">References : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</td>
         </tr>
       </tbody>
+      <tbody class="table-group-divider">
+        <tr>
+          <td colspan="3" align="center"><button onclick="printPage()">print</button></td>
+        </tr>
+      </tbody> 
+      <tbody class="no-border">
+        <tr></tr>
+      </tbody> 
     </table>
     <script>
+
+    function printPage() {
+      window.print(); // 触发浏览器的列印功能
+    }
       now = new Date();
       document.getElementById('now').innerHTML = now.toLocaleString('en-US');
       document.getElementById('site').innerHTML = localStorage.getItem('site');

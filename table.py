@@ -10,7 +10,7 @@ def x(age):
     m = re.match('(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12
 
-def _y_m(age,year):
+def _y_m(age,year,sign):
     m = re.match('(\d+)歲(\d+)', age)
     if int(m.group(1))+year > 9:
         space01=''
@@ -22,15 +22,16 @@ def _y_m(age,year):
         space02='&nbsp'
     m_y=str(int(m.group(1))+year)
     if language_type== 0 :
-        return f'&nbsp{space01}{m_y}歲{space02}{m.group(2)}個月'
+        return f'&nbsp{space01}{m_y}歲{space02}{m.group(2)}個月{sign}'
     elif language_type== 2:
-        return f'&nbsp{space01}{m_y}岁{space02}{m.group(2)}个月'
+        return f'&nbsp{space01}{m_y}岁{space02}{m.group(2)}个月{sign}'
     else:
-        return f'&nbsp{space01}{m_y}y{space02}{m.group(2)}m'
+        return f'&nbsp{space01}{m_y}y{space02}{m.group(2)}m{sign}'
     
 #print(language_type)
 table = {}
-table['Age　'] = [f'{_y_m(age,0)}']
+sign='⬪'
+table['Age　'] = [f'{_y_m(age,0,sign)}']
 if y1 == 19.5 :
     table['OD'] = [f'<20']
 elif y1== 30.5 :
@@ -49,9 +50,9 @@ else :
 agecounter = int(16-x(age))+1
 OD_new=y1
 OS_new=y2
-
+sign='⋆'
 for age_index in range(1,agecounter):
-    table['Age　'].append(f'{_y_m(age,age_index)}')
+    table['Age　'].append(f'{_y_m(age,age_index,sign)}')
     OD_new += slope_groupby[sex][suggestion]
     OS_new += slope_groupby[sex][suggestion]
     if report == '軸長':
@@ -89,10 +90,11 @@ for age_index in range(1,agecounter):
 
 import json
 records = json.loads(records)
+sign='⦁'
 od, os = (18, 24) if report == '軸長' else (15, 21)
 for record in records:
     if record[od] or record[os]:
-        table['Age　'].insert(0, f'{_y_m(record[11],0)}')
+        table['Age　'].insert(0, f'{_y_m(record[11],0,sign)}')
         if report == '軸長':
             if record[od] == 19.5 :
                 table['OD'].insert(0, f'<20')
