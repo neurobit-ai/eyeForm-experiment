@@ -30,7 +30,7 @@ def _y_m(age,year,sign):
     
 #print(language_type)
 table = {}
-sign='⬪'
+sign='⯁'
 table['Age　'] = [f'{_y_m(age,0,sign)}']
 if y1 == 19.5 :
     table['OD'] = [f'<20']
@@ -50,7 +50,7 @@ else :
 agecounter = int(16-x(age))+1
 OD_new=y1
 OS_new=y2
-sign='⋆'
+sign='★'
 for age_index in range(1,agecounter):
     table['Age　'].append(f'{_y_m(age,age_index,sign)}')
     OD_new += slope_groupby[sex][suggestion]
@@ -90,7 +90,7 @@ for age_index in range(1,agecounter):
 
 import json
 records = json.loads(records)
-sign='⦁'
+sign='●'
 od, os = (18, 24) if report == '軸長' else (15, 21)
 for record in records:
     if record[od] or record[os]:

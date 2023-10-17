@@ -9,7 +9,7 @@ from scipy.interpolate import make_interp_spline
 #with open('data_to_plot.pkl', 'rb') as f:
     #db_version, slope_groupby, stacked_area = pickle.load(f)[report]
 with open('data_to_plot_20231013.pkl', 'rb') as f:
-    db_version, slope_groupby,results_groupby, stacked_area = pickle.load(f)[report]
+    db_version , slope_groupby , results_groupby , stacked_area , constant_ci_groupby , coef_ci_025_groupby , coef_ci_975_groupby = pickle.load(f)[report]
 display(f'{db_version}', target='copyrightid')
 
 import matplotlib.pyplot as plt
@@ -247,7 +247,24 @@ osp_first=True
 
 for age_index in range(1,agecounter):
     x_age_series[age_index] = x_age_series[age_index-1] + 1
+def C_I_cal(nowvalue):  
+    #print("In draw  constant_ci_groupby : "+str(constant_ci_groupby[sex][suggestion])+ "----coef_ci_025_groupby is "+ str(coef_ci_025_groupby[sex][suggestion])+ "----coef_ci_975_groupby is "+ str(coef_ci_975_groupby[sex][suggestion]))
+    constant_025=nowvalue-constant_ci_groupby[sex][suggestion]
+    constant_975=nowvalue+constant_ci_groupby[sex][suggestion]
+    max_value = constant_025 +  coef_ci_025_groupby[sex][suggestion]
 
+    min_value = constant_025 +  coef_ci_975_groupby[sex][suggestion]
+    if  constant_975 +  coef_ci_025_groupby[sex][suggestion]  > max_value :
+        max_value = constant_975 + -0.216
+    if  constant_975 +  coef_ci_025_groupby[sex][suggestion]  < min_value :
+        min_value = constant_975 +  -0.216
+
+    if  constant_975 + coef_ci_975_groupby[sex][suggestion]  > max_value :
+        max_value = constant_975  +  -0.259
+    if  constant_975 + coef_ci_975_groupby[sex][suggestion]  < min_value :
+        min_value = constant_975 +  -0.259       
+
+    return max_value,min_value
 if y1 != "":
     if y1 == 0 :
         y1 = 19.5
@@ -262,27 +279,25 @@ if y1 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y1
     x_stdd_value_series[0] = y1
     for age_index in range(1,agecounter):
-        x_stdu_value_series[age_index] =  y1 + slope_groupby[sex][suggestion] * age_index + results_groupby[sex][suggestion] * 1.96
-        x_stdd_value_series[age_index] =  y1 + slope_groupby[sex][suggestion] * age_index - results_groupby[sex][suggestion] * 1.96
+        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y1 + slope_groupby[sex][suggestion] * (age_index-1))
         if odp_first :
-            plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in future', marker='*')
+            plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in 1 yr', marker='*')
             odp_first=False
         else :
             plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label=' OD in 1 yr ')##AC92EB
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label=' OD in future')##AC92EB
     #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y2
     x_stdd_value_series[0] = y2
     for age_index in range(1,agecounter):
-        x_stdu_value_series[age_index] = y2 + slope_groupby[sex][suggestion] * age_index + results_groupby[sex][suggestion] * 1.96
-        x_stdd_value_series[age_index] = y2 + slope_groupby[sex][suggestion] * age_index - results_groupby[sex][suggestion] * 1.96
+        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y2 + slope_groupby[sex][suggestion] * (age_index-1))
         if osp_first :
-            plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in future', marker='*')
+            plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
             osp_first=False
         else :
             plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in 1 yr')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in future')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 import json
 records = json.loads(records)
