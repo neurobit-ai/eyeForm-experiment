@@ -174,7 +174,11 @@
           else if (suggestion == '散瞳劑') $('#suggestion').html('点散瞳剂');
           else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('配戴一般眼镜+点散瞳剂');
           else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
-          else $('#suggestion').html('无需处置');
+          else 
+          {
+            $('#suggestion').html('No suggestion required.');
+            suggestion='无需处置'
+          }
           /*
           if (suggestion == '不處置') $('#suggestion').html('无需处置');
           else if (suggestion == '低散瞳劑')$('#suggestion').html('点低浓度散瞳剂');

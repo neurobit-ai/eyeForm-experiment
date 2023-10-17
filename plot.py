@@ -257,12 +257,12 @@ def C_I_cal(nowvalue):
     if  constant_975 +  coef_ci_025_groupby[sex][suggestion]  > max_value :
         max_value = constant_975 +  coef_ci_025_groupby[sex][suggestion]
     if  constant_975 +  coef_ci_025_groupby[sex][suggestion]  < min_value :
-        min_value = coef_ci_025_groupby[sex][suggestion]
+        min_value = constant_975 +  coef_ci_025_groupby[sex][suggestion]
 
     if  constant_975 + coef_ci_975_groupby[sex][suggestion]  > max_value :
-        max_value = coef_ci_975_groupby[sex][suggestion]
+        max_value = constant_975 + coef_ci_975_groupby[sex][suggestion]
     if  constant_975 + coef_ci_975_groupby[sex][suggestion]  < min_value :
-        min_value = coef_ci_975_groupby[sex][suggestion]       
+        min_value = constant_975 + coef_ci_975_groupby[sex][suggestion]       
 
     return max_value,min_value
 if y1 != "":

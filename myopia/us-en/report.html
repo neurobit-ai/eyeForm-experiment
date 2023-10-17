@@ -174,7 +174,11 @@
           else if (suggestion == '散瞳劑') $('#suggestion').html('Use Mydriatics.');
           else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('Wearing regular glasses and use Mydriatics.');
           else if (suggestion == '角膜塑型片') $('#suggestion').html('Corneal reshaping lenses.');
-          else $('#suggestion').html('No suggestion required.');
+          else 
+          {
+            $('#suggestion').html('No suggestion required.');
+            suggestion='不處置'
+          }
           /*
           if (suggestion == '不處置') $('#suggestion').html('No suggestion required.');
           else if (suggestion == '低散瞳劑')$('#suggestion').html('Low-concentration Mydriaticst.');
