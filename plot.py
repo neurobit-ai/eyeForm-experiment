@@ -268,12 +268,12 @@ def C_I_cal(nowvalue):
 if y1 != "":
     if y1 == 0 :
         y1 = 19.5
-    plt.scatter(x(age), y1, color='red', label='OD' , marker='D')
+    plt.scatter(x(age), y1, color='red', label='OD now' , marker='D')
     #print("od is : " + str(y1 ))
 if y2 != "":
     if y2 == 0 :
         y2 = 19.5
-    plt.scatter(x(age), y2, color='blue', label='OS' , marker='D')
+    plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D')
     #print("os is : " + str(y2))
 if y1 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y1
@@ -285,7 +285,7 @@ if y1 != "" and slope_groupby[sex].get(suggestion):
             odp_first=False
         else :
             plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label=' OD in future')##AC92EB
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label='OD in future')##AC92EB
     #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y2
@@ -297,7 +297,7 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
             osp_first=False
         else :
             plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label=' OS in future')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label='OS in future')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 import json
 records = json.loads(records)
