@@ -165,14 +165,12 @@
         complete: function(data) {
           suggestion = data['responseText'];
           console.log(suggestion);
-          if (suggestion == '不處置') $('#suggestion').html('無需處置');
-          else if (suggestion == '低散瞳劑')$('#suggestion').html('點低濃度散瞳劑');
-          else if (suggestion == '中散瞳劑')$('#suggestion').html('點中濃度散瞳劑');
-          else if (suggestion == '高散瞳劑')$('#suggestion').html('點高濃度散瞳劑');
-          else if (suggestion == '一般眼鏡')$('#suggestion').html('配戴一般眼鏡');
-          else if (suggestion == '一般眼鏡＋中散瞳劑')$('#suggestion').html('配戴一般眼鏡+點中濃度散瞳劑');
-          else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
-          else $('#suggestion').html('無需處置');
+          if (suggestion == '不處置') $('#suggestion').html('No suggestion required.');
+          else if (suggestion == '一般眼鏡') $('#suggestion').html('Wearing regular glasses.');
+          else if (suggestion == '散瞳劑') $('#suggestion').html('Use Mydriatics.');
+          else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('Wearing regular glasses and use Mydriatics.');
+          else if (suggestion == '角膜塑型片') $('#suggestion').html('Corneal reshaping lenses.');
+          else $('#suggestion').html('No suggestion required.');
         }
       });
       language_type=0;// 0 : traditional chinese , 1 : english , 2 : simple chinese
