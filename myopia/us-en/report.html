@@ -35,6 +35,10 @@
       .no-print {
         display: none;
       }
+      .scale_target_down {
+        transform: scale(0.9);
+        transform-origin: top left;
+      }
       .scale_down {
         transform: scale(0.8);
         transform-origin: top;
@@ -103,8 +107,8 @@
           <td colspan="3" align="center"><div id="table"></div></td>
         </tr>
       </tbody>
-      <tbody class="table-group-divider custom-row">
-        <tr>
+      <tbody class="table-group-divider">
+        <tr class="scale_target_down">
           <td colspan="3" align="center">Copyright © 2023 Neurobit Technologies Co., Ltd.</td>
           <td><span id="copyrightid"></span></td>
         </tr>
