@@ -27,6 +27,23 @@
       [[fetch]]
       files = ["./data_to_plot.pkl","msyhbd.ttc","msyh.ttc","data_to_plot_20231013.pkl"]
     </py-config>
+    <style type="text/css">
+      @media print {
+      .custom-row {
+        font-size: 10pt; 
+      }
+      .no-print {
+        display: none;
+      }
+      .scale_down {
+        transform: scale(0.8);
+        transform-origin: top;
+      }
+      #plot {
+        height: 475px;
+      }
+    }
+    </style>
   </head>
   <body class="p-3 m-0 border-0 bd-example">
     <table class="table">
@@ -75,34 +92,34 @@
           <td><span id="age_tr"></span> / <span id="sex_tr"></span></td>
           <td><span id="now"></span></td>
         </tr>
-        <tr>
+        <tr class="custom-row">
           <td colspan="3" align="left"><div id="advice"></div></td>
           <td><span id="age" style="display:none;"></span> <span id="sex" style="display:none;"></span></td>
         </tr>
-        <tr>
+        <tr class="scale_down">
           <td colspan="3" align="center"><div id="plot"></div></td>
         </tr>
-        <tr>
+        <tr class="custom-row">
           <td colspan="3" align="center"><div id="table"></div></td>
         </tr>
       </tbody>
       <tbody class="table-group-divider">
-        <tr>
+        <tr class="custom-row">
           <td colspan="3" align="center">版权声明 © 2023 神经元科技股份有限公司 版权所有</td>
           <td><span id="copyrightid"></span></td>
         </tr>
       </tbody>
       <tbody class="table-group-divider">
-        <tr>
+        <tr class="custom-row">
           <td colspan="3" align="left">参考资料 : Sanz Diez P, Yang LH, Lu MX, Wahl S, Ohlendorf A (2019) Growth curves of myopia-related parameters to clinically monitor the refractive development in Chinese schoolchildren. Graefes Arch Clin Exp Ophthalmol 257(5):1045-1053.</td>
         </tr>
       </tbody>
-      <tbody class="table-group-divider">
+      <tbody class="table-group-divider no-print">
         <tr>
           <td colspan="3" align="center"><button onclick="printPage()">打印</button></td>
         </tr>
       </tbody> 
-      <tbody class="no-border">
+      <tbody class="no-border no-print">
         <tr></tr>
       </tbody> 
     </table>

@@ -871,27 +871,12 @@
       }
     }
 
-    var pretermDValid=document.getElementById('pretermD');
-    pretermDValid.addEventListener('input', function() {
-    const inputValue = parseInt(this.value, 10);
-    if (isNaN(inputValue)) {
-      day_errorMsg.textContent= '請輸入有效的數字。';
-      pretermDValid.value=''
-    } else if (inputValue < 0 || inputValue > 6) {
-      day_errorMsg.textContent= '請輸入 0 到 6 之間的數字。';
-      if (inputValue < 0)
-        pretermDValid.value='0';
-      if (inputValue > 6)
-        pretermDValid.value='6';      
-    } else {
-      day_errorMsg.textContent= '';
-    }
-  });
-
   var heightValid=document.getElementById('height');
     heightValid.addEventListener('input', function() {
     const pattern=/^(\d{1,4})(\.\d{0,4})?$/;
-    if(!pattern.test(this.value))
+    if(this.value == '')
+      height_errorMsg.textContent= '';
+    else if(!pattern.test(this.value))
     {
       height_errorMsg.textContent= '請輸入大於或等於 0 的有效數字。';
       heightValid.value=this.value.slice(0,this.value.length-1);
@@ -967,7 +952,9 @@
     var pretermDValid=document.getElementById('pretermD');
     pretermDValid.addEventListener('input', function() {
     const pattern=/^[0-6]$/;
-    if(!pattern.test(this.value))
+    if(this.value == '')
+      day_errorMsg.textContent= '';
+    else if(!pattern.test(this.value))
     {
       if(isNaN(this.value))
       {
@@ -1008,13 +995,20 @@
       }
       
   });
-
+  let timer;
   var fatherDValid=document.getElementById('fatherD');
     fatherDValid.addEventListener('input', function() {
     const pattern=/^([\-])(\d{1,4})(\.\d{0,4})?$/;
-    if (this.value != '-')
+    if(this.value == '')
+      fatherD_errorMsg.textContent= '';
+    else if (this.value != '-')
     {
-      if(!pattern.test(this.value))
+      if(this.value.length==1)
+      {
+        fatherD_errorMsg.textContent= '請以負號( - )當開頭';
+        fatherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else if(!pattern.test(this.value))
       {
         fatherD_errorMsg.textContent= '請輸入有效的數字。';
         //fatherDValid.value=''
@@ -1042,8 +1036,16 @@
         {
             if(parseFloat(this.value)>-5)
             {
-              fatherDValid.value=-5;
-              fatherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+              clearTimeout(timer);
+              timer = setTimeout(function() {
+                if(fatherDValid.value>-5)
+                {
+                  fatherDValid.value=-5;
+                  fatherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+                }
+              }, 2000);
+              //fatherDValid.value=-5;
+              //fatherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
             }
             else
               fatherD_errorMsg.textContent =  "";
@@ -1060,9 +1062,16 @@
   var motherDValid=document.getElementById('motherD');
     motherDValid.addEventListener('input', function() {
       const pattern=/^([\-])(\d{1,4})(\.\d{0,4})?$/;
-    if (this.value != '-')
+      if(this.value == '')
+      motherD_errorMsg.textContent= '';
+    else if (this.value != '-')
     {
-      if(!pattern.test(this.value))
+      if(this.value.length==1)
+      {
+        motherD_errorMsg.textContent= '請以負號( - )當開頭';
+        motherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else if(!pattern.test(this.value))
       {
         motherD_errorMsg.textContent= '請輸入有效的數字。';
         //fatherDValid.value=''
@@ -1090,8 +1099,16 @@
         {
             if(parseInt(this.value)>-5)
             {
-              motherDValid.value=-5;
-              motherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+              clearTimeout(timer);
+              timer = setTimeout(function() {
+                if(motherDValid.value>-5)
+                {
+                  motherDValid.value=-5;
+                  motherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+                }
+            }, 2000);
+              //motherDValid.value=-5;
+              //motherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
             }
             else
               motherD_errorMsg.textContent =  "";
