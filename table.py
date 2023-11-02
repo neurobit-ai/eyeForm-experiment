@@ -1,5 +1,5 @@
 from js import sex, age, y1, y2, records, report
-
+ 
 import re
 def _y_m(age):
     m = re.match('(\d+)歲(\d+)', age)
