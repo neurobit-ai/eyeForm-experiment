@@ -6,11 +6,6 @@
 
     <title>eyeForm Report - Neurobit AI</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/site.webmanifest">
-
     <link rel="stylesheet" href="css/bootstrap.513.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -22,28 +17,11 @@
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <py-config>
-      packages = ["pandas", "matplotlib", "Jinja2", "numpy", "scipy"]
+      packages = ["pandas", "matplotlib"]
 
       [[fetch]]
-      files = ["./data_to_plot.pkl","msjhbd.ttc","msjh.ttc","data_to_plot_20231013.pkl"]
+      files = ["./data_to_plot.pkl"]
     </py-config>
-    <style type="text/css">
-      @media print {
-      .custom-row {
-        font-size: 9pt; 
-      }
-      .no-print {
-        display: none;
-      }
-      .scale_down {
-        transform: scale(0.8);
-        transform-origin: top;
-      }
-      #plot {
-        height: 475px;
-      }
-    }
-    </style>
   </head>
   <body class="p-3 m-0 border-0 bd-example">
     <table class="table">
@@ -55,7 +33,7 @@
         </tr>
       </thead>
       <tbody class="table-group-divider">
-        <tr style="display: none;">
+        <tr>
           <th scope="row">最佳矯正視力</th>
           <td><span id="od1"></span></td>
           <td><span id="os1"></span></td>
@@ -89,45 +67,26 @@
         </tr>
         <tr>
           <th scope="row">危險度分析</th>
-          <td><span id="age"></span> / <span id="sex_tr"></span></td>
+          <td><span id="age"></span> / <span id="sex"></span></td>
           <td><span id="now"></span></td>
         </tr>
-        <tr class="custom-row">
+        <tr>
           <td colspan="3" align="left"><div id="advice"></div></td>
-          <span id="sex" style="display:none;"></span></td>
         </tr>
-        <tr class="scale_down">
+        <tr>
           <td colspan="3" align="center"><div id="plot"></div></td>
         </tr>
-        <tr class="custom-row">
+        <tr>
           <td colspan="3" align="center"><div id="table"></div></td>
         </tr>
       </tbody>
       <tbody class="table-group-divider">
-        <tr class="custom-row">
-          <td colspan="3" align="center">版權聲明 © 2023 神經元科技股份有限公司 版權所有</td>
-          <td><span id="copyrightid"></span></td>
-        </tr>
-      </tbody>
-      <tbody class="table-group-divider">
-        <tr class="custom-row">
-          <td colspan="3" align="left">參考資料 : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</td>
-        </tr>
-      </tbody>
-      <tbody class="table-group-divider no-print">
         <tr>
-          <td colspan="3" align="center"><button onclick="printPage()">列印</button></td>
+          <td colspan="3" align="center">© 2023 Neurobit Technologies</td>
         </tr>
-      </tbody> 
-      <tbody class="no-border no-print">
-        <tr></tr>
-      </tbody> 
+      </tbody>
     </table>
     <script>
-
-    function printPage() {
-      window.print(); // 触发浏览器的列印功能
-    }
       now = new Date();
       document.getElementById('now').innerHTML = now.toLocaleString();
       document.getElementById('site').innerHTML = localStorage.getItem('site');
@@ -144,24 +103,7 @@
       os4 = document.getElementById('os4').innerHTML = parseFloat(localStorage.getItem('os4'));
       od5 = document.getElementById('od5').innerHTML = parseFloat(localStorage.getItem('od5')).toFixed(2);
       os5 = document.getElementById('os5').innerHTML = parseFloat(localStorage.getItem('os5')).toFixed(2);
- 
-      if(od5 == 19.5)
-        document.getElementById("od5").textContent="< 20";
-      else  if(od5 == 30.5)
-        document.getElementById("od5").textContent="> 30";
-
-      if(os5 == 19.5)
-        document.getElementById("os5").textContent="< 20";
-      else  if(os5 == 30.5)
-        document.getElementById("os5").textContent="> 30";
-
       report = localStorage.getItem('report');
-      var sex_content = document.getElementById("sex").textContent;
-      if( sex_content=="男" || sex_content=="Male")
-        document.getElementById("sex_tr").textContent="男"
-      else
-      document.getElementById("sex_tr").textContent="女"
-
       if (report == '軸長') {
         y1 = parseFloat(od5);
         y2 = parseFloat(os5);
@@ -182,20 +124,13 @@
         complete: function(data) {
           suggestion = data['responseText'];
           console.log(suggestion);
-
           if (suggestion == '不處置') $('#suggestion').html('無需處置');
-          else if (suggestion == '一般眼鏡') $('#suggestion').html('配戴一般眼鏡');
-          else if (suggestion == '散瞳劑') $('#suggestion').html('點散瞳劑');
-          else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('配戴一般眼鏡+點散瞳劑');
-          else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
-          else 
-          {
-            $('#suggestion').html('無需處置');
-            suggestion='不處置'
-          }
+          if (suggestion == '一般眼鏡') $('#suggestion').html('配戴一般眼鏡');
+          if (suggestion == '散瞳劑') $('#suggestion').html('點散瞳劑');
+          if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('配戴一般眼鏡、點散瞳劑');
+          if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
         }
       });
-      language_type=0;// 0 : traditional chinese , 1 : english , 2 : simple chinese
       records = localStorage.getItem('records');
     </script>
     <py-script src="plot.py"></py-script>
