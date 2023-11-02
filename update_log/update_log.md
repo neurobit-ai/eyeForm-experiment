@@ -1,4 +1,6 @@
-# Index.html
+# Index.html , report.html , plot.py and table in 1st layer
+As same as origin version.
+# Index.html in 2nd layer(myopia) and 3rd layer(3 languages)
 ## icon
 Resolve the problem where the icon is missing when users visit the webpage.
 ## permission
@@ -73,7 +75,7 @@ Add a detection mechanism to monitor the AWS state, preventing the AWS serverles
 Add a detection mechanism to monitor the AWS state, preventing the AWS serverless from entering sleep mode.
 ## Upload
 Add a detection mechanism to monitor the form state.
-# Report.html
+# Report.html in 2nd layer(myopia) and 3rd layer(3 languages)
 ## icon
 Resolve the problem where the icon is missing when users visit the webpage.
 ## py-config
@@ -95,7 +97,7 @@ Adjust the display options on the 'report.html'.
 ## Print
 Add a print feature with button below.  
 Adjust the font size, field height, and picture size on the print page using the selected print SCSS style.
-# plot.py
+# plot.py in 2nd layer(myopia)
 ## dataplot.pkl
 Update new data for risk assessment.
 ## Font
@@ -115,7 +117,7 @@ Replace '.' with '★' when displaying future records which is generating by our
 Create a blue and red color band block chart with confidence intervals which is generating by our training model to display the positive range.  
 Make all marks and color block chart display on legent.  
 Add dataset version to legend.
-# Table.py
+# Table.py  in 2nd layer(myopia)
 ## dataplot.pkl
 Load this pkl for showing future trend data in table.
 ## Font
