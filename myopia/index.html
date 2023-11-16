@@ -190,6 +190,7 @@
                     <label class="form-label" for="age">Age</label>
                     <input type="text" class="form-control" name="age" id="age" disabled style="display:none;">
                     <input type="text" class="form-control" name="age_show" id="age_show" disabled>
+                    <span class="warning_msg" id="ageID_warning"></span>
                   </div>
                   <div class="col-3 form-group">
                     <label class="form-label" for="height">Height (cm)</label>
@@ -1263,7 +1264,25 @@
           }
       else
           {
-            (document.getElementById('dateOfVisit_warning')).textContent="";
+            if (!isNaN(Date.parse(dateOfBirth.value)))
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️Age cannot be negative.";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfVisit_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
           }
           if (isNaN(Date.parse(dateOfBirth.value)))
       { 
@@ -1272,7 +1291,25 @@
           }
       else
           {
-            (document.getElementById('dateOfBirth_warning')).textContent="";
+            if (!isNaN(Date.parse(dateOfVisit.value)) )
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️Age cannot be negative.";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfBirth_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
           }
           (document.getElementById('sex_warning')).textContent="";
           (document.getElementById('od4ID_warning')).textContent="";
@@ -1365,14 +1402,32 @@
             (document.getElementById('site_warning')).textContent="";     
           }
   
-      if (isNaN(Date.parse(dateOfVisit.value)))
+          if (isNaN(Date.parse(dateOfVisit.value)))
       { 
             check=false;
             (document.getElementById('dateOfVisit_warning')).textContent="⚠️Required field";
           }
       else
           {
-            (document.getElementById('dateOfVisit_warning')).textContent="";
+            if (!isNaN(Date.parse(dateOfBirth.value)))
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️Age cannot be negative.";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfVisit_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
           }
           if (isNaN(Date.parse(dateOfBirth.value)))
       { 
@@ -1381,8 +1436,26 @@
           }
       else
           {
-            (document.getElementById('dateOfBirth_warning')).textContent="";
-          } 
+            if (!isNaN(Date.parse(dateOfVisit.value)) )
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️Age cannot be negative.";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfBirth_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
+          }
       hasChecked = Array.from(document.querySelectorAll('input[name="sex"]')).some(function(element) {
         return element.checked;
       });

@@ -238,6 +238,8 @@ elif suggestion == '一般眼鏡散瞳劑' :
 else :
     label_index = 0
 agecounter = int(16-x(age))+2
+if agecounter <= 0:
+    agecounter = 1
 x_age_series=[0]*agecounter#this is for initial
 x_stdu_value_series=[0]*agecounter#this is for initial
 x_stdd_value_series=[0]*agecounter#this is for initial
