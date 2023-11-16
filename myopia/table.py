@@ -48,6 +48,8 @@ else :
 
 
 agecounter = int(16-x(age))+1
+if agecounter <= 0:
+    agecounter = 2
 OD_new=y1
 OS_new=y2
 sign='★'
