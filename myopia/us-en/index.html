@@ -789,6 +789,11 @@
     </div>
     
   <script>
+    document.getElementById('eyeForm').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') 
+        //Prevent default submission action.
+        event.preventDefault();
+    });
     document.getElementById('os1value').textContent="1.0";
     document.getElementById('os1').value=1.0;
     document.getElementById('od1value').textContent="1.0";
