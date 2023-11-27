@@ -89,10 +89,15 @@ def plot(sex, report):
         #plt.fill_between(area_index_smooth, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
         #plt.fill_between(area_index_smooth, -9, area_10_smooth, color='red', alpha=0.2, label='0~10%')
         area_100_smooth = moving_average_cal(area['P100'])
+        area['P100']=moving_average_cal(area['P100'])
         area_50_smooth = moving_average_cal(area['P50'])
+        area['P50']=moving_average_cal(area['P50'])
         area_25_smooth = moving_average_cal(area['P25'])
+        area['P25']=moving_average_cal(area['P25'])
         area_10_smooth = moving_average_cal(area['P10'])
+        area['P10']=moving_average_cal(area['P10'])
         area_0_smooth = moving_average_cal(area['P0'])
+        area['P0']=moving_average_cal(area['P0'])
         plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='50~100%')
         plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
         plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
@@ -180,6 +185,10 @@ else :
     risk[3] = f' far beyond the normal age range, it is considered extremely high risk with a significant potential for severe myopia progression. Quarterly follow-up check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences (e.g., being mindful of screen time for computers and phones and taking breaks, maintaining proper posture, wearing sunglasses to protect against blue light and UV rays during outdoor activities). Additionally, consider supplementing with lutein or fish oil, and adopting proactive treatment measures for control.'
     samples_not_enought = 'The number of cases within this age group is insufficient to provide statistically significant risk classification.'
 Risk = {}
+
+#plt.figure(figsize=(7.5, 7.5))
+plot(sex, report)
+
 import re
 def x(age):
     m = re.match('(\d+)歲(\d+)', age)
@@ -221,8 +230,6 @@ else:
     localStorage.setItem('右眼', '')
     localStorage.setItem('左眼', '')
 
-#plt.figure(figsize=(7.5, 7.5))
-plot(sex, report)
 if suggestion == None :
     suggestion='不處置'
 if suggestion == '不處置' :
