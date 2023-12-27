@@ -5,7 +5,8 @@ import re
 import pickle
 with open('data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area = pickle.load(f)[report]
-
+with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
+    data_al = pickle.load(f)
 def x(age):
     m = re.match('(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12
@@ -46,7 +47,10 @@ elif y2 == 30.5 :
 else :
     table['OS'] = [f'{y2:.2f}']
 
-
+def logarithm_calculate_middle(age_index , age_origin): 
+    difference = np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_index)*data_al[report][sex][suggestion]["b1"]) - np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_origin)*data_al[report][sex][suggestion]["b1"])
+    return difference
+now_age = x(age)
 agecounter = int(16-x(age))+1
 if agecounter <= 0:
     agecounter = 2
@@ -55,8 +59,8 @@ OS_new=y2
 sign='★'
 for age_index in range(1,agecounter):
     table['Age　'].append(f'{_y_m(age,age_index,sign)}')
-    OD_new += slope_groupby[sex][suggestion]
-    OS_new += slope_groupby[sex][suggestion]
+    OD_new += logarithm_calculate_middle(now_age + age_index,now_age + age_index - 1 )#slope_groupby[sex][suggestion]
+    OS_new += logarithm_calculate_middle(now_age + age_index,now_age + age_index - 1)#slope_groupby[sex][suggestion]
     if report == '軸長':
         if OD_new <= 19.5 :
             table['OD'].append(f'<20')

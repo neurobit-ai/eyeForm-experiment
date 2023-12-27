@@ -10,6 +10,8 @@ from scipy.interpolate import make_interp_spline
     #db_version, slope_groupby, stacked_area = pickle.load(f)[report]
 with open('data_to_plot_20231013.pkl', 'rb') as f:
     db_version , slope_groupby , results_groupby , stacked_area , constant_ci_groupby , coef_ci_025_groupby , coef_ci_975_groupby = pickle.load(f)[report]
+with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
+    data_al = pickle.load(f)
 display(f'{db_version}', target='copyrightid')
 
 import matplotlib.pyplot as plt
@@ -274,6 +276,13 @@ def C_I_cal(nowvalue):
         min_value = constant_975 + coef_ci_975_groupby[sex][suggestion]       
 
     return max_value,min_value
+def logarithm_calculate_high_low(nowvalue , age_index , age_origin): 
+    difference_high = np.exp(data_al[report][sex][suggestion]["con_975"]+np.log(age_index)*data_al[report][sex][suggestion]["x_975"]) - np.exp(data_al[report][sex][suggestion]["con_975"]+np.log(age_origin)*data_al[report][sex][suggestion]["x_975"])
+    difference_low = np.exp(data_al[report][sex][suggestion]["con_025"]+np.log(age_index)*data_al[report][sex][suggestion]["x_025"]) - np.exp(data_al[report][sex][suggestion]["con_025"]+np.log(age_origin)*data_al[report][sex][suggestion]["x_025"])
+    return nowvalue + difference_high  , nowvalue + difference_low
+def logarithm_calculate_middle(nowvalue , age_index , age_origin):
+    difference = np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_index)*data_al[report][sex][suggestion]["b1"]) - np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_origin)*data_al[report][sex][suggestion]["b1"])
+    return nowvalue + difference
 if y1 != "":
     if y1 == 0 :
         y1 = 19.5
@@ -288,24 +297,30 @@ if y1 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y1
     x_stdd_value_series[0] = y1
     for age_index in range(1,agecounter):
-        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y1 + slope_groupby[sex][suggestion] * (age_index-1))
+        #x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y1 + slope_groupby[sex][suggestion] * (age_index-1))
+        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y1 , x_age_series[age_index], x_age_series[0])
         if odp_first :
-            plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in 1 yr', marker='*')
+            #plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in 1 yr', marker='*')
+            plt.scatter(x_age_series[age_index], logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.5, label='OD in 1 yr', marker='*')
             odp_first=False
         else :
-            plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
+            #plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
+            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.5, marker='*')
     plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label='OD in future')##AC92EB
     #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y2
     x_stdd_value_series[0] = y2
     for age_index in range(1,agecounter):
-        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y2 + slope_groupby[sex][suggestion] * (age_index-1))
+        #x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y2 + slope_groupby[sex][suggestion] * (age_index-1))
+        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y2 , x_age_series[age_index], x_age_series[0])
         if osp_first :
-            plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
+            #plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
+            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
             osp_first=False
         else :
-            plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
+            #plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
+            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.5, marker='*')
     plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label='OS in future')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
 import json
