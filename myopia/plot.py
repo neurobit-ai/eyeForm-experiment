@@ -282,7 +282,6 @@ def logarithm_calculate_high_low(nowvalue , age_index , age_origin):
     return nowvalue + difference_high  , nowvalue + difference_low
 def logarithm_calculate_middle(nowvalue , age_index , age_origin):
     difference = np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_index)*data_al[report][sex][suggestion]["b1"]) - np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_origin)*data_al[report][sex][suggestion]["b1"])
-    print(nowvalue , difference)
     return nowvalue + difference
 if y1 != "":
     if y1 == 0 and report == '軸長':
