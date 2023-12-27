@@ -285,12 +285,12 @@ def logarithm_calculate_middle(nowvalue , age_index , age_origin):
     print(nowvalue , difference)
     return nowvalue + difference
 if y1 != "":
-    if y1 == 0 :
+    if y1 == 0 and report == '軸長':
         y1 = 19.5
     plt.scatter(x(age), y1, color='red', label='OD now' , marker='D')
     #print("od is : " + str(y1 ))
 if y2 != "":
-    if y2 == 0 :
+    if y2 == 0 and report == '軸長':
         y2 = 19.5
     plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D')
     #print("os is : " + str(y2))
