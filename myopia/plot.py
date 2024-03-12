@@ -286,12 +286,12 @@ def logarithm_calculate_middle(nowvalue , age_index , age_origin):
 if y1 != "":
     if y1 == 0 and report == '軸長':
         y1 = 19.5
-    plt.scatter(x(age), y1, color='red', label='OD now' , marker='D')
+    plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9)
     #print("od is : " + str(y1 ))
 if y2 != "":
     if y2 == 0 and report == '軸長':
         y2 = 19.5
-    plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D')
+    plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
     #print("os is : " + str(y2))
 if y1 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y1
@@ -301,12 +301,12 @@ if y1 != "" and slope_groupby[sex].get(suggestion):
         x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y1 , x_age_series[age_index], x_age_series[0])
         if odp_first :
             #plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in 1 yr', marker='*')
-            plt.scatter(x_age_series[age_index], logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.5, label='OD in 1 yr', marker='*')
+            plt.scatter(x_age_series[age_index], logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.7, label='OD in 1 yr', marker='*')
             odp_first=False
         else :
             #plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
-            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.5, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.4, label='OD in future')##AC92EB
+            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.7, marker='*')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.6, label='OD in future')##AC92EB
     #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
 if y2 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y2
@@ -316,18 +316,55 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
         x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y2 , x_age_series[age_index], x_age_series[0])
         if osp_first :
             #plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
-            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
+            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.7, label='OS in 1 yr', marker='*')
             osp_first=False
         else :
             #plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
-            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.5, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.4, label='OS in future')
+            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.7, marker='*')
+    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.6, label='OS in future')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
+suggestion ="不處置"#角膜塑型片#不處置
+if y1 != "" and slope_groupby[sex].get(suggestion):
+    x_stdu_value_series[0] = y1
+    x_stdd_value_series[0] = y1
+    for age_index in range(1,agecounter):
+        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y1 , x_age_series[age_index], x_age_series[0])
+    if report=="軸長":#軸長#球面度數
+        if x_stdu_value_series[1]>=x_stdd_value_series[1]:
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+        else :
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+    else :
+        if x_stdu_value_series[1]<=x_stdd_value_series[1]:
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+        else :
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+if y2 != "" and slope_groupby[sex].get(suggestion):
+    x_stdu_value_series[0] = y2
+    x_stdd_value_series[0] = y2
+    for age_index in range(1,agecounter):
+        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y2 , x_age_series[age_index], x_age_series[0])
+    if report=="軸長":#軸長#球面度數
+        if x_stdu_value_series[1]>=x_stdd_value_series[1]:
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+        else :
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+    else :
+        if x_stdu_value_series[1]<=x_stdd_value_series[1]:
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+        else :
+            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
 import json
 records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
 odp_first=True
 osp_first=True
+x_age_record=[]
+y_od_record=[]
+y_os_record=[]
+x_age_record.append(x(age))
+y_od_record.append(y1)
+y_os_record.append(y2)
 for record in records:
     if record[od] != "":
         if odp_first :
@@ -335,6 +372,8 @@ for record in records:
             odp_first=False
         else :
             plt.scatter(x(record[11]), record[od], color='red', marker='.')
+        x_age_record.append(x(record[11]))
+        y_od_record.append(record[od])
         #print("od is : " + str(record[od]) )
     if record[os] != "":
         if osp_first :
@@ -342,7 +381,11 @@ for record in records:
             osp_first=False
         else :
             plt.scatter(x(record[11]), record[os], color='blue', marker='.')
+        y_os_record.append(record[os])
         #print("os is : " + str(record[os]))
+        
+plt.plot(x_age_record, y_od_record, color='red')
+plt.plot(x_age_record, y_os_record, color='blue')
 plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.19, 0.25),fontsize=8)
@@ -374,4 +417,5 @@ if report == '球面度數':
     plt.ylim(-9, 5)
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -10.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
+plt.grid(alpha=0.2)
 display(plt, target='plot')
