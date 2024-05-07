@@ -4,9 +4,9 @@ if 'ale' in sex:
 import re
 import pickle
 with open('data_to_plot.pkl', 'rb') as f:
-    db_version, slope_groupby, stacked_area = pickle.load(f)[report]
-with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
-    data_al = pickle.load(f)
+    db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
+#with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
+    #data_al = pickle.load(f)
 def x(age):
     m = re.match('(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12

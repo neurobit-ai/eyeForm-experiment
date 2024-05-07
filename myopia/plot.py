@@ -6,12 +6,12 @@ import pandas as pd
 import numpy as np
 import pickle
 from scipy.interpolate import make_interp_spline
-#with open('data_to_plot.pkl', 'rb') as f:
-    #db_version, slope_groupby, stacked_area = pickle.load(f)[report]
-with open('data_to_plot_20231013.pkl', 'rb') as f:
-    db_version , slope_groupby , results_groupby , stacked_area , constant_ci_groupby , coef_ci_025_groupby , coef_ci_975_groupby = pickle.load(f)[report]
-with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
-    data_al = pickle.load(f)
+with open('data_to_plot.pkl', 'rb') as f:
+    db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
+#with open('data_to_plot_20231013.pkl', 'rb') as f:
+    #db_version , slope_groupby , results_groupby , stacked_area , constant_ci_groupby , coef_ci_025_groupby , coef_ci_975_groupby = pickle.load(f)[report]
+#with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
+    #data_al = pickle.load(f)
 display(f'{db_version}', target='copyrightid')
 
 import matplotlib.pyplot as plt
