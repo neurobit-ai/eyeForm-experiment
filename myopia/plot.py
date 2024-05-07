@@ -65,18 +65,22 @@ def plot(sex, report):
     area = stacked_area.loc[sex].loc[3:16]
     MorF = {'男': 'Male', '女': 'Female'}[sex]
     if report == '軸長':
-        area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
-        splP100 = make_interp_spline(area.index, area['P100'], k=3)
-        splP90 = make_interp_spline(area.index, area['P90'], k=3)
-        splP75 = make_interp_spline(area.index, area['P75'], k=3)
-        splP50 = make_interp_spline(area.index, area['P50'], k=3)
-        area_100_smooth = splP100(area_index_smooth)
-        area_90_smooth = splP90(area_index_smooth)
-        area_75_smooth = splP75(area_index_smooth)
-        area_50_smooth = splP50(area_index_smooth)
-        plt.fill_between(area_index_smooth, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
-        plt.fill_between(area_index_smooth, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Medium Risk')#orange
-        plt.fill_between(area_index_smooth, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
+        #area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
+        #splP100 = make_interp_spline(area.index, area['P100'], k=3)
+        #splP90 = make_interp_spline(area.index, area['P90'], k=3)
+        #splP75 = make_interp_spline(area.index, area['P75'], k=3)
+        #splP50 = make_interp_spline(area.index, area['P50'], k=3)
+        #area_100_smooth = splP100(area_index_smooth)
+        #area_90_smooth = splP90(area_index_smooth)
+        #area_75_smooth = splP75(area_index_smooth)
+        #area_50_smooth = splP50(area_index_smooth)
+        area_100_smooth = moving_average_cal(area['P100'])
+        area_90_smooth = moving_average_cal(area['P90'])
+        area_75_smooth = moving_average_cal(area['P75'])
+        area_50_smooth = moving_average_cal(area['P50'])
+        plt.fill_between(area.index, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
+        plt.fill_between(area.index, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Medium Risk')#orange
+        plt.fill_between(area.index, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
         #plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
     else :
         #area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
