@@ -8,12 +8,15 @@ import pickle
 from scipy.interpolate import make_interp_spline
 with open('data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
+
+from datetime import datetime
+now = datetime.now()
+formatted_time = now.strftime('%Y%m%d_%H%M')
 #with open('data_to_plot_20231013.pkl', 'rb') as f:
     #db_version , slope_groupby , results_groupby , stacked_area , constant_ci_groupby , coef_ci_025_groupby , coef_ci_975_groupby = pickle.load(f)[report]
+display(f'{formatted_time}', target='copyrightid')
 #with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
     #data_al = pickle.load(f)
-display(f'{db_version}', target='copyrightid')
-
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
@@ -171,7 +174,7 @@ elif language_type== 2:
         eye_word[0]= '右眼轴长'
         eye_word[1]= '左眼轴长'
     if report == '球面度數':
-        eye_word[0]= '左眼球面度数'
+        eye_word[0]= '右眼球面度数'
         eye_word[1]= '左眼球面度数'
     risk[0] = f'在年龄正常范围内，属低风险，建议一年定期检查，无潜在近视发展状况。'
     risk[1] = f'稍长于年龄正常范围，属中风险，建议一年定期检查，需改变生活型态及减少外在环境影响。'
@@ -203,36 +206,64 @@ def x(age):
 if round(x(age)) in range(3, 17):
     if report == '軸長':
         p0, p50, p75, p90, p100 = stacked_area.loc[sex].loc[round(x(age))]
-        for y, eye in (y1, eye_word[0]), (y2, eye_word[1]):
+        for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y < p50:
-                display(f'{eye}{risk[0]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[0]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
             elif y < p75:
-                display(f'{eye}{risk[1]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[1]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
             elif y < p90:
-                display(f'{eye}{risk[2]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[2]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[2]}', target='advice')
                 localStorage.setItem(eye, 2)
             else:
-                display(f'{eye}{risk[3]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[3]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[3]}', target='advice')
                 localStorage.setItem(eye, 3)
     if report == '球面度數':
         p100, p50, p25, p10, p0 = stacked_area.loc[sex].loc[round(x(age))]
-        for y, eye in (y1, eye_word[0]), (y2, eye_word[1]):
+        for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y > p50:
-                display(f'{eye}{risk[0]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[0]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
             elif y > p25:
-                display(f'{eye}{risk[1]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[1]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
             elif y > p10:
-                display(f'{eye}{risk[2]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[2]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[2]}', target='advice')
                 localStorage.setItem(eye, 2)
             else:
-                display(f'{eye}{risk[3]}', target='advice')
+                if language_type== 0 :
+                    display(f'{eye}{risk[3]}', target=f'advice{ODOS}')
+                else :
+                    display(f'{eye}{risk[3]}', target='advice')
                 localStorage.setItem(eye, 3)
 else:
-    display(samples_not_enought, target='advice')
+    if language_type== 1 :
+        display(samples_not_enought, target='adviceOD')
+        display(samples_not_enought, target='adviceOS')
+    else :
+        display(samples_not_enought, target='advice')
     localStorage.setItem('右眼', '')
     localStorage.setItem('左眼', '')
 
@@ -277,7 +308,7 @@ def C_I_cal(nowvalue):
     if  constant_975 + coef_ci_975_groupby[sex][suggestion]  > max_value :
         max_value = constant_975 + coef_ci_975_groupby[sex][suggestion]
     if  constant_975 + coef_ci_975_groupby[sex][suggestion]  < min_value :
-        min_value = constant_975 + coef_ci_975_groupby[sex][suggestion]       
+        min_value = constant_975 + coef_ci_975_groupby[sex][suggestion]   
 
     return max_value,min_value
 def logarithm_calculate_high_low(nowvalue , age_index , age_origin): 
@@ -327,7 +358,12 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
             plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.7, marker='*')
     plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.6, label='OS in future')
     #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
-suggestion ="不處置"#角膜塑型片#不處置
+
+
+if report=="軸長":
+    suggestion ="不處置"
+else :
+    suggestion ="一般眼鏡"
 if y1 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y1
     x_stdd_value_series[0] = y1
@@ -392,9 +428,9 @@ plt.plot(x_age_record, y_od_record, color='red')
 plt.plot(x_age_record, y_os_record, color='blue')
 plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
-    plt.legend(loc='center right' , bbox_to_anchor=(1.19, 0.25),fontsize=8)
+    plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
 if report == '球面度數':
-    plt.legend(loc='center right' , bbox_to_anchor=(1.19, 0.25),fontsize=8)
+    plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
 plt.xticks(range(3, 17 if x(age) + 1 <= 16 else int(x(age)) + 2))
 plt.yticks(range(20, 30) if report == '軸長' else range(-8, 7))
 if language_type== 0 :
@@ -412,14 +448,19 @@ else :
     plt.ylabel('Axial Length (mm)' if report == '軸長' else 'SPH (degrees)', fontsize=12)
 #plt.ylabel('Axial Length' if report == '軸長' else 'SPH', fontsize=12)
 plt.margins(0)
-plt.subplots_adjust(left=0.1, right=0.86, bottom=0.1, top=0.9, wspace=0.8, hspace=0.2)
+plt.subplots_adjust(left=0.1, right=0.84, bottom=0.1, top=0.9, wspace=0.8, hspace=0.2)
 if report == '軸長':
-    plt.ylim(19.5, 30.5)
+    plt.ylim(21, 29)
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, 18.8 if sex=='女' else 19.2, f'', horizontalalignment='right', fontsize=8)
 if report == '球面度數':
-    plt.ylim(-9, 5)
+    plt.ylim(-8, 2)
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -10.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
 plt.grid(alpha=0.2)
+ax = plt.gca()
+if report == '軸長':
+    ax.set_aspect(aspect=1.25)
+else :
+    ax.set_aspect(aspect='auto')
 display(plt, target='plot')

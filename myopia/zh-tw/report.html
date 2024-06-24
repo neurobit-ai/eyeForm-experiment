@@ -27,8 +27,40 @@
       [[fetch]]
       files = ["./data_to_plot.pkl","msjhbd.ttc","msjh.ttc"]
     </py-config>
+
     <style type="text/css">
+        .plot-div { 
+            width: 100%;
+            margin: 0 auto; 
+        }
+        .frame-div { 
+            width: 80%;
+            margin: 0 auto;
+        }
+        .target-table tr:nth-child(odd) {
+            background-color: #CCDFEF;
+            border-collapse: collapse;
+            border: 2px solid #FFFFFF;
+            width: 80%;
+        }
+        .target-table tr:nth-child(even) {
+            background-color: #E7F0F7;
+            border-collapse: collapse;
+            border: 2px solid #FFFFFF;
+            width: 80%;
+        }
+        td.first-row {
+            width: 20%; /* 設置特定行的寬度 */
+        }
+        .drawing-area {
+          width: 100%;
+          height: auto;
+          }
       @media print {
+        body {
+                -webkit-print-color-adjust: exact; /* 對於Webkit內核瀏覽器 */
+                print-color-adjust: exact; /* 標準屬性 */
+            }
       .custom-row {
         font-size: 9pt; 
       }
@@ -36,105 +68,140 @@
         display: none;
       }
       .scale_down {
-        transform: scale(0.8);
+        transform: scale(0.75);
         transform-origin: top;
       }
       #plot {
-        height: 475px;
+        height: 450px;      
       }
+      .page-break { page-break-before: always; }
+      .fixed-footer {
+                position: fixed;
+                bottom: 0;
+                width: 95%;
+            }
     }
     </style>
   </head>
   <body class="p-3 m-0 border-0 bd-example">
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col"><span id="site"></span>：<span id="medRecNo"></span></th>
-          <th scope="col">右眼（OD）</th>
-          <th scope="col">左眼（OS）</th>
-        </tr>
-      </thead>
-      <tbody class="table-group-divider">
-        <tr style="display: none;">
-          <th scope="row">最佳矯正視力</th>
-          <td><span id="od1"></span></td>
-          <td><span id="os1"></span></td>
-        </tr>
-        <tr>
-          <th scope="row">球面度數(D)</th>
-          <td><span id="od2"></span></td>
-          <td><span id="os2"></span></td>
-        </tr>
-        <tr>
-          <th scope="row">散光度數(D)</th>
-          <td><span id="od3"></span></td>
-          <td><span id="os3"></span></td>
-        </tr>
-        <tr>
-          <th scope="row">軸度(°)</th>
-          <td><span id="od4"></span></td>
-          <td><span id="os4"></span></td>
-        </tr>
-        <tr>
-          <th scope="row">軸長(mm)</th>
-          <td><span id="od5"></span></td>
-          <td><span id="os5"></span></td>
-        </tr>
-      </tbody>
-      <tbody class="table-group-divider">
-        <tr style="display:none;">
-          <th scope="row">處置建議：<span id="suggestion"></span></th>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <th scope="row">危險度分析</th>
-          <td><span id="age"></span> / <span id="sex_tr"></span></td>
-          <td><span id="now"></span></td>
-        </tr>
-        <tr class="custom-row">
-          <td colspan="3" align="left"><div id="advice"></div></td>
-          <span id="sex" style="display:none;"></span></td>
-        </tr>
-        <tr class="scale_down">
-          <td colspan="3" align="center"><div id="plot"></div></td>
-        </tr>
-        <tr class="custom-row">
-          <td colspan="3" align="center"><div id="table"></div></td>
-        </tr>
-      </tbody>
-      <tbody class="table-group-divider">
-        <tr class="custom-row">
-          <td colspan="3" align="center">版權聲明 © 2024 神經元科技股份有限公司 版權所有</td>
-          <td><span id="copyrightid"></span></td>
-        </tr>
-      </tbody>
-      <tbody class="table-group-divider">
-        <tr class="custom-row">
-          <td colspan="3" align="left">參考資料 : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</td>
-        </tr>
-      </tbody>
-      <tbody class="no-border">
-        <tr>
-          <td colspan="3" align="center">⚫ 本檢查結果非臨床診斷使用。</td>
-        </tr>
-      </tbody> 
-      <tbody class="table-group-divider no-print">
-        <tr>
-          <td colspan="3" align="center"><button onclick="printPage()">列印</button></td>
-        </tr>
-      </tbody> 
-      <tbody class="no-border no-print">
-        <tr></tr>
-      </tbody> 
-    </table>
+    <py-script src="../../plot.py" id="py-plot"></py-script>
+    <py-script src="../../table.py" ></py-script>
+    <h1 align="center">學齡兒童近視趨勢報告</h1>
+    <h2 align="center"> ～Eye眼步驟做得好，看遠看近沒煩惱～</h2>
+    <h4 align="center"><br><span id="site"></span>：<span id="medRecNo"></span> 年齡 : <span id="age"></span>  性別 : <span id="sex_tr"></span></h4>
+    <div class="plot-div ">
+        <table class="table" align="center"  >
+            <thead class="table-group-divider" >
+                <tr class="scale_down no-border">
+                  <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
+                </tr>
+                <tr class="custom-row no-border">
+                  <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div "></div></td>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="frame-div page-break ">
+          <table class="table" align="center"  >
+            <tbody class="table-group-divider target-table" >
+              <tr  align="center">
+                <th colspan="3" ><span id="site02"></span>：<span id="medRecNo02"></span> 年齡 : <span id="age02"></span>  性別 : <span id="sex_tr02"></span></th><!-- <span id="now"></span> -->
+              </tr>
+              <tr>
+                <td class="first-row "></td>
+                <td style="width: 40%;">右眼（OD）</td>
+                <td style="width: 40%;">左眼（OS）</td>
+              </tr>
+              <tr>
+                <td >球面度數(D)</td>
+                <td><span id="od2"></span></td>
+                <td><span id="os2"></span></td>
+              </tr>
+              <tr>
+                <td >散光度數(D)</td>
+                <td><span id="od3"></span></td>
+                <td><span id="os3"></span></td>
+              </tr>
+              <tr>
+                <td >軸度(°)</td>
+                <td><span id="od4"></span></td>
+                <td><span id="os4"></span></td>
+              </tr>
+              <tr>
+                <td >軸長(mm)</td>
+                <td><span id="od5"></span></td>
+                <td><span id="os5"></span></td>
+              </tr>
+              <tr>
+                <td >危險度分析</td>
+                <td ><div id="adviceOD"></div></td>
+                <td ><div id="adviceOS"></div></td>
+              </tr>
+              <tr style="display:none;">
+                <td >處置建議 </td>
+                <td colspan="2"><span id="suggestion"></span></td>
+              </tr>
+              <tr style="display: none;">
+                <td >最佳矯正視力</td>
+                <td><span id="od1"></span></td>
+                <td><span id="os1"></span></td>
+              </tr> 
+              <tr class="custom-row" style="display:none; border-top: none; border-bottom: none;">
+                <td colspan="2" align="left"></td>
+                <td><span id="sex" ></span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="frame-div ">
+          <table class="table" align="left"  >
+            <tbody class="table-group-divider">
+              <tr class="custom-row" style="border-top: none; border-bottom: none;">
+                <td><img src="Group 64.png" style="width: 80%;height: auto;">  
+                  <h5><br></h5>             
+                  <ul>
+                    <li>用眼30分鐘，休息10分鐘 </li>
+                    <li>戶外活動每日120分鐘</li>
+                    <li>睡眠充足，8小時以上</li>
+                    <li>每日使用3C一小時內</li>
+                    <li>每年視力檢查2次</li>
+                    <li>均衡飲食，天天5蔬果</li>
+                    <li>光線充足，坐姿正確，保持距離40公分</li>
+                    <li>以上衛教資訊引用自 <a href="https://www.hpa.gov.tw/Pages/List.aspx?nodeid=49" target="_blank">衛生福利部國民健康署</a></li>
+                    <li>圖片引用自 <a href="https://health99.hpa.gov.tw/material/7600" target="_blank">健康九九+</a></li>
+                  </ul>
+                </td>
+                <td><img src="Group 63.png" style="width: 80%;height: auto;"></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="frame-div fixed-footer">
+            <table class="table" align="center"  >
+            <tbody  class="table-group-divider" >
+              <tr>
+                <td align="left">© 2024 神經元科技股份有限公司</td>
+                <td align="left" >• 本檢查結果非臨床診斷使用 •</td>
+                <td><span id="copyrightid" align="right" ></span></td>
+              </tr>
+              <tr>
+                <td colspan="3" align="left">參考資料 : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</td>
+              </tr>
+            </tbody>
+            <tbody class="no-print" style="border-bottom: none;">
+              <tr>
+                <td colspan="3" align="center"><button onclick="printPage()">列印</button></td>
+              </tr>
+            </tbody> 
+          </table>
+          </div>
     <script>
 
     function printPage() {
       window.print(); // 触发浏览器的列印功能
     }
-      now = new Date();
-      document.getElementById('now').innerHTML = now.toLocaleString();
+      //now = new Date();
+      //document.getElementById('now').innerHTML = now.toLocaleString();
       document.getElementById('site').innerHTML = localStorage.getItem('site');
       document.getElementById('medRecNo').innerHTML = localStorage.getItem('medRecNo');
       sex = document.getElementById('sex').innerHTML = localStorage.getItem('sex');
@@ -167,13 +234,22 @@
       else
       document.getElementById("sex_tr").textContent="女"
 
+      document.getElementById("site02").textContent = document.getElementById("site").textContent
+      document.getElementById("medRecNo02").textContent = document.getElementById("medRecNo").textContent
+      document.getElementById("age02").textContent = document.getElementById("age").textContent
+      document.getElementById("sex_tr02").textContent = document.getElementById("sex_tr").textContent
+      report = '球面度數'
       if (report == '軸長') {
         y1 = parseFloat(od5);
         y2 = parseFloat(os5);
       }
       if (report == '球面度數') {
-        y1 = parseFloat(od2);
-        y2 = parseFloat(os2);
+        //y1 = parseFloat(od2);
+        //y2 = parseFloat(os2);
+        y1 = '-2.25'
+        y2 = '-2.5'
+        document.getElementById("os2").textContent=y2
+        document.getElementById("od2").textContent=y1
       }
       Y = parseInt(localStorage.getItem('Y'));
       M = parseInt(localStorage.getItem('M'));
@@ -213,7 +289,5 @@
       language_type=0;// 0 : traditional chinese , 1 : english , 2 : simple chinese
       records = localStorage.getItem('records');
     </script>
-    <py-script src="../plot.py"></py-script>
-    <py-script src="../table.py"></py-script>
   </body>
 </html>
