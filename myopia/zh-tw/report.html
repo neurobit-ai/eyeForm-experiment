@@ -236,18 +236,14 @@
       document.getElementById("medRecNo02").textContent = document.getElementById("medRecNo").textContent
       document.getElementById("age02").textContent = document.getElementById("age").textContent
       document.getElementById("sex_tr02").textContent = document.getElementById("sex_tr").textContent
-      report = '球面度數'
+
       if (report == '軸長') {
         y1 = parseFloat(od5);
         y2 = parseFloat(os5);
       }
       if (report == '球面度數') {
-        //y1 = parseFloat(od2);
-        //y2 = parseFloat(os2);
-        y1 = '-2.25'
-        y2 = '-2.5'
-        document.getElementById("os2").textContent=y2
-        document.getElementById("od2").textContent=y1
+        y1 = parseFloat(od2);
+        y2 = parseFloat(os2);
       }
       Y = parseInt(localStorage.getItem('Y'));
       M = parseInt(localStorage.getItem('M'));
