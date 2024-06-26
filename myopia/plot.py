@@ -454,7 +454,10 @@ if report == '軸長':
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, 18.8 if sex=='女' else 19.2, f'', horizontalalignment='right', fontsize=8)
 if report == '球面度數':
-    plt.ylim(-8, 2)
+    if language_type== 0 :
+        plt.ylim(2, -8)
+    else:
+        plt.ylim(-8, 2)
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -10.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
 plt.grid(alpha=0.2)
