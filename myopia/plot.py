@@ -208,25 +208,25 @@ if round(x(age)) in range(3, 17):
         p0, p50, p75, p90, p100 = stacked_area.loc[sex].loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y < p50:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[0]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
             elif y < p75:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[1]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
             elif y < p90:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[2]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[2]}', target='advice')
                 localStorage.setItem(eye, 2)
             else:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[3]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[3]}', target='advice')
@@ -235,25 +235,25 @@ if round(x(age)) in range(3, 17):
         p100, p50, p25, p10, p0 = stacked_area.loc[sex].loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y > p50:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[0]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
             elif y > p25:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[1]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
             elif y > p10:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[2]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[2]}', target='advice')
                 localStorage.setItem(eye, 2)
             else:
-                if language_type== 0 :
+                if language_type== 0 or language_type== 1:
                     display(f'{eye}{risk[3]}', target=f'advice{ODOS}')
                 else :
                     display(f'{eye}{risk[3]}', target='advice')
@@ -454,7 +454,7 @@ if report == '軸長':
     plt.xlim(3, 16)
     plt.text(16 if x(age) + 1 < 16 else x(age) + 1, 18.8 if sex=='女' else 19.2, f'', horizontalalignment='right', fontsize=8)
 if report == '球面度數':
-    if language_type== 0 :
+    if language_type== 0 or language_type == 1:
         plt.ylim(2, -8)
     else:
         plt.ylim(-8, 2)
