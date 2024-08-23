@@ -248,7 +248,6 @@
       od5 = document.getElementById('od5').innerHTML = parseFloat(localStorage.getItem('od5')).toFixed(2);
       os5 = document.getElementById('os5').innerHTML = parseFloat(localStorage.getItem('os5')).toFixed(2);
       suggestion = document.getElementById('suggestion').innerHTML = localStorage.getItem('suggestion');
-      alert(suggestion);
       //advice = parseFloat(localStorage.getItem('advice'));
       let previousValue = document.getElementById('advice').textContent;
 
@@ -352,26 +351,14 @@
       document.getElementById("medRecNo02").textContent = document.getElementById("medRecNo").textContent
       document.getElementById("age02").textContent = document.getElementById("age").textContent
       document.getElementById("sex_tr02").textContent = document.getElementById("sex_tr").textContent
-      report = '球面度數'
+
       if (report == '軸長') {
-        //y1 = parseFloat(od5);
-        //y2 = parseFloat(os5);
-        y1 = '25.08'
-        y2 = '25.31'
-        document.getElementById("od2").textContent='-2.25'
-        document.getElementById("os2").textContent='-2.5'
-        document.getElementById("od5").textContent=y1
-        document.getElementById("os5").textContent=y2
+        y1 = parseFloat(od5);
+        y2 = parseFloat(os5);
       }
       if (report == '球面度數') {
-        //y1 = parseFloat(od2);
-        //y2 = parseFloat(os2);
-        y1 = '-2.25'
-        y2 = '-2.5'
-        document.getElementById("od2").textContent=y1
-        document.getElementById("os2").textContent=y2
-        document.getElementById("od5").textContent='25.08'
-        document.getElementById("os5").textContent='25.47'
+        y1 = parseFloat(od2);
+        y2 = parseFloat(os2);
       }
       Y = parseInt(localStorage.getItem('Y'));
       M = parseInt(localStorage.getItem('M'));
