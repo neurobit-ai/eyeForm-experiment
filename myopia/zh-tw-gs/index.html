@@ -1735,11 +1735,9 @@
       localStorage.setItem('report', '球面度數');
       if (treatment1.value !=''){
           localStorage.setItem('suggestion', treatment1.value);
-          alert(treatment1.value)
         }
         else{
           localStorage.setItem('suggestion', treatment3.value);
-          alert(treatment3.value)
         }
       label.textContent = "資料填寫完整，開啟球面度數危險度分析";
       window.open('report.html');
