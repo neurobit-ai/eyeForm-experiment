@@ -10,7 +10,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../../favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../favicon/favicon-16x16.png">
     <link rel="manifest" href="../../favicon/site.webmanifest">
-    
+
     <link rel="stylesheet" href="../../css/bootstrap.513.min.css">
     <link rel="stylesheet" href="../../css/style.css">
     <script src="../../js/jquery-3.3.1.min.js"></script>
@@ -55,13 +55,13 @@
         .drawing-area {
           width: 100%;
           height: auto;
-          }
+        }
           .print-only {
             display: none;
           }
         .justified-text {
         text-align: justify;
-        }
+          }
       @media print {
         body {
                 -webkit-print-color-adjust: exact; /* 對於Webkit內核瀏覽器 */
@@ -78,7 +78,7 @@
         transform-origin: top;
       }
       #plot {
-        height: 450px;
+        height: 450px;      
       }
       .page-break { page-break-before: always; }
       .fixed-footer {
@@ -88,7 +88,7 @@
             }
       .print-only {
                 display: block;
-      }
+            }
     }
     </style>
   </head>
@@ -105,127 +105,128 @@
       </p>
       <h4 align="center" class = "page-break"><br><span id="site"></span>：<span id="medRecNo"></span> 年齡 : <span id="age"></span>  性別 : <span id="sex_tr"></span></h4>
     <div class="plot-div ">
-      <table class="table" align="center"  >
-        <thead class="table-group-divider" >
-          <tr class="scale_down no-border">
-            <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
-          </tr>
-          <tr class="custom-row no-border">
-            <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div "></div></td>
-          </tr>
-        </thead>
-      </table>
-    </div>
-    <div class="frame-div page-break ">
-    <table class="table" align="center"  >
-      <tbody class="table-group-divider target-table" >
-        <tr  align="center">
-          <th colspan="3" ><span id="site02"></span>：<span id="medRecNo02"></span> 年齡 : <span id="age02"></span>  性別 : <span id="sex_tr02"></span></th><!-- <span id="now"></span> -->
-        </tr>
-        <tr>
-          <td class="first-row "></td>
-          <td style="width: 40%;">右眼（OD）</td>
-          <td style="width: 40%;">左眼（OS）</td>
-        </tr>
-        <tr>
-          <td >球面度數(D)</td>
-          <td><span id="od2"></span></td>
-          <td><span id="os2"></span></td>
-        </tr>
-        <tr>
-          <td >散光度數(D)</td>
-          <td><span id="od3"></span></td>
-          <td><span id="os3"></span></td>
-        </tr>
-        <tr>
-          <td >軸度(°)</td>
-          <td><span id="od4"></span></td>
-          <td><span id="os4"></span></td>
-        </tr>
-        <tr style="display:none;">
-          <td >軸長(mm)</td>
-          <td><span id="od5"></span></td>
-          <td><span id="os5"></span></td>
-        </tr>
-        <tr>
-          <td >危險度分析</td>
-          <td colspan="2"><div id="advice"></div></td>
-        </tr>
-        <tr style="display:none;">
-          <td >處置建議 </td>
-          <td colspan="2"><span id="suggestion"></span></td>
-        </tr>
-        <tr style="display: none;">
-          <td >最佳矯正視力</td>
-          <td><span id="od1"></span></td>
-          <td><span id="os1"></span></td>
-        </tr> 
-        <tr class="custom-row" style="display:none; border-top: none; border-bottom: none;">
-          <td colspan="2" align="left"></td>
-          <td><span id="sex" ></span></td>
-        </tr>
-      </tbody>
-    </table>
-    <div id="risk_content"></div>
-    <p>名詞解釋</p>
-    <ul class="justified-text">
-      <li>球面度數(D)：是用來矯正兒童近視或遠視的度數，以屈光度 (Diopter, D) 為單位。對於兒童，球面度數的範圍通常從 -0.50 D 到 -6.00 D 以矯正近視，以及 +0.50 D 到 +4.00 D 以矯正遠視。每 1.00 屈光度 (D) 對應的焦距約為 1 米，負數表示近視，正數表示遠視。球面度數可能隨著兒童的成長而變化。</li>
-      <li>散光度數(D)：用於矯正兒童的散光，表示角膜或晶狀體的屈光不正程度，以屈光度 (D) 為單位，數值可以為正或負。對於兒童，散光度數範圍通常在 0.00 到 ±3.00 屈光度 (D) 之間。散光度數越高，散光的程度越嚴重，且隨著成長可能會有變化。</li>
-      <li>軸度(°)：是指矯正散光的眼鏡或隱形眼鏡的光學軸線角度，範圍從 0° 到 180°，這個角度表示矯正散光的方向。</li>
-      <li>軸長(mm)：是從角膜前表面到視網膜黃斑中心的距離。對於兒童來說，眼軸長度範圍通常從 22 毫米到 24 毫米，會隨著年齡增長而逐漸變長。眼軸長度的增加與近視的發展有關，兒童的眼軸長度可能會影響其屈光狀況和視力健康。</li>
-    </ul>
-    <p class="no-print justified-text" >參考資料 : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</p>
-    </div>
-    <p class="print-only page-break " >
-      <h3 align="center" class="print-only">更多資訊</h3>
-      <b class="print-only" style="font-size: 32px;">神經元科技官方網站<br></b>
-      <span class="print-only">掃描下方 QR Code 進入神經元科技官方網站<br></span>
-      <img class="print-only" src="neurobit-qrcode.png" style="width: 25%;height: auto;"><br><br>
-      <b class="print-only" style="font-size: 32px;">專屬優惠：明亮守護者魚油葉黃素軟膠囊<br></b>
-      <span class="print-only justified-text ">撼衛生醫團隊設計的【明亮守護者】魚油葉黃素軟膠囊，結合黃金四大配方：
-        <ul>
-        <li>深海魚油：高濃度Omega 3，含DHA和EPA，滋潤保護眼睛，舒緩疲勞。</li>
-          <li>金盞花葉黃素：提供亮彩保護，讓雙眼舒適明亮。</li>
-          <li>維生素A、B2、B12、E+B胡蘿蔔素：維持暗處視覺，抗氧化。</li>
-          <li>山桑子/藍莓萃取：長效保水，舒緩乾燥。</li>
-        </ul>
-        立即掃描下方 QR Code 以前往購買頁面，並使用優惠碼 <strong><i>neurobit85</i></strong>  可享有 85折 折扣！
-        或是用優惠碼 <strong><i>Bit10</i></strong>  可享有 9折 折扣！
-        每日一顆，補足所需營養，提升視力保健效果。抓住這個機會，守護你的明亮視界！</span><br>
-      <img class="print-only" src="Lutein product.png" style="width: 25%;height: auto;"><br>
-    </p>
-    <p class="print-only page-break " >
-      <h3 align="center" class="print-only">參考資料</h3>
-      <ul class="print-only justified-text " style="font-size: 20px; ">
-        <li>Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</li>
-        <li>Wu, P. C., Tsai, C. L., Wu, H. L., et al. (2013). Outdoor activity during class recess reduces myopia onset and progression in school children. Ophthalmology, 120, 1080-1085.</li>
-        <li>Hemphälä, H., & Eklund, J. (2012). A visual ergonomics intervention in mail sorting facilities: Effects on eyes, muscles and productivity. Applied Ergonomics, 43(1), 217–229.</li>
-        <li>Brown, N.A., Bron, A.J., Harding, J.J., & Dewar, H.M. (1998). Nutrition supplements and the eye. Eye, 12(Pt 1), 127–133.</li>
-        <li>Lien, E.L., & Hammond, B.R. (2011). Nutritional influences on visual development and function. Prog. Retin. Eye Res.</li>
-        <li>Georgiou, T., & Prokopiou, E. (2016). Role of omega-3 fatty acids for eye health. In Omega-3 Fatty Acids: Keys to Nutritional Health (pp. 251–261). Springer International Publishing.</li>
-        <li>American Academy of Ophthalmology Preferred Practice Patterns Committee. (2020). Comprehensive Adult Medical Eye Evaluation PPP.</li>
-        <li>Tosini, G., Ferguson, I., & Tsubota, K. (2016). Effects of blue light on the circadian system and eye physiology. Mol Vis, 22, 61–72.</li>
-        <li>Stringham, J.M., Bovier, E.R., Wong, J.C., & Hammond Jr, B.R. (2010). The influence of dietary lutein and zeaxanthin on visual performance. J. Food Sci., 75, 24-29.</li>
-        <li>Sun, Y., Xu, F., Zhang, T., Liu, M., Wang, D., Chen, Y., & Liu, Q. (2015). Orthokeratology to control myopia progression: a meta-analysis. PloS One, 10, e0124535.</li>
-      </ul> 
-    </p>
-
-    <div class="frame-div fixed-footer">
-      <table class="table" align="center"  >
-      <tbody  class="table-group-divider" >
-        <tr>
-          <td align="left">© 2024 神經元科技股份有限公司</td>
-          <td align="left" ></td>
-          <td><span id="copyrightid" align="right" ></span></td>
-        </tr>
-      </tbody>
-      <tbody class="no-print" style="border-bottom: none;">
-        <tr>
-          <td colspan="3" align="center"><button onclick="printPage()">列印</button></td>
-        </tr>
-      </tbody> 
-    </table>
-    </div>
+        <table class="table" align="center"  >
+            <thead class="table-group-divider" >
+                <tr class="scale_down no-border">
+                  <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
+                </tr>
+                <tr class="custom-row no-border">
+                  <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div "></div></td>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="frame-div page-break ">
+          <table class="table" align="center"  >
+            <tbody class="table-group-divider target-table" >
+              <tr  align="center">
+                <th colspan="3" ><span id="site02"></span>：<span id="medRecNo02"></span> 年齡 : <span id="age02"></span>  性別 : <span id="sex_tr02"></span></th><!-- <span id="now"></span> -->
+              </tr>
+              <tr>
+                <td class="first-row "></td>
+                <td style="width: 40%;">右眼（OD）</td>
+                <td style="width: 40%;">左眼（OS）</td>
+              </tr>
+              <tr>
+                <td >球面度數(D)</td>
+                <td><span id="od2"></span></td>
+                <td><span id="os2"></span></td>
+              </tr>
+              <tr>
+                <td >散光度數(D)</td>
+                <td><span id="od3"></span></td>
+                <td><span id="os3"></span></td>
+              </tr>
+              <tr>
+                <td >軸度(°)</td>
+                <td><span id="od4"></span></td>
+                <td><span id="os4"></span></td>
+              </tr>
+              <tr style="display:none;">
+                <td >軸長(mm)</td>
+                <td><span id="od5"></span></td>
+                <td><span id="os5"></span></td>
+              </tr>
+              <tr>
+                <td >危險度分析</td>
+                <td colspan="2"><div id="advice"></div></td>
+              </tr>
+              <tr style="display:none;">
+                <td >處置建議 </td>
+                <td colspan="2"><span id="suggestion"></span></td>
+              </tr>
+              <tr style="display: none;">
+                <td >最佳矯正視力</td>
+                <td><span id="od1"></span></td>
+                <td><span id="os1"></span></td>
+              </tr> 
+              <tr class="custom-row" style="display:none; border-top: none; border-bottom: none;">
+                <td colspan="2" align="left"></td>
+                <td><span id="sex" ></span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div id="risk_content"></div>
+          <p>名詞解釋</p>
+          <ul class="justified-text">
+            <li>球面度數(D)：是用來矯正兒童近視或遠視的度數，以屈光度 (Diopter, D) 為單位。對於兒童，球面度數的範圍通常從 -0.50 D 到 -6.00 D 以矯正近視，以及 +0.50 D 到 +4.00 D 以矯正遠視。每 1.00 屈光度 (D) 對應的焦距約為 1 米，負數表示近視，正數表示遠視。球面度數可能隨著兒童的成長而變化。</li>
+            <li>散光度數(D)：用於矯正兒童的散光，表示角膜或晶狀體的屈光不正程度，以屈光度 (D) 為單位，數值可以為正或負。對於兒童，散光度數範圍通常在 0.00 到 ±3.00 屈光度 (D) 之間。散光度數越高，散光的程度越嚴重，且隨著成長可能會有變化。</li>
+            <li>軸度(°)：是指矯正散光的眼鏡或隱形眼鏡的光學軸線角度，範圍從 0° 到 180°，這個角度表示矯正散光的方向。</li>
+            <li>軸長(mm)：是從角膜前表面到視網膜黃斑中心的距離。對於兒童來說，眼軸長度範圍通常從 22 毫米到 24 毫米，會隨著年齡增長而逐漸變長。眼軸長度的增加與近視的發展有關，兒童的眼軸長度可能會影響其屈光狀況和視力健康。</li>
+          </ul>
+          <p class="no-print justified-text" >參考資料 : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</p>
+          </div>
+          <p class="print-only page-break " >
+            <h3 align="center" class="print-only">更多資訊</h3>
+            <b class="print-only" style="font-size: 32px;">神經元科技官方網站<br></b>
+            <span class="print-only">掃描下方 QR Code 進入神經元科技官方網站<br></span>
+            <img class="print-only" src="neurobit-qrcode.png" style="width: 25%;height: auto;"><br><br>
+            <b class="print-only" style="font-size: 32px;">專屬優惠：明亮守護者魚油葉黃素軟膠囊<br></b>
+            <span class="print-only justified-text ">撼衛生醫團隊設計的【明亮守護者】魚油葉黃素軟膠囊，結合黃金四大配方：
+              <ul>
+              <li>深海魚油：高濃度Omega 3，含DHA和EPA，滋潤保護眼睛，舒緩疲勞。</li>
+                <li>金盞花葉黃素：提供亮彩保護，讓雙眼舒適明亮。</li>
+                <li>維生素A、B2、B12、E+B胡蘿蔔素：維持暗處視覺，抗氧化。</li>
+                <li>山桑子/藍莓萃取：長效保水，舒緩乾燥。</li>
+              </ul>
+              立即掃描下方 QR Code 以前往購買頁面，並使用優惠碼 <strong><i>neurobit85</i></strong>  可享有 85折 折扣！
+              或是用優惠碼 <strong><i>Bit10</i></strong>  可享有 9折 折扣！
+              每日一顆，補足所需營養，提升視力保健效果。抓住這個機會，守護你的明亮視界！</span><br>
+            <img class="print-only" src="Lutein product.png" style="width: 25%;height: auto;"><br>
+          </p>
+          <p class="print-only page-break " >
+            <h3 align="center" class="print-only">參考資料</h3>
+            <ul class="print-only justified-text " style="font-size: 20px; ">
+              <li>Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</li>
+              <li>Wu, P. C., Tsai, C. L., Wu, H. L., et al. (2013). Outdoor activity during class recess reduces myopia onset and progression in school children. Ophthalmology, 120, 1080-1085.</li>
+              <li>Hemphälä, H., & Eklund, J. (2012). A visual ergonomics intervention in mail sorting facilities: Effects on eyes, muscles and productivity. Applied Ergonomics, 43(1), 217–229.</li>
+              <li>Brown, N.A., Bron, A.J., Harding, J.J., & Dewar, H.M. (1998). Nutrition supplements and the eye. Eye, 12(Pt 1), 127–133.</li>
+              <li>Lien, E.L., & Hammond, B.R. (2011). Nutritional influences on visual development and function. Prog. Retin. Eye Res.</li>
+              <li>Georgiou, T., & Prokopiou, E. (2016). Role of omega-3 fatty acids for eye health. In Omega-3 Fatty Acids: Keys to Nutritional Health (pp. 251–261). Springer International Publishing.</li>
+              <li>American Academy of Ophthalmology Preferred Practice Patterns Committee. (2020). Comprehensive Adult Medical Eye Evaluation PPP.</li>
+              <li>Tosini, G., Ferguson, I., & Tsubota, K. (2016). Effects of blue light on the circadian system and eye physiology. Mol Vis, 22, 61–72.</li>
+              <li>Stringham, J.M., Bovier, E.R., Wong, J.C., & Hammond Jr, B.R. (2010). The influence of dietary lutein and zeaxanthin on visual performance. J. Food Sci., 75, 24-29.</li>
+              <li>Sun, Y., Xu, F., Zhang, T., Liu, M., Wang, D., Chen, Y., & Liu, Q. (2015). Orthokeratology to control myopia progression: a meta-analysis. PloS One, 10, e0124535.</li>
+            </ul> 
+          </p>
+      
+          <div class="frame-div fixed-footer">
+            <table class="table" align="center"  >
+            <tbody  class="table-group-divider" >
+              <tr>
+                <td align="left">© 2024 神經元科技股份有限公司</td>
+                <td align="left" ></td>
+                <td><span id="copyrightid" align="right" ></span></td>
+              </tr>
+            </tbody>
+            <tbody class="no-print" style="border-bottom: none;">
+              <tr>
+                <td colspan="3" align="center"><button onclick="printPage()">列印</button></td>
+              </tr>
+            </tbody> 
+          </table>
+          </div>
     <script>
 
     function printPage() {
@@ -248,6 +249,7 @@
       od5 = document.getElementById('od5').innerHTML = parseFloat(localStorage.getItem('od5')).toFixed(2);
       os5 = document.getElementById('os5').innerHTML = parseFloat(localStorage.getItem('os5')).toFixed(2);
       suggestion = document.getElementById('suggestion').innerHTML = localStorage.getItem('suggestion');
+      alert(suggestion);
       //advice = parseFloat(localStorage.getItem('advice'));
       let previousValue = document.getElementById('advice').textContent;
 
@@ -340,13 +342,13 @@
       else  if(os5 == 30.5)
         document.getElementById("os5").textContent="> 30";
 
-     report = localStorage.getItem('report');
+      report = localStorage.getItem('report');
       var sex_content = document.getElementById("sex").textContent;
       if( sex_content=="男" || sex_content=="Male")
         document.getElementById("sex_tr").textContent="男"
       else
       document.getElementById("sex_tr").textContent="女"
-      document.getElementById("medRecNo").textContent="S007"
+
       document.getElementById("site02").textContent = document.getElementById("site").textContent
       document.getElementById("medRecNo02").textContent = document.getElementById("medRecNo").textContent
       document.getElementById("age02").textContent = document.getElementById("age").textContent
@@ -372,7 +374,6 @@
       //   complete: function(data) {
       //     suggestion = data['responseText'];
       //     console.log(suggestion);
-      //     suggestion='散瞳劑'
 
       //     if (suggestion == '不處置') $('#suggestion').html('無需處置');
       //     else if (suggestion == '一般眼鏡') $('#suggestion').html('配戴一般眼鏡');
@@ -394,14 +395,10 @@
       //     else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
       //     else $('#suggestion').html('無需處置');
       //     */
-      // }
+      //   }
       // });
       language_type=0;// 0 : traditional chinese , 1 : english , 2 : simple chinese
-      //var records=[[1,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2010-08-31T16:00:00.000Z","9歲7個月",138,"",0.7,-2.5,-0.75,10,25.14,"",0.5,-3.25,-1.25,90,25.52]];
-      //var records=[[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2010-08-31T16:00:00.000Z","9歲7個月",138,"",0.7,-2.5,-0.75,10,25.14,"",0.5,-3.25,-1.25,90,25.52],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2009-09-06T16:00:00.000Z","8歲7個月",131,"",0.7,-2,-0.5,10,24.25,"",0.5,-2.5,-1,90,24.42],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2008-09-08T16:00:00.000Z","7歲7個月",127,"",0.8,-1.25,-0.25,10,22.81,"",0.6,-2,-0.75,90,23.14],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2007-09-07T16:00:00.000Z","6歲7個月",121,"",0.9,-0.5,0,10,22.56,"",0.8,-1,0,90,22.77],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2006-09-09T16:00:00.000Z","5歲7個月",116,"",0.9,-0.5,0,10,22.18,"",0.9,-0.75,0,90,22.47],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2005-09-05T16:00:00.000Z","4歲7個月",110,"",1,-0.25,0,10,21.72,"",0.9,-0.75,0,90,21.74],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2004-05-27T16:00:00.000Z","3歲4個月",106,"",1,0,0,10,21.33,"",1,0.25,0,90,21.46]];
-      var records=[[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2009-09-07T16:00:00.000Z","8歲7個月",131,"",1,-2,-0.5,10,24.66,"",1,-2,-0.5,90,24.88],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2008-09-09T16:00:00.000Z","7歲7個月",127,"",1,-1.25,-0.25,10,24.21,"",1,-1.5,-0.5,90,24.44],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2007-09-08T16:00:00.000Z","6歲7個月",121,"",1,-0.5,0,10,23.86,"",1,-1,0,90,24.07],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2006-09-10T16:00:00.000Z","5歲7個月",116,"",1,-0.5,0,10,23.68,"",1,-0.75,0,90,23.76],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2005-09-06T16:00:00.000Z","4歲7個月",110,"",1,0,0,10,23.22,"",1,0,0,90,23.24]];
-      //localStorage.setItem(records);
-      //records = localStorage.getItem('records');
+      records = localStorage.getItem('records');
     </script>
     <py-script src="plot.py"></py-script>
     <py-script src="table.py" ></py-script>
