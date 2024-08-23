@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>eyeForm Report - Neurobit AI</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../../favicon/site.webmanifest">
+    
+    <link rel="stylesheet" href="../../css/bootstrap.513.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="../../js/jquery-3.3.1.min.js"></script>
+    <script src="../../js/popper.min.js"></script>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/jquery.validate.min.js"></script>
+    <script src="../../js/main.js"></script>
+
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <py-config>
+      packages = ["pandas", "matplotlib", "Jinja2", "numpy", "scipy"]
+
+      [[fetch]]
+      files = ["./data_to_plot.pkl","msjhbd.ttc","msjh.ttc","data_to_plot_20240507.pkl"]
+    </py-config>
+
+    <style type="text/css">
+        .plot-div { 
+            width: 100%;
+            margin: 0 auto; 
+        }
+        .frame-div { 
+            width: 80%;
+            margin: 0 auto;
+        }
+        .target-table tr:nth-child(odd) {
+            background-color: #CCDFEF;
+            border-collapse: collapse;
+            border: 2px solid #FFFFFF;
+            width: 80%;
+        }
+        .target-table tr:nth-child(even) {
+            background-color: #E7F0F7;
+            border-collapse: collapse;
+            border: 2px solid #FFFFFF;
+            width: 80%;
+        }
+        td.first-row {
+            width: 20%; /* 設置特定行的寬度 */
+        }
+        .drawing-area {
+          width: 100%;
+          height: auto;
+          }
+          .print-only {
+            display: none;
+          }
+        .justified-text {
+        text-align: justify;
+        }
+      @media print {
+        body {
+                -webkit-print-color-adjust: exact; /* 對於Webkit內核瀏覽器 */
+                print-color-adjust: exact; /* 標準屬性 */
+            }
+      .custom-row {
+        font-size: 9pt; 
+      }
+      .no-print {
+        display: none;
+      }
+      .scale_down {
+        transform: scale(0.75);
+        transform-origin: top;
+      }
+      #plot {
+        height: 450px;
+      }
+      .page-break { page-break-before: always; }
+      .fixed-footer {
+                position: fixed;
+                bottom: 0;
+                width: 95%;
+            }
+      .print-only {
+                display: block;
+      }
+    }
+    </style>
+  </head>
+  <body class="p-3 m-0 border-0 bd-example">
+    <div><img class="print-only" src="Group 01.png" style="width: 100%;height: auto;"></div>
+    <h1 class="no-print"align="center">學齡兒童近視趨勢報告</h1>
+    <h2 align="center"> ～Eye眼步驟做得好，看遠看近沒煩惱～</h2>
+    <p class="print-only justified-text" style="font-size: 20px;">
+      「預估到2050年，全球人口中有近一半可能會患上近視」– American Academy of Ophthalmology<br><br>
+      近視是一項日趨嚴重的眼科疾病，根據美國國內統計，在 12 歲以上的族群有33%罹患近視，在亞洲地區例如台灣、日本以及韓國，盛行率更高達 46.7%。近視超過 6 個屈光度以上稱做高度近視，在此狀況下的眼球組織據研究有較高的機率產生病變，例如:視網膜裂孔、視網膜剝離、黃斑部新生血管以及青光眼等，嚴重的後果可能導致視力不可逆喪失或是失明，嚴重影響生活品質。</p>
+    <p class="print-only justified-text" style="font-size: 20px;">
+        eyeForm 是一款專為學齡兒童設計的視力保健與近視控制風險分析平台。我們通過驗光機或軸長機收集的數據進行深入分析，為兒童的未來近視控制提供準確的評估。eyeForm 能夠根據個體的軸長數值和球面度數，預測可能的變化趨勢，並提供個性化的生活方式和營養攝取建議，全方位支持兒童的視力健康管理。
+        我們的目標是通過精確的風險分析，幫助家長和醫療專業人員及早識別潛在問題，從而有效控制近視的增長趨勢，保障兒童的長期視力健康。
+      </p>
+      <h4 align="center" class = "page-break"><br><span id="site"></span>：<span id="medRecNo"></span> 年齡 : <span id="age"></span>  性別 : <span id="sex_tr"></span></h4>
+    <div class="plot-div ">
+      <table class="table" align="center"  >
+        <thead class="table-group-divider" >
+          <tr class="scale_down no-border">
+            <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
+          </tr>
+          <tr class="custom-row no-border">
+            <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div "></div></td>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div class="frame-div page-break ">
+    <table class="table" align="center"  >
+      <tbody class="table-group-divider target-table" >
+        <tr  align="center">
+          <th colspan="3" ><span id="site02"></span>：<span id="medRecNo02"></span> 年齡 : <span id="age02"></span>  性別 : <span id="sex_tr02"></span></th><!-- <span id="now"></span> -->
+        </tr>
+        <tr>
+          <td class="first-row "></td>
+          <td style="width: 40%;">右眼（OD）</td>
+          <td style="width: 40%;">左眼（OS）</td>
+        </tr>
+        <tr>
+          <td >球面度數(D)</td>
+          <td><span id="od2"></span></td>
+          <td><span id="os2"></span></td>
+        </tr>
+        <tr>
+          <td >散光度數(D)</td>
+          <td><span id="od3"></span></td>
+          <td><span id="os3"></span></td>
+        </tr>
+        <tr>
+          <td >軸度(°)</td>
+          <td><span id="od4"></span></td>
+          <td><span id="os4"></span></td>
+        </tr>
+        <tr style="display:none;">
+          <td >軸長(mm)</td>
+          <td><span id="od5"></span></td>
+          <td><span id="os5"></span></td>
+        </tr>
+        <tr>
+          <td >危險度分析</td>
+          <td colspan="2"><div id="advice"></div></td>
+        </tr>
+        <tr style="display:none;">
+          <td >處置建議 </td>
+          <td colspan="2"><span id="suggestion"></span></td>
+        </tr>
+        <tr style="display: none;">
+          <td >最佳矯正視力</td>
+          <td><span id="od1"></span></td>
+          <td><span id="os1"></span></td>
+        </tr> 
+        <tr class="custom-row" style="display:none; border-top: none; border-bottom: none;">
+          <td colspan="2" align="left"></td>
+          <td><span id="sex" ></span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="risk_content"></div>
+    <p>名詞解釋</p>
+    <ul class="justified-text">
+      <li>球面度數(D)：是用來矯正兒童近視或遠視的度數，以屈光度 (Diopter, D) 為單位。對於兒童，球面度數的範圍通常從 -0.50 D 到 -6.00 D 以矯正近視，以及 +0.50 D 到 +4.00 D 以矯正遠視。每 1.00 屈光度 (D) 對應的焦距約為 1 米，負數表示近視，正數表示遠視。球面度數可能隨著兒童的成長而變化。</li>
+      <li>散光度數(D)：用於矯正兒童的散光，表示角膜或晶狀體的屈光不正程度，以屈光度 (D) 為單位，數值可以為正或負。對於兒童，散光度數範圍通常在 0.00 到 ±3.00 屈光度 (D) 之間。散光度數越高，散光的程度越嚴重，且隨著成長可能會有變化。</li>
+      <li>軸度(°)：是指矯正散光的眼鏡或隱形眼鏡的光學軸線角度，範圍從 0° 到 180°，這個角度表示矯正散光的方向。</li>
+      <li>軸長(mm)：是從角膜前表面到視網膜黃斑中心的距離。對於兒童來說，眼軸長度範圍通常從 22 毫米到 24 毫米，會隨著年齡增長而逐漸變長。眼軸長度的增加與近視的發展有關，兒童的眼軸長度可能會影響其屈光狀況和視力健康。</li>
+    </ul>
+    <p class="no-print justified-text" >參考資料 : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</p>
+    </div>
+    <p class="print-only page-break " >
+      <h3 align="center" class="print-only">更多資訊</h3>
+      <b class="print-only" style="font-size: 32px;">神經元科技官方網站<br></b>
+      <span class="print-only">掃描下方 QR Code 進入神經元科技官方網站<br></span>
+      <img class="print-only" src="neurobit-qrcode.png" style="width: 25%;height: auto;"><br><br>
+      <b class="print-only" style="font-size: 32px;">專屬優惠：明亮守護者魚油葉黃素軟膠囊<br></b>
+      <span class="print-only justified-text ">撼衛生醫團隊設計的【明亮守護者】魚油葉黃素軟膠囊，結合黃金四大配方：
+        <ul>
+        <li>深海魚油：高濃度Omega 3，含DHA和EPA，滋潤保護眼睛，舒緩疲勞。</li>
+          <li>金盞花葉黃素：提供亮彩保護，讓雙眼舒適明亮。</li>
+          <li>維生素A、B2、B12、E+B胡蘿蔔素：維持暗處視覺，抗氧化。</li>
+          <li>山桑子/藍莓萃取：長效保水，舒緩乾燥。</li>
+        </ul>
+        立即掃描下方 QR Code 以前往購買頁面，並使用優惠碼 <strong><i>neurobit85</i></strong>  可享有 85折 折扣！
+        或是用優惠碼 <strong><i>Bit10</i></strong>  可享有 9折 折扣！
+        每日一顆，補足所需營養，提升視力保健效果。抓住這個機會，守護你的明亮視界！</span><br>
+      <img class="print-only" src="Lutein product.png" style="width: 25%;height: auto;"><br>
+    </p>
+    <p class="print-only page-break " >
+      <h3 align="center" class="print-only">參考資料</h3>
+      <ul class="print-only justified-text " style="font-size: 20px; ">
+        <li>Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</li>
+        <li>Wu, P. C., Tsai, C. L., Wu, H. L., et al. (2013). Outdoor activity during class recess reduces myopia onset and progression in school children. Ophthalmology, 120, 1080-1085.</li>
+        <li>Hemphälä, H., & Eklund, J. (2012). A visual ergonomics intervention in mail sorting facilities: Effects on eyes, muscles and productivity. Applied Ergonomics, 43(1), 217–229.</li>
+        <li>Brown, N.A., Bron, A.J., Harding, J.J., & Dewar, H.M. (1998). Nutrition supplements and the eye. Eye, 12(Pt 1), 127–133.</li>
+        <li>Lien, E.L., & Hammond, B.R. (2011). Nutritional influences on visual development and function. Prog. Retin. Eye Res.</li>
+        <li>Georgiou, T., & Prokopiou, E. (2016). Role of omega-3 fatty acids for eye health. In Omega-3 Fatty Acids: Keys to Nutritional Health (pp. 251–261). Springer International Publishing.</li>
+        <li>American Academy of Ophthalmology Preferred Practice Patterns Committee. (2020). Comprehensive Adult Medical Eye Evaluation PPP.</li>
+        <li>Tosini, G., Ferguson, I., & Tsubota, K. (2016). Effects of blue light on the circadian system and eye physiology. Mol Vis, 22, 61–72.</li>
+        <li>Stringham, J.M., Bovier, E.R., Wong, J.C., & Hammond Jr, B.R. (2010). The influence of dietary lutein and zeaxanthin on visual performance. J. Food Sci., 75, 24-29.</li>
+        <li>Sun, Y., Xu, F., Zhang, T., Liu, M., Wang, D., Chen, Y., & Liu, Q. (2015). Orthokeratology to control myopia progression: a meta-analysis. PloS One, 10, e0124535.</li>
+      </ul> 
+    </p>
+
+    <div class="frame-div fixed-footer">
+      <table class="table" align="center"  >
+      <tbody  class="table-group-divider" >
+        <tr>
+          <td align="left">© 2024 神經元科技股份有限公司</td>
+          <td align="left" ></td>
+          <td><span id="copyrightid" align="right" ></span></td>
+        </tr>
+      </tbody>
+      <tbody class="no-print" style="border-bottom: none;">
+        <tr>
+          <td colspan="3" align="center"><button onclick="printPage()">列印</button></td>
+        </tr>
+      </tbody> 
+    </table>
+    </div>
+    <script>
+
+    function printPage() {
+      window.print(); // 触发浏览器的列印功能
+    }
+      //now = new Date();
+      //document.getElementById('now').innerHTML = now.toLocaleString();
+      document.getElementById('site').innerHTML = localStorage.getItem('site');
+      document.getElementById('medRecNo').innerHTML = localStorage.getItem('medRecNo');
+      sex = document.getElementById('sex').innerHTML = localStorage.getItem('sex');
+      age = document.getElementById('age').innerHTML = localStorage.getItem('age');
+      od1 = document.getElementById('od1').innerHTML = parseFloat(localStorage.getItem('od1')).toFixed(1);
+      os1 = document.getElementById('os1').innerHTML = parseFloat(localStorage.getItem('os1')).toFixed(1);
+      od2 = document.getElementById('od2').innerHTML = parseFloat(localStorage.getItem('od2')).toFixed(2);
+      os2 = document.getElementById('os2').innerHTML = parseFloat(localStorage.getItem('os2')).toFixed(2);
+      od3 = document.getElementById('od3').innerHTML = parseFloat(localStorage.getItem('od3')).toFixed(2);
+      os3 = document.getElementById('os3').innerHTML = parseFloat(localStorage.getItem('os3')).toFixed(2);
+      od4 = document.getElementById('od4').innerHTML = parseFloat(localStorage.getItem('od4'));
+      os4 = document.getElementById('os4').innerHTML = parseFloat(localStorage.getItem('os4'));
+      od5 = document.getElementById('od5').innerHTML = parseFloat(localStorage.getItem('od5')).toFixed(2);
+      os5 = document.getElementById('os5').innerHTML = parseFloat(localStorage.getItem('os5')).toFixed(2);
+      suggestion = document.getElementById('suggestion').innerHTML = localStorage.getItem('suggestion');
+      alert(suggestion);
+      //advice = parseFloat(localStorage.getItem('advice'));
+      let previousValue = document.getElementById('advice').textContent;
+
+      function advice_content(advice)
+      {
+        risk_content_div= document.getElementById("risk_content")
+        var ulElement = document.createElement('ul');
+        if (advice == '高')
+        { 
+          items = [
+                {
+                    text: '生活方式與用眼習慣',
+                    subItems: ['戶外活動：每天至少1小時戶外活動，增加自然光暴露', '視力休息：每使用20分鐘後，遠眺6公尺外的物體至少20秒','長時間休息：每使用電子設備1小時後，進行10-15分鐘的較長時間休息','視力保健：減少電子設備的使用時間，考慮使用角膜塑形鏡片']
+                },
+                {
+                    text: '飲食與營養品',
+                    subItems: ['均衡飲食：攝取富含維他命A、C、E和鋅的食物', '營養品：補充高劑量的葉黃素、玉米黃質和Omega-3脂肪酸']
+                },
+                {
+                    text: '定期回診時間',
+                    subItems: ['定期檢查：每3到6個月進行一次視力檢查']
+                }
+            ];
+        }
+        else if (advice == '中')
+        { 
+          items = [
+                {
+                    text: '生活方式與用眼習慣',
+                    subItems: ['戶外活動：每天至少1小時戶外活動，增加自然光暴露', '視力休息：每20分鐘遠眺6公尺外的物體至少20秒','長時間休息：每使用電子設備1小時後，進行5-10分鐘的較長時間休息','視力保健：使用防藍光眼鏡']
+                },
+                {
+                    text: '飲食與營養品',
+                    subItems: ['均衡飲食：增加富含抗氧化劑的食物，如藍莓、胡蘿蔔、菠菜', '營養品：補充葉黃素和玉米黃質，以及Omega-3脂肪酸']
+                },
+                {
+                    text: '定期回診時間',
+                    subItems: ['定期檢查：每6到12個月至少進行一次視力檢查']
+                }
+            ];
+        }
+        else
+        { 
+          items = [
+                {
+                    text: '生活方式與用眼習慣',
+                    subItems: ['戶外活動：每天至少1小時戶外活動，增加自然光暴露', '視力休息：每20分鐘遠眺6公尺外的物體至少20秒']
+                },
+                {
+                    text: '飲食與營養品',
+                    subItems: ['均衡飲食：確保足夠的維他命A、C和E，有助於眼睛健康', '營養品：考慮補充Omega-3脂肪酸']
+                },
+                {
+                    text: '定期回診時間',
+                    subItems: ['定期檢查：每年至少進行一次視力檢查']
+                }
+            ];
+        }
+        items.forEach(function(item) {
+                var liElement = document.createElement('li');
+                liElement.textContent = item.text;
+                if (item.subItems && item.subItems.length > 0) {
+                    var subUlElement = document.createElement('ul');
+                    item.subItems.forEach(function(subItem) {
+                        var subLiElement = document.createElement('li');
+                        subLiElement.textContent = subItem;
+                        subUlElement.appendChild(subLiElement);
+                    });
+                    liElement.appendChild(subUlElement);
+                }
+                ulElement.appendChild(liElement);
+            });
+              risk_content_div.appendChild(ulElement);
+      }
+
+      setInterval(() => {
+      let advice = document.getElementById('advice').textContent;
+            if (advice !== previousValue) {
+              previousValue = advice;
+              advice_content(advice)
+            }
+        }, 1000);
+      if(od5 == 19.5)
+        document.getElementById("od5").textContent="< 20";
+      else  if(od5 == 30.5)
+        document.getElementById("od5").textContent="> 30";
+
+      if(os5 == 19.5)
+        document.getElementById("os5").textContent="< 20";
+      else  if(os5 == 30.5)
+        document.getElementById("os5").textContent="> 30";
+
+     report = localStorage.getItem('report');
+      var sex_content = document.getElementById("sex").textContent;
+      if( sex_content=="男" || sex_content=="Male")
+        document.getElementById("sex_tr").textContent="男"
+      else
+      document.getElementById("sex_tr").textContent="女"
+      document.getElementById("medRecNo").textContent="S007"
+      document.getElementById("site02").textContent = document.getElementById("site").textContent
+      document.getElementById("medRecNo02").textContent = document.getElementById("medRecNo").textContent
+      document.getElementById("age02").textContent = document.getElementById("age").textContent
+      document.getElementById("sex_tr02").textContent = document.getElementById("sex_tr").textContent
+      report = '球面度數'
+      if (report == '軸長') {
+        //y1 = parseFloat(od5);
+        //y2 = parseFloat(os5);
+        y1 = '25.08'
+        y2 = '25.31'
+        document.getElementById("od2").textContent='-2.25'
+        document.getElementById("os2").textContent='-2.5'
+        document.getElementById("od5").textContent=y1
+        document.getElementById("os5").textContent=y2
+      }
+      if (report == '球面度數') {
+        //y1 = parseFloat(od2);
+        //y2 = parseFloat(os2);
+        y1 = '-2.25'
+        y2 = '-2.5'
+        document.getElementById("od2").textContent=y1
+        document.getElementById("os2").textContent=y2
+        document.getElementById("od5").textContent='25.08'
+        document.getElementById("os5").textContent='25.47'
+      }
+      Y = parseInt(localStorage.getItem('Y'));
+      M = parseInt(localStorage.getItem('M'));
+      features = [(sex=='男')?1:0, Y+M/12, od1, od2, od3, od4, os1, os2, os3, os4];
+      features = features.map(function(x) { return parseFloat(x); });
+      // $.ajax({
+      //   url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+      //   type: 'POST',
+      //   dataType: 'json',
+      //   data: JSON.stringify(features),
+      //   complete: function(data) {
+      //     suggestion = data['responseText'];
+      //     console.log(suggestion);
+      //     suggestion='散瞳劑'
+
+      //     if (suggestion == '不處置') $('#suggestion').html('無需處置');
+      //     else if (suggestion == '一般眼鏡') $('#suggestion').html('配戴一般眼鏡');
+      //     else if (suggestion == '散瞳劑') $('#suggestion').html('點散瞳劑');
+      //     else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('配戴一般眼鏡+點散瞳劑');
+      //     else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
+      //     else 
+      //     {
+      //       $('#suggestion').html('無需處置');
+      //       suggestion='不處置'
+      //     }
+      //     /*
+      //     if (suggestion == '不處置') $('#suggestion').html('無需處置');
+      //     else if (suggestion == '低散瞳劑')$('#suggestion').html('點低濃度散瞳劑');
+      //     else if (suggestion == '中散瞳劑')$('#suggestion').html('點中濃度散瞳劑');
+      //     else if (suggestion == '高散瞳劑')$('#suggestion').html('點高濃度散瞳劑');
+      //     else if (suggestion == '一般眼鏡')$('#suggestion').html('配戴一般眼鏡');
+      //     else if (suggestion == '一般眼鏡＋中散瞳劑')$('#suggestion').html('配戴一般眼鏡+點中濃度散瞳劑');
+      //     else if (suggestion == '角膜塑型片') $('#suggestion').html('配戴角膜塑型片');
+      //     else $('#suggestion').html('無需處置');
+      //     */
+      // }
+      // });
+      language_type=0;// 0 : traditional chinese , 1 : english , 2 : simple chinese
+      //var records=[[1,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2010-08-31T16:00:00.000Z","9歲7個月",138,"",0.7,-2.5,-0.75,10,25.14,"",0.5,-3.25,-1.25,90,25.52]];
+      //var records=[[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2010-08-31T16:00:00.000Z","9歲7個月",138,"",0.7,-2.5,-0.75,10,25.14,"",0.5,-3.25,-1.25,90,25.52],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2009-09-06T16:00:00.000Z","8歲7個月",131,"",0.7,-2,-0.5,10,24.25,"",0.5,-2.5,-1,90,24.42],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2008-09-08T16:00:00.000Z","7歲7個月",127,"",0.8,-1.25,-0.25,10,22.81,"",0.6,-2,-0.75,90,23.14],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2007-09-07T16:00:00.000Z","6歲7個月",121,"",0.9,-0.5,0,10,22.56,"",0.8,-1,0,90,22.77],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2006-09-09T16:00:00.000Z","5歲7個月",116,"",0.9,-0.5,0,10,22.18,"",0.9,-0.75,0,90,22.47],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2005-09-05T16:00:00.000Z","4歲7個月",110,"",1,-0.25,0,10,21.72,"",0.9,-0.75,0,90,21.74],[14,"S001","2001-01-20T16:00:00.000Z","Male","Single","","","",-6,-5,"2004-05-27T16:00:00.000Z","3歲4個月",106,"",1,0,0,10,21.33,"",1,0.25,0,90,21.46]];
+      var records=[[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2009-09-07T16:00:00.000Z","8歲7個月",131,"",1,-2,-0.5,10,24.66,"",1,-2,-0.5,90,24.88],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2008-09-09T16:00:00.000Z","7歲7個月",127,"",1,-1.25,-0.25,10,24.21,"",1,-1.5,-0.5,90,24.44],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2007-09-08T16:00:00.000Z","6歲7個月",121,"",1,-0.5,0,10,23.86,"",1,-1,0,90,24.07],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2006-09-10T16:00:00.000Z","5歲7個月",116,"",1,-0.5,0,10,23.68,"",1,-0.75,0,90,23.76],[14,"S007","2001-01-21T16:00:00.000Z","Male","Single","","","",-6,-5,"2005-09-06T16:00:00.000Z","4歲7個月",110,"",1,0,0,10,23.22,"",1,0,0,90,23.24]];
+      //localStorage.setItem(records);
+      //records = localStorage.getItem('records');
+    </script>
+    <py-script src="plot.py"></py-script>
+    <py-script src="table.py" ></py-script>
+  </body>
+</html>
