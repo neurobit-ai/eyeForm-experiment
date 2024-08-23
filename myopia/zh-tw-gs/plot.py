@@ -279,6 +279,7 @@ if round(x(age)) in range(3, 17):
     if report == '球面度數' and language_type == 0:
             p100, p50, p25, p10, p0 = stacked_area.loc[sex].loc[round(x(age))]
             eye="ODOS"
+            print(f'{y1} {type(y1)}')
             if y1 > p50 or y2 > p50:
                 display(f'{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
