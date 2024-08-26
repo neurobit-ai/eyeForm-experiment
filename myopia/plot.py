@@ -109,8 +109,8 @@ def plot(sex, report):
         area['P0']=moving_average_cal(area['P0'])
         plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='50~100%')
         plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
-        plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
-        plt.fill_between(area.index, area_0_smooth, area_10_smooth, color='red', alpha=0.2, label='0~10%')
+        # plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
+        plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='0~25%')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
     if language_type== 0 :
         if report == '軸長':
