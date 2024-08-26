@@ -407,12 +407,12 @@ if y1 != "" and slope_groupby[sex].get(suggestion):
         if x_stdu_value_series[1]>=x_stdd_value_series[1]:
             plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
         else :
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
     else :
         if x_stdu_value_series[1]<=x_stdd_value_series[1]:
             plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
         else :
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
 if y2 != "" and slope_groupby[sex].get(suggestion):
     x_stdu_value_series[0] = y2
     x_stdd_value_series[0] = y2
@@ -422,12 +422,12 @@ if y2 != "" and slope_groupby[sex].get(suggestion):
         if x_stdu_value_series[1]>=x_stdd_value_series[1]:
             plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
         else :
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
     else :
         if x_stdu_value_series[1]<=x_stdd_value_series[1]:
             plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
         else :
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
+            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
 import json
 records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
