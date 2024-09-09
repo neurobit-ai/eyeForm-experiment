@@ -419,7 +419,7 @@ elif suggestion == "雙焦眼鏡":
 elif suggestion == "漸進多焦點眼鏡":
     control_rate = 0.10
 else :
-    control_rate = 0.30
+    control_rate = 0.12
 if y1 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y1
     growth_with_control_rate[0] = y1
