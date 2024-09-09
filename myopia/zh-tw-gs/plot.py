@@ -116,7 +116,7 @@ def plot(sex, report):
             plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
         if report == '球面度數':
             plt.title(f"Trend in spherical diopter of {MorF} children", fontsize=16)
-
+    return area
 risk = [...] * 4
 eye_word = [...] * 2
 #x_label=[ "ortho-k" ,"glasses" ,"multiple treatment" ,"no treatment", "atropine" ]
@@ -180,7 +180,7 @@ else :
 Risk = {}
 
 #plt.figure(figsize=(7.5, 7.5))
-plot(sex, report)
+area = plot(sex, report)
 
 import re
 def x(age):
@@ -189,7 +189,7 @@ def x(age):
 
 if round(x(age)) in range(3, 17):
     if report == '軸長' and language_type!=0:
-        p0, p50, p75, p90, p100 = stacked_area.loc[sex].loc[round(x(age))]
+        p0, p50, p75, p90, p100 = area.loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y < p50:
                 if language_type== 1:
@@ -217,7 +217,7 @@ if round(x(age)) in range(3, 17):
                 localStorage.setItem(eye, 3)
 
     if report == '軸長' and language_type == 0:
-            p0, p50, p75, p90, p100 = stacked_area.loc[sex].loc[round(x(age))]
+            p0, p50, p75, p90, p100 = area.loc[round(x(age))]
             eye="ODOS"
             if y1 < p50 or y2 < p50:
                 display(f'{risk[0]}', target='advice')
@@ -233,7 +233,7 @@ if round(x(age)) in range(3, 17):
                 localStorage.setItem(eye, 2)
 
     if report == '球面度數'  and language_type!=0:
-        p100, p50, p25, p10, p0 = stacked_area.loc[sex].loc[round(x(age))]
+        p100, p50, p25, p10, p0 = area.loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y > p50:
                 if  language_type== 1:
@@ -261,19 +261,16 @@ if round(x(age)) in range(3, 17):
                 localStorage.setItem(eye, 3)
                 
     if report == '球面度數' and language_type == 0:
-            p100, p50, p25, p10, p0 = stacked_area.loc[sex].loc[round(x(age))]
+            p100, p50, p25, p10, p0 = area.loc[round(x(age))]
             eye="ODOS"
-            if y1 > p50 or y2 > p50:
-                display(f'{risk[0]}', target='advice')
+            if y1 < p25 or y2 < p25:
+                display(f'{risk[2]}', target='advice')
                 localStorage.setItem(eye, 0)
-            elif y1 > p25 or y2 > p25:
+            elif y1 < p50 or y2 < p50:
                 display(f'{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
-            elif y1 > p10 or y2 > p10:
-                display(f'{risk[2]}', target='advice')
-                localStorage.setItem(eye, 2)
             else:
-                display(f'{risk[2]}', target='advice')
+                display(f'{risk[0]}', target='advice')
                 localStorage.setItem(eye, 2)
 
 else:
@@ -368,8 +365,8 @@ if len(records)!=0:
                 plt.scatter(x(record[11]), record[os], color='blue', marker='.')
             y_os_record.append(record[os])
             #print("os is : " + str(record[os]))
-    print(f'Last age :{x_age_record[1]}  OD : {y_od_record[1]} OS : {y_os_record[1]} slope {current_slope_rate_OD}')
-    print(f'Now age :{x_age_record[0]}  OD : {y_od_record[0]} OS : {y_os_record[0]} slope {current_slope_rate_OS}')
+    # print(f'Last age :{x_age_record[1]}  OD : {y_od_record[1]} OS : {y_os_record[1]} slope {current_slope_rate_OD}')
+    # print(f'Now age :{x_age_record[0]}  OD : {y_od_record[0]} OS : {y_os_record[0]} slope {current_slope_rate_OS}')
     plt.plot(x_age_record, y_od_record, color='red', alpha=0.2)
     plt.plot(x_age_record, y_os_record, color='blue', alpha=0.2)
 else : 
@@ -390,13 +387,13 @@ if y2 != "":
         y2 = 19.5
     plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
     #print("os is : " + str(y2))
-print(f'OD is {y1} OS is {y2} Age is {int(x(age))} record length {len(records)} suggestion {suggestion}')
+# print(f'OD is {y1} OS is {y2} Age is {int(x(age))} record length {len(records)} suggestion {suggestion}')
 def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,control_rate):
     age_index = age - 3
     sd_count = ((-0.5) - curve_point[0]) / 0.5
     attu_age_base = attu_base[age_index]
     attu_age_interval =  attu_interval[age_index]
-    print(current_slope_rate)
+    # print(current_slope_rate)
     current_slope_rate = current_slope_rate * (1-control_rate)
     for i in range(1,len(curve_point)):#(let i = 1; i < age_growth.length; i++) {
         curve_point[i] = curve_point[i-1] + current_slope_rate

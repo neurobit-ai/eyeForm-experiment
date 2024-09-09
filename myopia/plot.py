@@ -132,7 +132,7 @@ def plot(sex, report):
             plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
         if report == '球面度數':
             plt.title(f"Trend in spherical diopter of {MorF} children", fontsize=16)
-
+    return area
 risk = [...] * 4
 eye_word = [...] * 2
 #x_label=[ "ortho-k" ,"glasses" ,"multiple treatment" ,"no treatment", "atropine" ]
@@ -196,7 +196,7 @@ else :
 Risk = {}
 
 #plt.figure(figsize=(7.5, 7.5))
-plot(sex, report)
+area = plot(sex, report)
 
 import re
 def x(age):
@@ -205,7 +205,7 @@ def x(age):
 
 if round(x(age)) in range(3, 17):
     if report == '軸長':
-        p0, p50, p75, p90, p100 = stacked_area.loc[sex].loc[round(x(age))]
+        p0, p50, p75, p90, p100 = area.loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y < p50:
                 if language_type== 0 or language_type== 1:
@@ -232,7 +232,7 @@ if round(x(age)) in range(3, 17):
                     display(f'{eye}{risk[3]}', target='advice')
                 localStorage.setItem(eye, 3)
     if report == '球面度數':
-        p100, p50, p25, p10, p0 = stacked_area.loc[sex].loc[round(x(age))]
+        p100, p50, p25, p10, p0 = area.loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y > p50:
                 if language_type== 0 or language_type== 1:
