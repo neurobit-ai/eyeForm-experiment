@@ -2,6 +2,11 @@ from js import sex, age, y1, y2, records, suggestion, localStorage, report , lan
 if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
 #print(language_type)
+growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
+growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
+attu_base =    [ -0.12,-0.08,-0.04, 0,  0.04, 0.133, 0.136,0.269, 0.3, 0.378, 0.439, 0.596,0.7, 0.77]
+attu_interval =  [0.039,0.033,0.044,0.039,0.033, 0.044,0.056, 0.056,0.042, 0.053, 0.04, 0.098,0.17, 0.23]
+
 import pandas as pd
 import numpy as np
 import pickle
@@ -68,15 +73,6 @@ def plot(sex, report):
     area = stacked_area.loc[sex].loc[3:16]
     MorF = {'男': 'Male', '女': 'Female'}[sex]
     if report == '軸長':
-        #area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
-        #splP100 = make_interp_spline(area.index, area['P100'], k=3)
-        #splP90 = make_interp_spline(area.index, area['P90'], k=3)
-        #splP75 = make_interp_spline(area.index, area['P75'], k=3)
-        #splP50 = make_interp_spline(area.index, area['P50'], k=3)
-        #area_100_smooth = splP100(area_index_smooth)
-        #area_90_smooth = splP90(area_index_smooth)
-        #area_75_smooth = splP75(area_index_smooth)
-        #area_50_smooth = splP50(area_index_smooth)
         area_100_smooth = moving_average_cal(area['P100'])
         area_90_smooth = moving_average_cal(area['P90'])
         area_75_smooth = moving_average_cal(area['P75'])
@@ -84,19 +80,7 @@ def plot(sex, report):
         plt.fill_between(area.index, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
         plt.fill_between(area.index, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Medium Risk')#orange
         plt.fill_between(area.index, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
-        #plt.fill_between(area_index_smooth, area_50_smooth, 19.5, color='lightgreen', alpha=0.2, label='0~50%')
     else :
-        #area_index_smooth = np.linspace(area.index.min(), area.index.max(), 100)
-        #splP50 = make_interp_spline(area.index, area['P50'], k=3)
-        #splP25 = make_interp_spline(area.index, area['P25'], k=3)
-        #splP10 = make_interp_spline(area.index, area['P10'], k=3)
-        #area_50_smooth = splP50(area_index_smooth)
-        #area_25_smooth = splP25(area_index_smooth)
-        #area_10_smooth = splP10(area_index_smooth)
-        #plt.fill_between(area_index_smooth, area_50_smooth, 5, color='lightgreen', alpha=0.2, label='50~100%')
-        #plt.fill_between(area_index_smooth, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
-        #plt.fill_between(area_index_smooth, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
-        #plt.fill_between(area_index_smooth, -9, area_10_smooth, color='red', alpha=0.2, label='0~10%')
         area_100_smooth = moving_average_cal(area['P100'])
         area['P100']=moving_average_cal(area['P100'])
         area_50_smooth = moving_average_cal(area['P50'])
@@ -327,107 +311,6 @@ osp_first=True
 
 for age_index in range(1,agecounter):
     x_age_series[age_index] = x_age_series[age_index-1] + 1
-def C_I_cal(nowvalue):  
-    #print("In draw  constant_ci_groupby : "+str(constant_ci_groupby[sex][suggestion])+ "----coef_ci_025_groupby is "+ str(coef_ci_025_groupby[sex][suggestion])+ "----coef_ci_975_groupby is "+ str(coef_ci_975_groupby[sex][suggestion]))
-    constant_025=nowvalue-constant_ci_groupby[sex][suggestion]
-    constant_975=nowvalue+constant_ci_groupby[sex][suggestion]
-    max_value = constant_025 +  coef_ci_025_groupby[sex][suggestion]
-
-    min_value = constant_025 +  coef_ci_975_groupby[sex][suggestion]
-    if  constant_975 +  coef_ci_025_groupby[sex][suggestion]  > max_value :
-        max_value = constant_975 +  coef_ci_025_groupby[sex][suggestion]
-    if  constant_975 +  coef_ci_025_groupby[sex][suggestion]  < min_value :
-        min_value = constant_975 +  coef_ci_025_groupby[sex][suggestion]
-
-    if  constant_975 + coef_ci_975_groupby[sex][suggestion]  > max_value :
-        max_value = constant_975 + coef_ci_975_groupby[sex][suggestion]
-    if  constant_975 + coef_ci_975_groupby[sex][suggestion]  < min_value :
-        min_value = constant_975 + coef_ci_975_groupby[sex][suggestion]   
-
-    return max_value,min_value
-def logarithm_calculate_high_low(nowvalue , age_index , age_origin): 
-    difference_high = np.exp(data_al[report][sex][suggestion]["con_975"]+np.log(age_index)*data_al[report][sex][suggestion]["x_975"]) - np.exp(data_al[report][sex][suggestion]["con_975"]+np.log(age_origin)*data_al[report][sex][suggestion]["x_975"])
-    difference_low = np.exp(data_al[report][sex][suggestion]["con_025"]+np.log(age_index)*data_al[report][sex][suggestion]["x_025"]) - np.exp(data_al[report][sex][suggestion]["con_025"]+np.log(age_origin)*data_al[report][sex][suggestion]["x_025"])
-    return nowvalue + difference_high  , nowvalue + difference_low
-def logarithm_calculate_middle(nowvalue , age_index , age_origin):
-    difference = np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_index)*data_al[report][sex][suggestion]["b1"]) - np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_origin)*data_al[report][sex][suggestion]["b1"])
-    return nowvalue + difference
-if y1 != "":
-    if y1 == 0 and report == '軸長':
-        y1 = 19.5
-    plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9)
-    #print("od is : " + str(y1 ))
-if y2 != "":
-    if y2 == 0 and report == '軸長':
-        y2 = 19.5
-    plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
-    #print("os is : " + str(y2))
-if y1 != "" and slope_groupby[sex].get(suggestion):
-    x_stdu_value_series[0] = y1
-    x_stdd_value_series[0] = y1
-    for age_index in range(1,agecounter):
-        #x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y1 + slope_groupby[sex][suggestion] * (age_index-1))
-        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y1 , x_age_series[age_index], x_age_series[0])
-        if odp_first :
-            #plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, label='OD in 1 yr', marker='*')
-            plt.scatter(x_age_series[age_index], logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.7, label='OD in 1 yr', marker='*')
-            odp_first=False
-        else :
-            #plt.scatter(x_age_series[age_index], y1 + slope_groupby[sex][suggestion] * age_index, color='red', alpha=0.5, marker='*')
-            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y1 , x_age_series[age_index], x_age_series[0]), color='red', alpha=0.7, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#E84F6B', alpha=0.6, label='OD in future')##AC92EB
-    #plt.scatter(x(age) + 1, y1 + slope_groupby[sex][suggestion], color='red', label='OD in 1 yr', marker='*')
-if y2 != "" and slope_groupby[sex].get(suggestion):
-    x_stdu_value_series[0] = y2
-    x_stdd_value_series[0] = y2
-    for age_index in range(1,agecounter):
-        #x_stdu_value_series[age_index],x_stdd_value_series[age_index] = C_I_cal(y2 + slope_groupby[sex][suggestion] * (age_index-1))
-        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y2 , x_age_series[age_index], x_age_series[0])
-        if osp_first :
-            #plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, label='OS in 1 yr', marker='*')
-            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.7, label='OS in 1 yr', marker='*')
-            osp_first=False
-        else :
-            #plt.scatter(x_age_series[age_index], y2 + slope_groupby[sex][suggestion] * age_index, color='blue', alpha=0.5, marker='*')
-            plt.scatter(x_age_series[age_index],logarithm_calculate_middle(y2 , x_age_series[age_index], x_age_series[0]), color='blue', alpha=0.7, marker='*')
-    plt.fill_between(x_age_series, x_stdu_value_series, x_stdd_value_series, color='#4FC1E8', alpha=0.6, label='OS in future')
-    #plt.scatter(x(age) + 1, y2 + slope_groupby[sex][suggestion], color='blue', label='OS in 1 yr', marker='*')
-
-
-if report=="軸長":
-    suggestion ="不處置"
-else :
-    suggestion ="一般眼鏡"
-if y1 != "" and slope_groupby[sex].get(suggestion):
-    x_stdu_value_series[0] = y1
-    x_stdd_value_series[0] = y1
-    for age_index in range(1,agecounter):
-        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y1 , x_age_series[age_index], x_age_series[0])
-    if report=="軸長":#軸長#球面度數
-        if x_stdu_value_series[1]>=x_stdd_value_series[1]:
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-        else :
-            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-    else :
-        if x_stdu_value_series[1]<=x_stdd_value_series[1]:
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-        else :
-            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-if y2 != "" and slope_groupby[sex].get(suggestion):
-    x_stdu_value_series[0] = y2
-    x_stdd_value_series[0] = y2
-    for age_index in range(1,agecounter):
-        x_stdu_value_series[age_index],x_stdd_value_series[age_index] = logarithm_calculate_high_low(y2 , x_age_series[age_index], x_age_series[0])
-    if report=="軸長":#軸長#球面度數
-        if x_stdu_value_series[1]>=x_stdd_value_series[1]:
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-        else :
-            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-    else :
-        if x_stdu_value_series[1]<=x_stdd_value_series[1]:
-            plt.plot(x_age_series, x_stdu_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
-        else :
-            plt.plot(x_age_series, x_stdd_value_series, color='0.3', linewidth=0.7, label='No treatment')#, alpha=0.2
 import json
 records = json.loads(records)
 od, os = (18, 24) if report == '軸長' else (15, 21)
@@ -439,27 +322,121 @@ y_os_record=[]
 x_age_record.append(x(age))
 y_od_record.append(y1)
 y_os_record.append(y2)
-for record in records:
-    if record[od] != "":
-        if odp_first :
-            plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='OD in past')
-            odp_first=False
+
+def slope_calculate(age,slope,start_point):
+    age_index = age - 3
+    sd_count = ((-0.5) - start_point) / 0.5
+    sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
+    slope = slope * sd_now
+    return slope
+
+def attu_calculate(age,slope,start_point):
+    age_index = age - 3
+    sd_count = ((-0.5) - start_point) / 0.5
+    sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
+    attu = (slope /  sd_now) *0.0962
+    return -attu
+
+if len(records)!=0:
+    for record in records:
+        if record[od] != "":
+            if odp_first :
+                plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='OD in past')
+                current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
+                if current_slope_rate_OD > 0 :
+                    current_slope_rate_OD = 0
+                    current_slope_attu_OD = 0
+                else:
+                    current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
+                odp_first=False
+            else :
+                plt.scatter(x(record[11]), record[od], color='red', marker='.')
+            x_age_record.append(x(record[11]))
+            y_od_record.append(record[od])
+            #print("od is : " + str(record[od]) )
+        if record[os] != "":
+            if osp_first :
+                plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='OS in past')
+                current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
+                if current_slope_rate_OS > 0 :
+                    current_slope_rate_OS = 0
+                    current_slope_attu_OS = 0
+                else:
+                    current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+                osp_first=False
+            else :
+                plt.scatter(x(record[11]), record[os], color='blue', marker='.')
+            y_os_record.append(record[os])
+            #print("os is : " + str(record[os]))
+    print(f'Last age :{x_age_record[1]}  OD : {y_od_record[1]} OS : {y_os_record[1]} slope {current_slope_rate_OD}')
+    print(f'Now age :{x_age_record[0]}  OD : {y_od_record[0]} OS : {y_os_record[0]} slope {current_slope_rate_OS}')
+    plt.plot(x_age_record, y_od_record, color='red', alpha=0.2)
+    plt.plot(x_age_record, y_os_record, color='blue', alpha=0.2)
+else : 
+    current_slope_rate_OD=-1.078
+    current_slope_rate_OS=-1.078
+    current_slope_attu_OD=0.1038
+    current_slope_attu_OS=0.1038
+    current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
+    current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y1)
+################################## 
+if y1 != "":
+    if y1 == 0 and report == '軸長':
+        y1 = 19.5
+    plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9)
+    #print("od is : " + str(y1 ))
+if y2 != "":
+    if y2 == 0 and report == '軸長':
+        y2 = 19.5
+    plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
+    #print("os is : " + str(y2))
+print(f'OD is {y1} OS is {y2} Age is {int(x(age))} record length {len(records)} suggestion {suggestion}')
+def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,control_rate):
+    age_index = age - 3
+    sd_count = ((-0.5) - curve_point[0]) / 0.5
+    attu_age_base = attu_base[age_index]
+    attu_age_interval =  attu_interval[age_index]
+    print(current_slope_rate)
+    current_slope_rate = current_slope_rate * (1-control_rate)
+    for i in range(1,len(curve_point)):#(let i = 1; i < age_growth.length; i++) {
+        curve_point[i] = curve_point[i-1] + current_slope_rate
+        if (current_slope_rate < -0.1) :
+            current_slope_rate += current_slope_attu * (1-control_rate) * ( 1 + (attu_age_interval*sd_count) )* (1 - attu_age_base)
         else :
-            plt.scatter(x(record[11]), record[od], color='red', marker='.')
-        x_age_record.append(x(record[11]))
-        y_od_record.append(record[od])
-        #print("od is : " + str(record[od]) )
-    if record[os] != "":
-        if osp_first :
-            plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='OS in past')
-            osp_first=False
-        else :
-            plt.scatter(x(record[11]), record[os], color='blue', marker='.')
-        y_os_record.append(record[os])
-        #print("os is : " + str(record[os]))
-        
-plt.plot(x_age_record, y_od_record, color='red')
-plt.plot(x_age_record, y_os_record, color='blue')
+            current_slope_rate += current_slope_attu * (1-control_rate) * ( 1 + (attu_age_interval*sd_count) )* (1 - attu_age_base) * 0.2
+        if (current_slope_rate > -0.01) :
+            current_slope_rate = 0
+    return curve_point
+##################################
+growth_without_control_rate=[0]*agecounter#this is for initial
+growth_with_control_rate=[0]*agecounter#this is for initial
+if suggestion == "一般眼鏡":
+    control_rate = 0.30
+elif suggestion == "軟式隱形眼鏡":
+    control_rate = 0.43
+elif suggestion == "周邊離焦鏡片":
+    control_rate = 0.19
+elif suggestion == "雙焦眼鏡":
+    control_rate = 0.50
+elif suggestion == "漸進多焦點眼鏡":
+    control_rate = 0.10
+else :
+    control_rate = 0.30
+if y1 != "" :#and slope_groupby[sex].get(suggestion)
+    growth_without_control_rate[0] = y1
+    growth_with_control_rate[0] = y1
+    growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
+    growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
+    plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='No treatment')#, alpha=0.7
+    plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='Control')#, alpha=0.7
+if y2 != "" :#and slope_groupby[sex].get(suggestion)
+    growth_without_control_rate[0] = y2
+    growth_with_control_rate[0] = y2
+    growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+    growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate) 
+    plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='No treatment')#, alpha=0.7
+    plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='Control')#, alpha=0.7
+##################################
 plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
