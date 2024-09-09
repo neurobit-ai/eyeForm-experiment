@@ -334,7 +334,7 @@ def attu_calculate(age,slope,start_point):
     attu = (slope /  sd_now) *0.0962
     return -attu
 
-if len(records)!=0:
+if len(records)!=0 and round(x(age)) in range(3,17):
     for record in records:
         if record[od] != "":
             if odp_first :
@@ -374,8 +374,9 @@ else :
     current_slope_rate_OS=-1.078
     current_slope_attu_OD=0.1038
     current_slope_attu_OS=0.1038
-    current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
-    current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y1)
+    if  round(x(age)) in range(3,17):
+        current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
+        current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y2)
 ################################## 
 if y1 != "":
     if y1 == 0 and report == '軸長':
@@ -419,14 +420,14 @@ elif suggestion == "漸進多焦點眼鏡":
     control_rate = 0.10
 else :
     control_rate = 0.30
-if y1 != "" :#and slope_groupby[sex].get(suggestion)
+if y1 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y1
     growth_with_control_rate[0] = y1
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
     growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
     plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='No treatment')#, alpha=0.7
     plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='Control')#, alpha=0.7
-if y2 != "" :#and slope_groupby[sex].get(suggestion)
+if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y2
     growth_with_control_rate[0] = y2
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
