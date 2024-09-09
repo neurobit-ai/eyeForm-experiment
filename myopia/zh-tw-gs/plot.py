@@ -409,7 +409,7 @@ def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,cont
 growth_without_control_rate=[0]*agecounter#this is for initial
 growth_with_control_rate=[0]*agecounter#this is for initial
 if suggestion == "一般眼鏡":
-    control_rate = 0.04
+    control_rate = 0.12
 elif suggestion == "軟式隱形眼鏡":
     control_rate = 0.43
 elif suggestion == "周邊離焦鏡片":
