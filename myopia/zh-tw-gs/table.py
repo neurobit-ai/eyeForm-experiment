@@ -61,44 +61,44 @@ OD_control_data=[0]*agecounter#this is for initial
 OS_control_data=[0]*agecounter#this is for initial
 OD_control_data[0] = y1
 OS_control_data[0] = y2
-# OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
-# OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate)
-OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
-OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
-for age_index in range(1,agecounter):
-    table['Age　'].append(f'{_y_m(age,age_index,sign)}')
-    # OD_new += logarithm_calculate_middle(now_age + age_index,now_age + age_index - 1 )#slope_groupby[sex][suggestion]
-    # OS_new += logarithm_calculate_middle(now_age + age_index,now_age + age_index - 1)#slope_groupby[sex][suggestion]
-    OD_new=OD_control_data[age_index]
-    OS_new=OS_control_data[age_index]
-    if report == '軸長':
-        if OD_new <= 19.5 :
-            table['OD'].append(f'<20')
-        elif OD_new >= 30.5 :
-            table['OD'].append(f'>30')
-        else :
-            table['OD'].append(f'{OD_new:.2f}')
+if  round(x(age)) in range(3,17):
+    # OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
+    # OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate)
+    OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
+    OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+    
+    for age_index in range(1,agecounter):
+        table['Age　'].append(f'{_y_m(age,age_index,sign)}')
+        OD_new=OD_control_data[age_index]
+        OS_new=OS_control_data[age_index]
+        if report == '軸長':
+            if OD_new <= 19.5 :
+                table['OD'].append(f'<20')
+            elif OD_new >= 30.5 :
+                table['OD'].append(f'>30')
+            else :
+                table['OD'].append(f'{OD_new:.2f}')
 
-        if OS_new <= 19.5 :
-            table['OS'].append(f'<20')
-        elif OS_new >= 30.5 :
-            table['OS'].append(f'>30')
-        else :
-            table['OS'].append(f'{OS_new:.2f}')
-    else:
-        if OD_new <= -9:
-            table['OD'].append(f'<-9')
-        elif OD_new >= 5 :
-            table['OD'].append(f'>5')
-        else :
-            table['OD'].append(f'{OD_new:.2f}')
+            if OS_new <= 19.5 :
+                table['OS'].append(f'<20')
+            elif OS_new >= 30.5 :
+                table['OS'].append(f'>30')
+            else :
+                table['OS'].append(f'{OS_new:.2f}')
+        else:
+            if OD_new <= -9:
+                table['OD'].append(f'<-9')
+            elif OD_new >= 5 :
+                table['OD'].append(f'>5')
+            else :
+                table['OD'].append(f'{OD_new:.2f}')
 
-        if OS_new <= -9 :
-            table['OS'].append(f'<-9')
-        elif OS_new >= 5 :
-            table['OS'].append(f'>5')
-        else :
-            table['OS'].append(f'{OS_new:.2f}')
+            if OS_new <= -9 :
+                table['OS'].append(f'<-9')
+            elif OS_new >= 5 :
+                table['OS'].append(f'>5')
+            else :
+                table['OS'].append(f'{OS_new:.2f}')
 #print("*********************")
 #print(type(records))
 
