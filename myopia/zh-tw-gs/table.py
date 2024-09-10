@@ -31,7 +31,7 @@ def _y_m(age,year,sign):
     
 #print(language_type)
 table = {}
-sign='⯁'
+sign='R/L'
 table['Age　'] = [f'{_y_m(age,0,sign)}']
 if y1 == 19.5 :
     table['OD'] = [f'<20']
@@ -56,7 +56,7 @@ if agecounter <= 0:
     agecounter = 2
 OD_new=y1
 OS_new=y2
-sign='★'
+sign=' '
 OD_control_data=[0]*agecounter#this is for initial
 OS_control_data=[0]*agecounter#this is for initial
 OD_control_data[0] = y1
