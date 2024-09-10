@@ -91,16 +91,16 @@ def plot(sex, report):
         area['P10']=moving_average_cal(area['P10'])
         area_0_smooth = moving_average_cal(area['P0'])
         area['P0']=moving_average_cal(area['P0'])
-        plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='50~100%')
-        plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='25~50%')
+        plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='低風險')
+        plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='中風險')
         # plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
-        plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='0~25%')
+        plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='高風險')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
     if language_type== 0 :
         if report == '軸長':
             plt.title(f"{sex}童軸長成長趨勢", fontproperties=custom_font, fontsize=16)
         if report == '球面度數':
-            plt.title(f"{sex}童球面度數成長趨勢", fontproperties=custom_font, fontsize=16)
+            plt.title(f"{sex}童球面度數成長趨勢-使用{suggestion}控制-", fontproperties=custom_font, fontsize=16)
     elif language_type== 1:
         if report == '軸長':
             plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
@@ -381,12 +381,18 @@ else :
 if y1 != "":
     if y1 == 0 and report == '軸長':
         y1 = 19.5
-    plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9)
+    if language_type != 0 :
+        plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9) 
+    else :
+        plt.scatter(x(age), y1, color='red', label='右眼' , marker='$R$', zorder=9) 
     #print("od is : " + str(y1 ))
 if y2 != "":
     if y2 == 0 and report == '軸長':
         y2 = 19.5
-    plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
+    if language_type != 0 :
+        plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
+    else :
+        plt.scatter(x(age), y2, color='blue', label='左眼' , marker='$L$', zorder=9)
     #print("os is : " + str(y2))
 # print(f'OD is {y1} OS is {y2} Age is {int(x(age))} record length {len(records)} suggestion {suggestion}')
 def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,control_rate):
@@ -425,21 +431,29 @@ if y1 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggest
     growth_with_control_rate[0] = y1
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
     growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
-    plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='No treatment')#, alpha=0.7
-    plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='Control')#, alpha=0.7
+    if language_type != 0: 
+        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='No treatment')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='Control')#, alpha=0.7
+    else:
+        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='右眼有控制')#, alpha=0.7
 if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y2
     growth_with_control_rate[0] = y2
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
     growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate) 
-    plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='No treatment')#, alpha=0.7
-    plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='Control')#, alpha=0.7
+    if language_type != 0: 
+        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='No treatment')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='Control')#, alpha=0.7
+    else:
+        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='左眼無控制')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='左眼有控制')#, alpha=0.7  
 ##################################
-plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
+# plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
 if report == '球面度數':
-    plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
+    plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.25),fontsize=8,prop=custom_font)
 plt.xticks(range(3, 17 if x(age) + 1 <= 16 else int(x(age)) + 2))
 plt.yticks(range(20, 30) if report == '軸長' else range(-8, 7))
 if language_type== 0 :
@@ -450,9 +464,9 @@ else :
     plt.xlabel("Age (years)", fontsize=12)
 #plt.xlabel('Age', fontsize=12)
 if language_type== 0 :
-    plt.ylabel('軸長 (mm)' if report == '軸長' else '球面度數 (度)', fontproperties=custom_font_s, fontsize=12)
+    plt.ylabel('軸長 (mm)' if report == '軸長' else '球面度數 (D)', fontproperties=custom_font_s, fontsize=12)
 elif language_type== 2:
-    plt.ylabel('轴长 (mm)' if report == '軸長' else '球面度数 (度)', fontproperties=custom_font_s, fontsize=12)
+    plt.ylabel('轴长 (mm)' if report == '軸長' else '球面度数 (D)', fontproperties=custom_font_s, fontsize=12)
 else :
     plt.ylabel('Axial Length (mm)' if report == '軸長' else 'SPH (degrees)', fontsize=12)
 #plt.ylabel('Axial Length' if report == '軸長' else 'SPH', fontsize=12)
