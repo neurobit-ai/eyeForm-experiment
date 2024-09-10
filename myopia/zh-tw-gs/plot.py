@@ -333,7 +333,8 @@ def attu_calculate(age,slope,start_point):
     sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
     attu = (slope /  sd_now) *0.0962
     return -attu
-
+OD_zero = False
+OS_zero = False
 if len(records)!=0 and round(x(age)) in range(3,17):
     for record in records:
         if record[od] != "":
@@ -344,6 +345,7 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='右眼歷史')
                 if x(age)-x(record[11]) == 0:
                     current_slope_rate_OD=0
+                    OD_zero=True
                 else:
                     current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
                 if current_slope_rate_OD > 0 :
@@ -353,6 +355,10 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
                 odp_first=False
             else :
+                if OD_zero ==True and x(age)-x(record[11]) > 0:
+                    current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
+                    current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
+                    OD_zero = False
                 plt.scatter(x(record[11]), record[od], color='red', marker='.')
             x_age_record.append(x(record[11]))
             y_od_record.append(record[od])
@@ -365,6 +371,7 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='左眼歷史')
                 if x(age)-x(record[11]) == 0:
                     current_slope_rate_OS=0
+                    OS_zero=True
                 else:
                     current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
                 if current_slope_rate_OS > 0 :
@@ -374,6 +381,10 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
                 osp_first=False
             else :
+                if OS_zero ==True and x(age)-x(record[11]) > 0:
+                    current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
+                    current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+                    OS_zero=False
                 plt.scatter(x(record[11]), record[os], color='blue', marker='.')
             y_os_record.append(record[os])
             #print("os is : " + str(record[os]))
@@ -448,7 +459,7 @@ if y1 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggest
         plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='Control')#, alpha=0.7
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='右眼有控制')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linestyle='--', linewidth=0.9, label='右眼有控制')#, alpha=0.7
 if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y2
     growth_with_control_rate[0] = y2
@@ -459,7 +470,7 @@ if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggest
         plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='Control')#, alpha=0.7
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='左眼無控制')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='左眼有控制')#, alpha=0.7  
+        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linestyle='--', linewidth=0.9, label='左眼有控制')#, alpha=0.7  
 ##################################
 # plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':

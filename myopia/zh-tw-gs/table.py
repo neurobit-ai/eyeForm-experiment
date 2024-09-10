@@ -144,7 +144,7 @@ df = pd.DataFrame(table)
 if report == '軸長':
     new_column_names = {'OD': 'OD(mm)　', 'OS': 'OS(mm)　'}
 elif language_type == 0 or language_type == 2:
-    new_column_names = {'OD': 'OD(D)　', 'OS': 'OS(D)　'}
+    new_column_names = {'OD': '右眼(D)　', 'OS': '左眼(D)　'}
 else :
     new_column_names = {'OD': 'OD(degrees)　', 'OS': 'OS(degrees)　'}
 df.rename(columns=new_column_names, inplace=True)
