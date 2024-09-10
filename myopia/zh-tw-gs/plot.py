@@ -338,8 +338,14 @@ if len(records)!=0 and round(x(age)) in range(3,17):
     for record in records:
         if record[od] != "":
             if odp_first :
-                plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='OD in past')
-                current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
+                if language_type !=0:
+                    plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='OD in past')
+                else:
+                    plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='右眼歷史')
+                if x(age)-x(record[11]) == 0:
+                    current_slope_rate_OD=0
+                else:
+                    current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
                 if current_slope_rate_OD > 0 :
                     current_slope_rate_OD = 0
                     current_slope_attu_OD = 0
@@ -353,8 +359,14 @@ if len(records)!=0 and round(x(age)) in range(3,17):
             #print("od is : " + str(record[od]) )
         if record[os] != "":
             if osp_first :
-                plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='OS in past')
-                current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
+                if language_type !=0:
+                    plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='OS in past')
+                else:
+                    plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='左眼歷史')
+                if x(age)-x(record[11]) == 0:
+                    current_slope_rate_OS=0
+                else:
+                    current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
                 if current_slope_rate_OS > 0 :
                     current_slope_rate_OS = 0
                     current_slope_attu_OS = 0
