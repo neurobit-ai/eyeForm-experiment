@@ -342,7 +342,7 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                 if language_type !=0:
                     plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='OD in past')
                 else:
-                    plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='右眼歷史')
+                    plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='右眼歷史\n紀錄')
                 if x(age)-x(record[11]) == 0:
                     current_slope_rate_OD=0
                     OD_zero=True
@@ -368,7 +368,7 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                 if language_type !=0:
                     plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='OS in past')
                 else:
-                    plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='左眼歷史')
+                    plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='左眼歷史\n紀錄')
                 if x(age)-x(record[11]) == 0:
                     current_slope_rate_OS=0
                     OS_zero=True
@@ -407,7 +407,7 @@ if y1 != "":
     if language_type != 0 :
         plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9) 
     else :
-        plt.scatter(x(age), y1, color='red', label='右眼' , marker='$R$', zorder=9) 
+        plt.scatter(x(age), y1, color='red', label='右眼當前\n資料' , marker='$R$', zorder=9) 
     #print("od is : " + str(y1 ))
 if y2 != "":
     if y2 == 0 and report == '軸長':
@@ -415,7 +415,7 @@ if y2 != "":
     if language_type != 0 :
         plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
     else :
-        plt.scatter(x(age), y2, color='blue', label='左眼' , marker='$L$', zorder=9)
+        plt.scatter(x(age), y2, color='blue', label='左眼當前\n資料' , marker='$L$', zorder=9)
     #print("os is : " + str(y2))
 # print(f'OD is {y1} OS is {y2} Age is {int(x(age))} record length {len(records)} suggestion {suggestion}')
 def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,control_rate):
@@ -456,10 +456,10 @@ if y1 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggest
     growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
     if language_type != 0: 
         plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='No treatment')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linewidth=0.7, label='Control')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#e34fe8', linewidth=0.7, label='Control')#, alpha=0.7
     else:
-        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#E84F6B', linestyle='--', linewidth=0.9, label='右眼有控制')#, alpha=0.7
+        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制\n成長趨勢')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#e34fe8', linestyle='--', linewidth=0.9, label='右眼有控制\n成長趨勢')#, alpha=0.7
 if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y2
     growth_with_control_rate[0] = y2
@@ -469,14 +469,14 @@ if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggest
         plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='No treatment')#, alpha=0.7
         plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='Control')#, alpha=0.7
     else:
-        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='左眼無控制')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linestyle='--', linewidth=0.9, label='左眼有控制')#, alpha=0.7  
+        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='左眼無控制\n成長趨勢')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linestyle='--', linewidth=0.9, label='左眼有控制\n成長趨勢')#, alpha=0.7  
 ##################################
 # plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
     plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
 if report == '球面度數':
-    plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.25),fontsize=8,prop=custom_font)
+    plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.55),fontsize=8,prop=custom_font)
 plt.xticks(range(3, 17 if x(age) + 1 <= 16 else int(x(age)) + 2))
 plt.yticks(range(20, 30) if report == '軸長' else range(-8, 7))
 if language_type== 0 :
