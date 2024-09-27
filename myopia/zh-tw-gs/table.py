@@ -47,19 +47,8 @@ elif y2 == 30.5 :
 else :
     table['OS'] = [f'{y2:.2f}']
 
-if y1 == 19.5 :
-    table['OD_m'] = [f'<20']
-elif y1== 30.5 :
-    table['OD_m'] = [f'>30']
-else :
-    table['OD_m'] = [f'{y1:.2f}']
-
-if y2 == 19.5 :
-    table['OS_m'] = [f'<20']
-elif y2 == 30.5 :
-    table['OS_m'] = [f'>30']
-else :
-    table['OS_m'] = [f'{y2:.2f}']
+table['OD_m'] = ['-']
+table['OS_m'] = ['-']
 
 def logarithm_calculate_middle(age_index , age_origin): 
     difference = np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_index)*data_al[report][sex][suggestion]["b1"]) - np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_origin)*data_al[report][sex][suggestion]["b1"])
@@ -168,14 +157,14 @@ for record in records:
                 table['OD'].insert(0, f'>5')
             else :
                 table['OD'].insert(0, f'{record[od]:.2f}')
-            table['OD_m'].insert(0,'　')
+            table['OD_m'].insert(0,'-')
             if record[os] == -9 :
                 table['OS'].insert(0, f'<-9')
             elif record[os] == 5 :
                 table['OS'].insert(0, f'>5')
             else :
                 table['OS'].insert(0, f'{record[os]:.2f}')
-            table['OS_m'].insert(0,'　　')
+            table['OS_m'].insert(0,'-')
 import pandas as pd
 df = pd.DataFrame(table)
 if report == '軸長':
@@ -219,13 +208,15 @@ if not duplicated_columns.empty:
     df.columns = renamed_columns
 
 #print(df.index)
+"""
 def hide_border(val):
-    if val == '　':  # 當值為2時隱藏左方和下方框線
+    if val == '　':  # 當值為單空格時隱藏左方和下方框線
         return 'border-left: none; border-right: none; border-bottom: none;'
-    elif val == '　　':  # 當值為2時隱藏左方和下方框線
+    elif val == '　　':  # 當值為雙空格時隱藏左方和下方框線
         return 'border-left: none; border-right: none; border-bottom: none; border-top: none;'
     else:
         return ''
+"""
 styled_df = df.style.hide(axis="columns")
 styled_df = styled_df.set_properties(**{
 'background-color': 'white', 
@@ -235,5 +226,5 @@ styled_df = styled_df.set_properties(**{
 'border-width': '2px',
 'padding': '2px'
 })
-styled_df = styled_df.applymap(hide_border)
+# styled_df = styled_df.applymap(hide_border)
 display(styled_df, target='table')
