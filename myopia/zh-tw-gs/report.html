@@ -65,6 +65,58 @@
         .justified-text {
         text-align: justify;
           }
+      @media only screen and (max-width: 850px) {
+      .scale_down {
+        transform: scale(0.7);
+        transform-origin: left;
+      }
+      #plot {
+        height: 450px;
+      }
+      .scale_down_table {
+        transform: scale(0.6);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 600px) {
+      .scale_down {
+        transform: scale(0.55);
+        transform-origin: left;
+      }
+      #plot {
+        height: 350px;
+      }
+      .scale_down_table {
+        transform: scale(0.525);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 500px) {
+      .scale_down {
+        transform: scale(0.4);
+        transform-origin: left;
+      }
+      #plot {
+        height: 250px;
+      }
+      .scale_down_table {
+        transform: scale(0.45);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 450px) {
+      .scale_down {
+        transform: scale(0.35);
+        transform-origin: left;
+      }
+      #plot {
+        height: 150px;
+      }
+      .scale_down_table {
+        transform: scale(0.37);
+        transform-origin: left;
+      }
+      }
       @media print {
         body {
                 -webkit-print-color-adjust: exact; /* 對於Webkit內核瀏覽器 */
@@ -116,7 +168,7 @@
                 <tr class="scale_down no-border">
                   <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
                 </tr>
-                <tr class="custom-row no-border">
+                <tr class="custom-row no-border scale_down_table">
                   <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div ptable-div"></div></td>
                 </tr>
               </thead>
