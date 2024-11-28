@@ -71,8 +71,12 @@ OS_control_data=[0]*agecounter#this is for initial
 OD_control_data[0] = y1
 OS_control_data[0] = y2
 if  round(x(age)) in range(3,17):
-    OD_no_management_data = curve_calculation(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
-    OS_no_management_data = curve_calculation(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+    if report == '球面度數':
+        OD_no_management_data = curve_calculation(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
+        OS_no_management_data = curve_calculation(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+    else:
+        OD_no_management_data = curve_calculation_AL(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
+        OS_no_management_data = curve_calculation_AL(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)     
     OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
     OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate)
     
@@ -172,7 +176,7 @@ if report == '軸長':
 elif language_type == 0 or language_type == 2:
     new_column_names = {'OD': '右眼(D)　<br>無控制', 'OS': '左眼(D)　<br>無控制','OD_m':'右眼(D)　<br>有控制','OS_m':'左眼(D)　<br>有控制'}
 else :
-    new_column_names = {'OD': 'OD(degrees)　', 'OS': 'OS(degrees)　'}
+    new_column_names = {'OD': 'OD(D)　<br>No Treatment', 'OS': 'OS(D)　<br>No Treatment','OD_m':'OD(D)　<br>Control','OS_m':'OS(D)　<br>Control'}
 df.rename(columns=new_column_names, inplace=True)
 
 df = df.T

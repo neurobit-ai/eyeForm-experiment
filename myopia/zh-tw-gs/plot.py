@@ -10,7 +10,6 @@ attu_interval =  [0.039,0.033,0.044,0.039,0.033, 0.044,0.056, 0.056,0.042, 0.053
 import pandas as pd
 import numpy as np
 import pickle
-from scipy.interpolate import make_interp_spline
 with open('data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
 
@@ -77,9 +76,14 @@ def plot(sex, report):
         area_90_smooth = moving_average_cal(area['P90'])
         area_75_smooth = moving_average_cal(area['P75'])
         area_50_smooth = moving_average_cal(area['P50'])
-        plt.fill_between(area.index, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
-        plt.fill_between(area.index, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Medium Risk')#orange
-        plt.fill_between(area.index, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
+        if language_type == 1:
+            plt.fill_between(area.index, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='High Risk')
+            plt.fill_between(area.index, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='Medium Risk')#orange
+            plt.fill_between(area.index, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='Low Risk')#yellow
+        else:
+            plt.fill_between(area.index, area_100_smooth, area_90_smooth, color='red', alpha=0.2, label='高風險')
+            plt.fill_between(area.index, area_90_smooth, area_75_smooth, color='yellow', alpha=0.2, label='中風險')#orange
+            plt.fill_between(area.index, area_75_smooth, area_50_smooth, color='lightgreen', alpha=0.2, label='低風險')#yellow
     else :
         area_100_smooth = moving_average_cal(area['P100'])
         area['P100']=moving_average_cal(area['P100'])
@@ -91,10 +95,14 @@ def plot(sex, report):
         area['P10']=moving_average_cal(area['P10'])
         area_0_smooth = moving_average_cal(area['P0'])
         area['P0']=moving_average_cal(area['P0'])
-        plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='低風險')
-        plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='中風險')
-        # plt.fill_between(area.index, area_10_smooth, area_25_smooth, color='orange', alpha=0.2, label='10~25%')
-        plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='高風險')
+        if language_type == 1:
+            plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='Low Risk')
+            plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='Medium Risk')
+            plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='High Risk')
+        else:
+            plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='低風險')
+            plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='中風險')
+            plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='高風險')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
     if language_type== 0 :
         if report == '軸長':
@@ -105,7 +113,19 @@ def plot(sex, report):
         if report == '軸長':
             plt.title(f"Trend in axial length of {MorF} children", fontsize=16)
         if report == '球面度數':
-            plt.title(f"Trend in spherical diopter of {MorF}children", fontsize=16)
+            if suggestion == '一般眼鏡':
+                suggestion_tr = 'regular glasses'
+            elif suggestion == '漸進多焦點眼鏡':
+                suggestion_tr = 'progressive addition spectacles'
+            elif suggestion == '雙焦眼鏡':
+                suggestion_tr = 'executive bifocals'
+            elif suggestion == '周邊離焦鏡片':
+                suggestion_tr = 'peripheral defocus spectacles'
+            elif suggestion == '軟式隱形眼鏡':
+                suggestion_tr = 'soft contact lens for myopia control'
+            else:
+                suggestion_tr = 'regular glasses'
+            plt.title(f"Trend in spherical diopter of {MorF}children \n with {suggestion_tr}", fontsize=16)
     elif language_type== 2:
         if report == '軸長':
             plt.title(f"{sex}童轴长成长趋势", fontproperties=custom_font, fontsize=16)
@@ -148,9 +168,9 @@ elif language_type== 1:
     if report == '球面度數':
         eye_word[0] = 'Spherical diopter of right eye'
         eye_word[1] = 'Spherical diopter of left eye'
-    risk[0] = f' within the normal age range, it is considered low risk. Regular annual check-ups are recommended, and there is no indication of potential nearsightedness development.'
-    risk[1] = f' slightly beyond the normal age range, it is considered moderate risk. Regular annual check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences.'
-    risk[2] = f' beyond the normal age range, it is considered high risk. Biannual follow-up check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences (e.g., being mindful of screen time for computers and phones and taking breaks, wearing sunglasses to protect against blue light and UV rays during outdoor activities). Additionally, consider supplementing with lutein or fish oil.'
+    risk[0] = f'Low'#' within the normal age range, it is considered low risk. Regular annual check-ups are recommended, and there is no indication of potential nearsightedness development.'
+    risk[1] = f'Medium'#' slightly beyond the normal age range, it is considered moderate risk. Regular annual check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences.'
+    risk[2] = f'High'#' beyond the normal age range, it is considered high risk. Biannual follow-up check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences (e.g., being mindful of screen time for computers and phones and taking breaks, wearing sunglasses to protect against blue light and UV rays during outdoor activities). Additionally, consider supplementing with lutein or fish oil.'
     risk[3] = f' far beyond the normal age range, it is considered extremely high risk with a significant potential for severe myopia progression. Quarterly follow-up check-ups are recommended, along with the need to adjust lifestyle and minimize external environmental influences (e.g., being mindful of screen time for computers and phones and taking breaks, maintaining proper posture, wearing sunglasses to protect against blue light and UV rays during outdoor activities). Additionally, consider supplementing with lutein or fish oil, and adopting proactive treatment measures for control.'
     samples_not_enought = 'The number of cases within this age group is insufficient to provide statistically significant risk classification.'
 elif language_type== 2:
@@ -188,79 +208,55 @@ def x(age):
     return int(m.group(1)) + int(m.group(2)) / 12
 
 if round(x(age)) in range(3, 17):
-    if report == '軸長' and language_type!=0:
+    if report == '軸長' and language_type == 2:
         p0, p50, p75, p90, p100 = area.loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y < p50:
-                if language_type== 1:
-                    display(f'{eye}{risk[0]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[0]}', target='advice')
+                display(f'{eye}{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
             elif y < p75:
-                if language_type== 1:
-                    display(f'{eye}{risk[1]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[1]}', target='advice')
+                display(f'{eye}{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
             elif y < p90:
-                if language_type== 1:
-                    display(f'{eye}{risk[2]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[2]}', target='advice')
+                display(f'{eye}{risk[2]}', target='advice')
                 localStorage.setItem(eye, 2)
             else:
-                if language_type== 1:
-                    display(f'{eye}{risk[3]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[3]}', target='advice')
+                display(f'{eye}{risk[3]}', target='advice')
                 localStorage.setItem(eye, 3)
 
-    if report == '軸長' and language_type == 0:
-            p0, p50, p75, p90, p100 = area.loc[round(x(age))]
-            eye="ODOS"
-            if y1 < p50 or y2 < p50:
-                display(f'{risk[0]}', target='advice')
-                localStorage.setItem(eye, 0)
-            elif y1 < p75 or y2 < p75:
-                display(f'{risk[1]}', target='advice')
-                localStorage.setItem(eye, 1)
-            elif y1 < p90 or y2 < p90:
-                display(f'{risk[2]}', target='advice')
-                localStorage.setItem(eye, 2)
-            else:
-                display(f'{risk[2]}', target='advice')
-                localStorage.setItem(eye, 2)
+    if report == '軸長' and language_type != 2:
+        p0, p50, p75, p90, p100 = area.loc[round(x(age))]
+        eye="ODOS"
+        if y1 < p50 or y2 < p50:
+            display(f'{risk[0]}', target='advice')
+            localStorage.setItem(eye, 0)
+        elif y1 < p75 or y2 < p75:
+            display(f'{risk[1]}', target='advice')
+            localStorage.setItem(eye, 1)
+        elif y1 < p90 or y2 < p90:
+            display(f'{risk[2]}', target='advice')
+            localStorage.setItem(eye, 2)
+        else:
+            display(f'{risk[2]}', target='advice')
+            localStorage.setItem(eye, 2)
 
-    if report == '球面度數'  and language_type!=0:
+    if report == '球面度數'  and language_type == 2:
         p100, p50, p25, p10, p0 = area.loc[round(x(age))]
         for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
             if y > p50:
-                if  language_type== 1:
-                    display(f'{eye}{risk[0]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[0]}', target='advice')
+                display(f'{eye}{risk[0]}', target='advice')
                 localStorage.setItem(eye, 0)
             elif y > p25:
-                if language_type== 1:
-                    display(f'{eye}{risk[1]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[1]}', target='advice')
+                display(f'{eye}{risk[1]}', target='advice')
                 localStorage.setItem(eye, 1)
             elif y > p10:
-                if language_type== 1:
-                    display(f'{eye}{risk[2]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[2]}', target='advice')
+                display(f'{eye}{risk[2]}', target='advice')
                 localStorage.setItem(eye, 2)
             else:
-                if language_type== 1:
-                    display(f'{eye}{risk[3]}', target=f'advice{ODOS}')
-                else :
-                    display(f'{eye}{risk[3]}', target='advice')
+                display(f'{eye}{risk[3]}', target='advice')
                 localStorage.setItem(eye, 3)
                 
-    if report == '球面度數' and language_type == 0:
+    if report == '球面度數' and language_type != 2:
             p100, p50, p25, p10, p0 = area.loc[round(x(age))]
             eye="ODOS"
             if y1 < p25 or y2 < p25:
@@ -274,11 +270,7 @@ if round(x(age)) in range(3, 17):
                 localStorage.setItem(eye, 2)
 
 else:
-    if language_type== 1 :
-        display(samples_not_enought, target='adviceOD')
-        display(samples_not_enought, target='adviceOS')
-    else :
-        display(samples_not_enought, target='advice')
+    display(samples_not_enought, target='advice')
     localStorage.setItem('右眼', '')
     localStorage.setItem('左眼', '')
 
@@ -333,6 +325,9 @@ def attu_calculate(age,slope,start_point):
     sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
     attu = (slope /  sd_now) *0.0962
     return -attu
+def attu_calculate_AL(attu,start_point):
+    attu = attu + ((start_point - 25) * (-0.003))
+    return attu
 OD_zero = False
 OS_zero = False
 if len(records)!=0 and round(x(age)) in range(3,17):
@@ -348,11 +343,6 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     OD_zero=True
                 else:
                     current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
-                if current_slope_rate_OD > 0 :
-                    current_slope_rate_OD = 0
-                    current_slope_attu_OD = 0
-                else:
-                    current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
                 odp_first=False
             else :
                 if OD_zero ==True and x(age)-x(record[11]) > 0:
@@ -374,11 +364,6 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     OS_zero=True
                 else:
                     current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
-                if current_slope_rate_OS > 0 :
-                    current_slope_rate_OS = 0
-                    current_slope_attu_OS = 0
-                else:
-                    current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
                 osp_first=False
             else :
                 if OS_zero ==True and x(age)-x(record[11]) > 0:
@@ -388,32 +373,69 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                 plt.scatter(x(record[11]), record[os], color='blue', marker='.')
             y_os_record.append(record[os])
             #print("os is : " + str(record[os]))
+    if report =='球面度數':
+        if current_slope_rate_OD > 0 :
+            current_slope_rate_OD = 0
+            current_slope_attu_OD = 0
+        else:
+            current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
+        if current_slope_rate_OS > 0 :
+            current_slope_rate_OS = 0
+            current_slope_attu_OS = 0
+        else:
+            current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+    else:
+        current_slope_attu_OD=0.15
+        current_slope_attu_OS=0.15
+        if current_slope_rate_OD < 0 :
+            current_slope_rate_OD = 0
+            current_slope_attu_OD = 0
+        else:
+            current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,y1)
+        if current_slope_rate_OS < 0 :
+            current_slope_rate_OS = 0
+            current_slope_attu_OS = 0
+        else:
+            current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,y2)
+        # print('計算完得到的衰減率',current_slope_attu_OD,current_slope_attu_OS,round(x(age)))
     # print(f'Last age :{x_age_record[1]}  OD : {y_od_record[1]} OS : {y_os_record[1]} slope {current_slope_rate_OD}')
     # print(f'Now age :{x_age_record[0]}  OD : {y_od_record[0]} OS : {y_os_record[0]} slope {current_slope_rate_OS}')
     plt.plot(x_age_record, y_od_record, color='red', alpha=0.2)
     plt.plot(x_age_record, y_os_record, color='blue', alpha=0.2)
 else : 
-    current_slope_rate_OD=-1.078
-    current_slope_rate_OS=-1.078
-    current_slope_attu_OD=0.1038
-    current_slope_attu_OS=0.1038
-    if  round(x(age)) in range(3,17):
-        current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
-        current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y2)
+    if report =='球面度數':
+        current_slope_rate_OD=-1.078
+        current_slope_rate_OS=-1.078
+        current_slope_attu_OD=0.1038
+        current_slope_attu_OS=0.1038
+        if  round(x(age)) in range(3,17):
+            current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
+            current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y2)
+    else:
+        current_slope_rate_OD=1.326#1.127
+        current_slope_rate_OS=1.326#1.127
+        current_slope_attu_OD=0.15
+        current_slope_attu_OS=0.15
+        for i in range(round(x(age))-3):
+            current_slope_rate_OD = current_slope_rate_OD * ( 1 - current_slope_attu_OD)
+        current_slope_rate_OS = current_slope_rate_OD
+        current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,y1)
+        current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,y2)
+################################## 
 ################################## 
 if y1 != "":
     if y1 == 0 and report == '軸長':
         y1 = 19.5
-    if language_type != 0 :
-        plt.scatter(x(age), y1, color='red', label='OD now' , marker='D', zorder=9) 
+    if language_type == 1 :
+        plt.scatter(x(age), y1, color='red', label='OD now' , marker='$R$', zorder=9) 
     else :
         plt.scatter(x(age), y1, color='red', label='右眼當前\n資料' , marker='$R$', zorder=9) 
     #print("od is : " + str(y1 ))
 if y2 != "":
     if y2 == 0 and report == '軸長':
         y2 = 19.5
-    if language_type != 0 :
-        plt.scatter(x(age), y2, color='blue', label='OS now' , marker='D', zorder=9)
+    if language_type == 1 :
+        plt.scatter(x(age), y2, color='blue', label='OS now' , marker='$L$', zorder=9)
     else :
         plt.scatter(x(age), y2, color='blue', label='左眼當前\n資料' , marker='$L$', zorder=9)
     #print("os is : " + str(y2))
@@ -434,6 +456,14 @@ def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,cont
         if (current_slope_rate > -0.01) :
             current_slope_rate = 0
     return curve_point
+def curve_calculation_AL(curve_point,slope,attu,age,control_rate):
+    # print(current_slope_rate)
+    current_slope_rate = slope * (1 - attu ) * (1 - control_rate)
+    for i in range(1,len(curve_point)):#(let i = 1; i < age_growth.length; i++) {
+        curve_point[i] = curve_point[i-1] + current_slope_rate
+        current_slope_rate = current_slope_rate * (1 - attu ) * (1 - control_rate)
+        age = age + 1
+    return curve_point
 ##################################
 growth_without_control_rate=[0]*agecounter#this is for initial
 growth_with_control_rate=[0]*agecounter#this is for initial
@@ -449,34 +479,56 @@ elif suggestion == "漸進多焦點眼鏡":
     control_rate = 0.10
 else :
     control_rate = 0.13
-if y1 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
+if y1 != "" and round(x(age)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y1
     growth_with_control_rate[0] = y1
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
     growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
     if language_type != 0: 
-        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='No treatment')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#e34fe8', linewidth=0.7, label='Control')#, alpha=0.7
+        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='OD \nNo treatment')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#e34fe8', linestyle='--', linewidth=0.9, label='OD Control')#, alpha=0.7
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制\n成長趨勢')#, alpha=0.7
         plt.plot(x_age_series, growth_with_control_rate, color='#e34fe8', linestyle='--', linewidth=0.9, label='右眼有控制\n成長趨勢')#, alpha=0.7
-if y2 != "" and round(x(age)) in range(3,17):#and slope_groupby[sex].get(suggestion)
+if y2 != "" and round(x(age)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = y2
     growth_with_control_rate[0] = y2
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
     growth_with_control_rate = curve_calculation(growth_with_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate) 
     if language_type != 0: 
-        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='No treatment')#, alpha=0.7
-        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linewidth=0.7, label='Control')#, alpha=0.7
+        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='OS \nNo treatment')#, alpha=0.7
+        plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linestyle='--', linewidth=0.9, label='OS Control')#, alpha=0.7
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='左眼無控制\n成長趨勢')#, alpha=0.7
         plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linestyle='--', linewidth=0.9, label='左眼有控制\n成長趨勢')#, alpha=0.7  
+if y1 != "" and round(x(age)) in range(3,17) and report == '軸長':
+    growth_without_control_rate[0] = y1
+    print('OD slope is ',current_slope_rate_OD,y1)
+    growth_without_control_rate = curve_calculation_AL(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
+    if language_type != 0: 
+        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='OD No treatment')#, alpha=0.7
+    else:
+        plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制\n成長趨勢')#, alpha=0.7
+if y2 != "" and round(x(age)) in range(3,17) and report == '軸長':
+    growth_without_control_rate[0] = y2
+    print('OS slope is ',current_slope_rate_OS,y2)
+    growth_without_control_rate = curve_calculation_AL(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+    if language_type != 0: 
+        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='OD No treatment')#, alpha=0.7
+    else:
+        plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='右眼無控制\n成長趨勢')#, alpha=0.7
 ##################################
 # plt.plot(3, 19.5 , linestyle='none' , marker='None', alpha=0, label=db_version)
 if report == '軸長':
-    plt.legend(loc='center right' , bbox_to_anchor=(1.21, 0.25),fontsize=8)
+    if language_type == 1:
+        plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.35),fontsize=8)
+    else:
+        plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.35),fontsize=8,prop=custom_font)
 if report == '球面度數':
-    plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.55),fontsize=8,prop=custom_font)
+    if language_type == 1:
+        plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.55),fontsize=8)
+    else:
+        plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.55),fontsize=8,prop=custom_font)
 plt.xticks(range(3, 17 if x(age) + 1 <= 16 else int(x(age)) + 2))
 plt.yticks(range(20, 30) if report == '軸長' else range(-8, 7))
 if language_type== 0 :

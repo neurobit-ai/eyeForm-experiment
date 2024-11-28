@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>eyeForm Report - Neurobit AI</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../../../favicon/site.webmanifest">
+    
+    <link rel="stylesheet" href="../../../css/bootstrap.513.min.css">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <script src="../../../js/jquery-3.3.1.min.js"></script>
+    <script src="../../../js/popper.min.js"></script>
+    <script src="../../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../../js/jquery.validate.min.js"></script>
+    <script src="../../../js/main.js"></script>
+
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <py-config>
+      packages = ["pandas", "matplotlib", "Jinja2", "numpy", "scipy"]
+
+      [[fetch]]
+      files = ["./data_to_plot.pkl"]
+    </py-config>
+    <style type="text/css">
+      .plot-div { 
+          width: 100%;
+          margin: 0 auto; 
+      }
+      .ptable-div { 
+            font-size: 14px;
+        }
+      .frame-div { 
+          width: 80%;
+          margin: 0 auto;
+      }
+      .target-table tr:nth-child(odd) {
+          background-color: #CCDFEF;
+          border-collapse: collapse;
+          border: 2px solid #FFFFFF;
+          width: 80%;
+      }
+      .target-table tr:nth-child(even) {
+          background-color: #E7F0F7;
+          border-collapse: collapse;
+          border: 2px solid #FFFFFF;
+          width: 80%;
+      }
+      td.first-row {
+          width: 20%; /* 設置特定行的寬度 */
+      }
+      .drawing-area {
+        width: 100%;
+        height: auto;
+      }
+          .print-only {
+            display: none;
+          }
+        .justified-text {
+        text-align: justify;
+          }
+          @media only screen and (max-width: 850px) {
+      .scale_down {
+        transform: scale(0.7);
+        transform-origin: left;
+      }
+      #plot {
+        height: 450px;
+      }
+      .scale_down_table {
+        transform: scale(0.6);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 600px) {
+      .scale_down {
+        transform: scale(0.55);
+        transform-origin: left;
+      }
+      #plot {
+        height: 350px;
+      }
+      .scale_down_table {
+        transform: scale(0.525);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 500px) {
+      .scale_down {
+        transform: scale(0.4);
+        transform-origin: left;
+      }
+      #plot {
+        height: 250px;
+      }
+      .scale_down_table {
+        transform: scale(0.45);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 450px) {
+      .scale_down {
+        transform: scale(0.35);
+        transform-origin: left;
+      }
+      #plot {
+        height: 150px;
+      }
+      .scale_down_table {
+        transform: scale(0.37);
+        transform-origin: left;
+      }
+      }
+    @media print {
+      body {
+              -webkit-print-color-adjust: exact; /* 對於Webkit內核瀏覽器 */
+              print-color-adjust: exact; /* 標準屬性 */
+          }
+    .custom-row {
+      font-size: 9pt; 
+    }
+    .ptable-div { 
+            font-size: 12px;
+      }
+    .no-print {
+      display: none;
+    }
+    .scale_down {
+      transform: scale(0.75);
+      transform-origin: top;
+    }
+    #plot {
+      height: 450px;
+    }
+    .page-break { page-break-before: always; }
+    .fixed-footer {
+              position: fixed;
+              bottom: 0;
+              width: 95%;
+    }
+      .print-only {
+        display: block;
+      }
+      .print-font-size {
+        font-size: 13px;
+    }
+  }
+    </style>
+  </head>
+  <body class="p-3 m-0 border-0 bd-example">
+    <div><img class="print-only" src="../group 01.png" style="width: 100%;height: auto;"></div>
+    <h1 class="no-print"align="center">Analysis of Myopia Trends in School-Age Children</h1>
+    <h2 align="center"> ～Eye Care Today, Clear Vision Tomorrow～</h2>
+    <p class="print-only justified-text" style="font-size: 20px;">
+      「The myopia epidemic has become virtually impossible to ignore. In 2050, 50% of the world’s population was affected.」– American Academy of Ophthalmology</p>
+      <p class="print-only justified-text" style="font-size: 15px;">
+      Myopia is steadily deteriorating in ophthalmic condition. According to statistics in the United States, 33% of individuals aged 12 and above suffer from myopia. In Asian regions such as Taiwan, Japan, and South Korea, the prevalence is even higher, reaching 46.7%. Myopia exceeding 6 diopters is classified as high myopia, and studies have shown that the ocular tissues in this condition are at a significantly higher risk of developing complications, such as retinal tears, retinal detachment, macular neovascularization, and glaucoma. These severe consequences may lead to irreversible vision loss or blindness,  seriously affects the quality of life.</p>
+    <p class="print-only justified-text" style="font-size: 15px;">
+        eyeForm is a vision care and myopia control risk analysis platform specifically designed for school-aged children. By leveraging data collected through refractometers or axial length measuring devices, we conduct deep analyses to provide accurate assessments for future myopia management. The eyeForm system predicts possible changes based on individual axial length values and spherical diopters, offering personalized lifestyle and nutritional recommendations to comprehensively support children’s vision health management.
+        Our mission is to assist parents and healthcare professionals to identify potential issues early through precise risk analysis, effectively controlling the progression of myopia and safeguarding long-term vision health for children.
+      </p>
+    <h4 align="center" class = "page-break"><br><span id="site"></span>：<span id="medRecNo"></span> Age : <span id="age_tr"></span>  Gender : <span id="sex_tr"></span></h4>
+      <div class="plot-div ">
+        <table class="table" align="center"  >
+          <thead class="table-group-divider" >
+            <tr class="scale_down no-border">
+              <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
+            </tr>
+            <tr class="custom-row no-border scale_down_table">
+              <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div ptable-div"></div></td>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div class="frame-div page-break ">
+      <table class="table" align="center"  >
+        <tbody class="table-group-divider target-table" >
+          <tr  align="center">
+            <th colspan="3" ><span id="site02"></span>：<span id="medRecNo02"></span> Age : <span id="age02"></span><span id="age" style="display: none;"></span>  Gender : <span id="sex_tr02"></span></th><!-- <span id="now"></span> -->
+          </tr>
+          <tr>
+            <td class="first-row "></td>
+            <td style="width: 40%;">OD</td>
+            <td style="width: 40%;">OS</td>
+          </tr>
+        <tr>
+          <td >SPH(D)</td>
+          <td><span id="od2"></span></td>
+          <td><span id="os2"></span></td>
+        </tr>
+        <tr>
+          <td >CYL(D)</td>
+          <td><span id="od3"></span></td>
+          <td><span id="os3"></span></td>
+        </tr>
+        <tr>
+          <td >Axis(°)</td>
+          <td><span id="od4"></span></td>
+          <td><span id="os4"></span></td>
+        </tr>
+        <tr style="display:none;">
+          <td >AL(mm)</td>
+          <td><span id="od5"></span></td>
+          <td><span id="os5"></span></td>
+        </tr>
+        <tr>
+          <td >Risk assessment</td>
+          <td colspan="2"><div id="advice"></div></td>
+        </tr>
+        <tr>
+          <td > Treatment recommendations: </td>
+          <td colspan="2"><span id="suggestion"></span></td>
+        </tr>
+        <tr style="display: none;">
+          <td >BCVA</td>
+          <td><span id="od1"></span></td>
+          <td><span id="os1"></span></td>
+        </tr>
+        <tr class="custom-row" style="display:none; border-top: none; border-bottom: none;">
+          <td colspan="2" align="left"></td>
+          <td><span id="sex" ></span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div id="risk_content" class="justified-text print-font-size"></div>
+    <p>Notes</p>
+    <ul class="justified-text print-font-size" >
+      <li>Diopter(D)：The spherical diopter (measured in Diopters, D) is used to correct myopia or hyperopia in children. For myopia correction in children, the range typically falls between -0.50 D and -6.00 D, while for hyperopia correction, it is between +0.50 D and +4.00 D. Each 1.00 diopter (D) corresponds to a focal length of approximately 1 meter, where negative values indicate myopia and positive values indicate hyperopia. The spherical diopter may change as the child grows.</li>
+      <li>Cylinder(D)：
+        Astigmatism correction in children indicates the degree of refractive error in the cornea or lens, measured in diopters (D). The values can be either positive or negative. For children, the typical range of astigmatism correction falls between 0.00 and ±3.00 D. Higher diopter values indicate more severe astigmatism, and the degree of astigmatism may change as the child grows.</li>
+      <li>Axis(°)：The axis refers to the optical axis angle of eyeglasses or contact lenses used to correct astigmatism. It ranges from 0° to 180° and indicates the direction of astigmatism correction.</li>
+      <li>Axial length(mm)：Axial length refers to the distance from the anterior surface of the cornea to the center of the macula on the retina. In children, the axial length typically ranges from 22 mm to 24 mm and gradually increases with age. The elongation of axial length is associated with the progression of myopia. A child’s axial length can significantly impact their refractive status and overall vision health.</li>
+    </ul>
+    <p class="no-print justified-text" style="display:none;">References : Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</p>
+    </div>
+    <p class="print-only page-break " >
+      <h3 align="center" class="print-only">More informantion</h3>
+      <b class="print-only" style="font-size: 32px;">Neurobit official web site<br></b>
+      <span class="print-only">Scan the QR Code below to visit Neurobit official web site<br></span>
+      <img class="print-only" src="../web QR Code.png" style="width: 25%;height: auto;"><br><br>
+      <b class="print-only" style="font-size: 32px;">Special deal<br></b>
+      <span class="print-only justified-text ">
+        Scan the QR code to purchase health supplements from our partner vendor <i>TCMC</i>.Use the promo code <strong><i>Bit10forvip</i></strong>  to get a 10% discount.<br>
+        <!-- Or use the promo code <strong><i>Neuro15VIP</i></strong>  to get a 15% discount.<br> -->
+        </span><br>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;"><img class="print-only" src="../Lutein product.png" style="width: 50%;height: auto;"><img class="print-only" src="../Lutein product 3set.png" style="width: 50%;height: auto;"></div> <br>
+    </p>
+    <p class="print-only page-break " >
+      <h3 align="center" class="print-only">References</h3>
+      <ul class="print-only justified-text " style="font-size: 14px; ">
+        <li>Hsieh, M. W., Chang, H. C., Chen, Y. H., & Chien, K. H. (2022). Classification-Based Approaches to Myopia Control in a Taiwanese Cohort. Frontiers in Medicine, 9, 879210.</li>
+        <li>Wu, P. C., Tsai, C. L., Wu, H. L., et al. (2013). Outdoor activity during class recess reduces myopia onset and progression in school children. Ophthalmology, 120, 1080-1085.</li>
+        <li>Hemphälä, H., & Eklund, J. (2012). A visual ergonomics intervention in mail sorting facilities: Effects on eyes, muscles and productivity. Applied Ergonomics, 43(1), 217–229.</li>
+        <li>Brown, N.A., Bron, A.J., Harding, J.J., & Dewar, H.M. (1998). Nutrition supplements and the eye. Eye, 12(Pt 1), 127–133.</li>
+        <li>Lien, E.L., & Hammond, B.R. (2011). Nutritional influences on visual development and function. Prog. Retin. Eye Res.</li>
+        <li>Georgiou, T., & Prokopiou, E. (2016). Role of omega-3 fatty acids for eye health. In Omega-3 Fatty Acids: Keys to Nutritional Health (pp. 251–261). Springer International Publishing.</li>
+        <li>American Academy of Ophthalmology Preferred Practice Patterns Committee. (2020). Comprehensive Adult Medical Eye Evaluation PPP.</li>
+        <li>Tosini, G., Ferguson, I., & Tsubota, K. (2016). Effects of blue light on the circadian system and eye physiology. Mol Vis, 22, 61–72.</li>
+        <li>Stringham, J.M., Bovier, E.R., Wong, J.C., & Hammond Jr, B.R. (2010). The influence of dietary lutein and zeaxanthin on visual performance. J. Food Sci., 75, 24-29.</li>
+        <li>Sun, Y., Xu, F., Zhang, T., Liu, M., Wang, D., Chen, Y., & Liu, Q. (2015). Orthokeratology to control myopia progression: a meta-analysis. PloS One, 10, e0124535.</li>
+        <li>Donovan L, Sankaridurg P, Ho A, Naduvilath T, Smith EL 3rd, Holden BA.. Myopia progression rates in urban children wearing single-vision spectacles. Optom Vis Sci. 2012; 89(1): 27–32. - PMC - PubMed</li>
+        <li>Qin Z, Peng T, Zhang Z, et al. . Myopia progression and stabilization in school-aged children with single-vision lenses. Acta Ophthalmol 2022;100:e950–6. 10.1111/aos.15038 - DOI - PubMed</li>
+        <li>Sankaridurg P, Holden B, Smith E, III, et al. Decrease in rate of myopia progression with a contact lens designed to reduce relative peripheral hyperopia: one-year results. Invest Ophthalmol Vis Sci. 2011;52:9362–9367. - PubMed</li>
+        <li>CHAMBERLAIN P, PEIXOTO-DE-MATOS SC, LOGAN NS et al. 2019. A 3-year Randomized Clinical Trial of MiSight Lenses for Myopia Control. Optom Vis Sci, 96(8): 556-567.</li>
+        <li>HASEBE S, JUN J, VARNAS SR. 2014. Myopia Control with Positively Aspherized Progressive Addition Lenses: a 2-Year, Multicenter, Randomized, Controlled Trial. Invest Ophthalmol Vis Sci, 55: 7177-88.</li>
+        <li>SANKARIDURG P, DONOVAN L, VARNAS S et al. 2010. Spectacle Lenses Designed to Reduce Progression of Myopia: 12-Month Results. Optom Vis Sci 87: 631-41.</li>
+        <li>CHENG D, WOO GC, DROBE B et al. 2014. Effect of Bifocal and Prismatic Bifocal Spectacles on Myopia Progression in Children: Three-Year Results of a Randomized Clinical Trial. JAMA Ophthalmol, 132: 258-64.</li>
+        <li>COMET2 2011. Progressive-addition lenses versus single-vision lenses for slowing progression of myopia in children with high accommodative lag and near esophoria. Invest Ophthalmol Vis Sci, 52, 2749-57.</li>
+        <li>GWIAZDA, J., HYMAN, L., HUSSEIN, M., EVERETT, D., NORTON, T. T., KURTZ, D., LESKE, M. C., MANNY, R., MARSH-TOOTLE, W. & SCHEIMAN, M. 2003. A randomized clinical trial of progressive addition lenses versus single vision lenses on the progression of myopia in children. Invest Ophthalmol Vis Sci, 44, 1492-500.</li>
+      </ul> 
+    </p>
+
+  <div class="frame-div fixed-footer">
+    <table class="table" align="center"  >
+    <tbody  class="table-group-divider" >
+      <tr>
+        <td align="left">© 2024 Neurobit Technologies Co., Ltd.</td>
+        <td align="left" ></td>
+        <td><span id="copyrightid" align="right" ></span></td>
+        </tr>
+      </tbody>
+      <tbody class="no-print" style="border-bottom: none;">
+        <tr>
+          <td colspan="3" align="center"><button onclick="printPage()">print</button></td>
+        </tr>
+      </tbody> 
+    </table>
+    </div>
+    <script>
+
+    function printPage() {
+      window.print(); // 触发浏览器的列印功能
+    }
+      //now = new Date();
+      //document.getElementById('now').innerHTML = now.toLocaleString('en-US');
+      document.getElementById('site').innerHTML = localStorage.getItem('site');
+      document.getElementById('medRecNo').innerHTML = localStorage.getItem('medRecNo');
+      sex = document.getElementById('sex').innerHTML = localStorage.getItem('sex');
+      age = document.getElementById('age').innerHTML = localStorage.getItem('age');
+      od1 = document.getElementById('od1').innerHTML = parseFloat(localStorage.getItem('od1')).toFixed(1);
+      os1 = document.getElementById('os1').innerHTML = parseFloat(localStorage.getItem('os1')).toFixed(1);
+      od2 = document.getElementById('od2').innerHTML = parseFloat(localStorage.getItem('od2')).toFixed(2);
+      os2 = document.getElementById('os2').innerHTML = parseFloat(localStorage.getItem('os2')).toFixed(2);
+      od3 = document.getElementById('od3').innerHTML = parseFloat(localStorage.getItem('od3')).toFixed(2);
+      os3 = document.getElementById('os3').innerHTML = parseFloat(localStorage.getItem('os3')).toFixed(2);
+      od4 = document.getElementById('od4').innerHTML = parseFloat(localStorage.getItem('od4'));
+      os4 = document.getElementById('os4').innerHTML = parseFloat(localStorage.getItem('os4'));
+      od5 = document.getElementById('od5').innerHTML = parseFloat(localStorage.getItem('od5')).toFixed(2);
+      os5 = document.getElementById('os5').innerHTML = parseFloat(localStorage.getItem('os5')).toFixed(2);
+      suggestion = document.getElementById('suggestion').innerHTML = localStorage.getItem('suggestion');
+      if (suggestion == '一般眼鏡')
+        document.getElementById('suggestion').innerHTML = 'Regular glasses';
+      else if(suggestion == '漸進多焦點眼鏡')
+        document.getElementById('suggestion').innerHTML = 'Progressive addition spectacles';
+      else if(suggestion == '雙焦眼鏡')
+        document.getElementById('suggestion').innerHTML = 'Executive bifocals';
+      else if(suggestion == '周邊離焦鏡片')
+        document.getElementById('suggestion').innerHTML = 'Peripheral defocus spectacles';
+      else if(suggestion == '軟式隱形眼鏡')
+        document.getElementById('suggestion').innerHTML = 'Soft contact lens for myopia control';
+      else
+        document.getElementById('suggestion').innerHTML = 'Regular glasses';
+      //advice = parseFloat(localStorage.getItem('advice'));
+      let previousValue = document.getElementById('advice').textContent;
+
+      function advice_content(advice)
+      {
+        risk_content_div= document.getElementById("risk_content")
+        var ulElement = document.createElement('ul');
+        if (advice == 'High')
+        { 
+          items = [
+                {
+                    text: 'Lifestyle and vision habits',
+                    subItems: ['Outdoor Activities: Spend at least 1 hour outdoors daily to increase exposure to natural light.', 'Vision Breaks: After every 20 minutes of near work, look at an object at least 6 meters away for at least 20 seconds.','Extended Rest: Take a longer break of 10-15 minutes after using electronic devices for 1 hour.','Vision Care: Reduce screen time and consider using orthokeratology lenses (OK lenses) for better eye health.']
+                },
+                {
+                    text: 'Diet and nutrition products',
+                    subItems: ['Balanced Diet: Consume foods rich in vitamins A, C, E, and zinc to support eye health.', 'Supplements: Add high doses of lutein, zeaxanthin, and omega-3 fatty acids to your daily regimen.']
+                },
+                {
+                    text: 'Regular follow-up schedule',
+                    subItems: ['Regular Check-ups: Schedule a vision examination every 3 to 6 months.']
+                }
+            ];
+        }
+        else if (advice == 'Medium')
+        { 
+          items = [
+                {
+                    text: 'Lifestyle and vision habits',
+                    subItems: ['Outdoor Activities: Spend at least 1 hour outdoors daily to increase exposure to natural light.', 'Vision Breaks: After every 20 minutes of near work, look at an object at least 6 meters away for at least 20 seconds.','Extended Rest: Take a longer break of 10-15 minutes after using electronic devices for 1 hour.','Vision Care: Use blue-light-blocking glasses to protect your eyes.']
+                },
+                {
+                    text: 'Diet and nutrition products',
+                    subItems: ['Balanced Diet: Incorporate foods rich in antioxidants, such as blueberries, carrots, and spinach.', 'Supplements: Consider taking lutein, zeaxanthin, and omega-3 fatty acids for better eye health.']
+                },
+                {
+                    text: 'Regular follow-up schedule',
+                    subItems: ['Regular Check-ups: Schedule a vision examination every 6 to 12 months.']
+                }
+            ];
+        }
+        else
+        { 
+          items = [
+                {
+                    text: 'Lifestyle and vision habits',
+                    subItems: ['Outdoor Activities: Spend at least 1 hour outdoors daily to increase exposure to natural light.', 'Vision Breaks: After every 20 minutes of near work, look at an object at least 6 meters away for at least 20 seconds.']
+                },
+                {
+                    text: 'Diet and nutrition products',
+                    subItems: ['Balanced Diet: Ensure adequate intake of vitamins A, C, and E to promote eye health.', 'Supplements: Consider adding omega-3 fatty acids to your diet.']
+                },
+                {
+                    text: 'Regular follow-up schedule',
+                    subItems: ['Regular Check-ups: Have a vision examination at least once a year.']
+                }
+            ];
+        }
+        items.forEach(function(item) {
+                var liElement = document.createElement('li');
+                liElement.textContent = item.text;
+                if (item.subItems && item.subItems.length > 0) {
+                    var subUlElement = document.createElement('ul');
+                    item.subItems.forEach(function(subItem) {
+                        var subLiElement = document.createElement('li');
+                        subLiElement.textContent = subItem;
+                        subUlElement.appendChild(subLiElement);
+                    });
+                    liElement.appendChild(subUlElement);
+                }
+                ulElement.appendChild(liElement);
+            });
+              risk_content_div.appendChild(ulElement);
+      }
+
+      setInterval(() => {
+      let advice = document.getElementById('advice').textContent;
+            if (advice !== previousValue) {
+              previousValue = advice;
+              advice_content(advice)
+            }
+        }, 1000);
+      if(od5 == 19.5)
+        document.getElementById("od5").textContent="< 20";
+      else  if(od5 == 30.5)
+        document.getElementById("od5").textContent="> 30";
+
+      if(os5 == 19.5)
+        document.getElementById("os5").textContent="< 20";
+      else  if(os5 == 30.5)
+        document.getElementById("os5").textContent="> 30";
+
+      report = localStorage.getItem('report');
+      var age_content = document.getElementById("age").textContent;
+      document.getElementById("age_tr").textContent=age_content.replace("歲" , "y");
+      document.getElementById("age_tr").textContent=document.getElementById("age_tr").textContent.replace("個月" , "m");
+      var sex_content = document.getElementById("sex").textContent;
+      if( sex_content=="男" || sex_content=="Male")
+        document.getElementById("sex_tr").textContent="Male"
+      else
+      document.getElementById("sex_tr").textContent="Female"
+
+      document.getElementById("site02").textContent = document.getElementById("site").textContent
+      document.getElementById("medRecNo02").textContent = document.getElementById("medRecNo").textContent
+      document.getElementById("age02").textContent = document.getElementById("age_tr").textContent
+      document.getElementById("sex_tr02").textContent = document.getElementById("sex_tr").textContent
+      if (report == '軸長') {
+        y1 = parseFloat(od5);
+        y2 = parseFloat(os5);
+      }
+      if (report == '球面度數') {
+        y1 = parseFloat(od2);
+        y2 = parseFloat(os2);
+      }
+      Y = parseInt(localStorage.getItem('Y'));
+      M = parseInt(localStorage.getItem('M'));
+      features = [(sex=='男')?1:0, Y+M/12, od1, od2, od3, od4, os1, os2, os3, os4];
+      features = features.map(function(x) { return parseFloat(x); });
+      // $.ajax({
+      //   url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+      //   type: 'POST',
+      //   dataType: 'json',
+      //   data: JSON.stringify(features),
+      //   complete: function(data) {
+      //     suggestion = data['responseText'];
+      //     console.log(suggestion);
+
+      //     if (suggestion == '不處置') $('#suggestion').html('No suggestion required.');
+      //     else if (suggestion == '一般眼鏡') $('#suggestion').html('Wearing regular glasses.');
+      //     else if (suggestion == '散瞳劑') $('#suggestion').html('Use Mydriatics.');
+      //     else if (suggestion == '一般眼鏡散瞳劑') $('#suggestion').html('Wearing regular glasses and use Mydriatics.');
+      //     else if (suggestion == '角膜塑型片') $('#suggestion').html('Corneal reshaping lenses.');
+      //     else 
+      //     {
+      //       $('#suggestion').html('No suggestion required.');
+      //       suggestion='不處置'
+      //     }
+      //     /*
+      //     if (suggestion == '不處置') $('#suggestion').html('No suggestion required.');
+      //     else if (suggestion == '低散瞳劑')$('#suggestion').html('Low-concentration Mydriaticst.');
+      //     else if (suggestion == '中散瞳劑')$('#suggestion').html('Medium-concentration Mydriatics.');
+      //     else if (suggestion == '高散瞳劑')$('#suggestion').html('Hight-concentration Mydriatics.');
+      //     else if (suggestion == '一般眼鏡')$('#suggestion').html('Wearing regular glasses.');
+      //     else if (suggestion == '一般眼鏡＋中散瞳劑')$('#suggestion').html('Wearing regular glasses and Medium-concentration Mydriatics.');
+      //     else if (suggestion == '角膜塑型片') $('#suggestion').html('Corneal reshaping lenses.');
+      //     else $('#suggestion').html('No suggestion required.');
+      //     */
+      //   }
+      // });
+      language_type=1;// 0 : traditional chinese , 1 : english , 2 : simple chinese
+      records = localStorage.getItem('records');
+    </script>
+    <py-script src="../plot.py"></py-script>
+    <py-script src="../table.py"></py-script>
+  </body>
+</html>
