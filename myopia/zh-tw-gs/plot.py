@@ -10,7 +10,7 @@ attu_interval =  [0.039,0.033,0.044,0.039,0.033, 0.044,0.056, 0.056,0.042, 0.053
 import pandas as pd
 import numpy as np
 import pickle
-with open('data_to_plot.pkl', 'rb') as f:
+with open('../data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
 
 from datetime import datetime

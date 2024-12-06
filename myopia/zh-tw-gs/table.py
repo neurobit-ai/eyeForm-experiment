@@ -3,7 +3,7 @@ if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
 import re
 import pickle
-with open('data_to_plot.pkl', 'rb') as f:
+with open('../data_to_plot.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
 #with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
     #data_al = pickle.load(f)
