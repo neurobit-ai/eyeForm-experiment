@@ -745,7 +745,7 @@
                       <option value="高散瞳劑">高散瞳劑</option>
                     </select>
                   </div>
-                  <div class="col-4 form-group" style="display: none;">
+                  <div class="col-4 form-group">
                     <label class="form-label" for="treatment3">角膜塑型片</label>
                     <select class="form-select" name="treatment3" id="treatment3">
                       <option value=""></option>
@@ -1355,7 +1355,7 @@
           {
             (document.getElementById('os4ID_warning')).textContent="";
           }
-          if(check_value_func(document.getElementById('treatment1').value) )//& check_value_func(document.getElementById('treatment3').value)
+          if(check_value_func(document.getElementById('treatment1').value) & check_value_func(document.getElementById('treatment3').value) )
           { 
             check=false;
             (document.getElementById('treatment_wm')).textContent="⚠️請選擇一種處置方式";

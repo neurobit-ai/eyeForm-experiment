@@ -477,6 +477,8 @@ elif suggestion == "雙焦眼鏡":
     control_rate = 0.50
 elif suggestion == "漸進多焦點眼鏡":
     control_rate = 0.10
+elif suggestion == "角膜塑型片":
+    control_rate = 0.44
 else :
     control_rate = 0.13
 if y1 != "" and round(x(age)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
