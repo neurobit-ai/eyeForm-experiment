@@ -28,7 +28,30 @@ def _y_m(age,year,sign):
         return f'&nbsp{space01}{m_y}岁{space02}{m.group(2)}个月{sign}'
     else:
         return f'&nbsp{space01}{m_y}y{space02}{m.group(2)}m{sign}'
-    
+def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,control_rate):
+    age_index = age - 3
+    sd_count = ((-0.5) - curve_point[0]) / 0.5
+    attu_age_base = attu_base[age_index]
+    attu_age_interval =  attu_interval[age_index]
+    # print(current_slope_rate)
+    current_slope_rate = current_slope_rate * (1-control_rate)
+    for i in range(1,len(curve_point)):#(let i = 1; i < age_growth.length; i++) {
+        curve_point[i] = curve_point[i-1] + current_slope_rate
+        if (current_slope_rate < -0.1) :
+            current_slope_rate += current_slope_attu * (1-control_rate) * ( 1 + (attu_age_interval*sd_count) )* (1 - attu_age_base)
+        else :
+            current_slope_rate += current_slope_attu * (1-control_rate) * ( 1 + (attu_age_interval*sd_count) )* (1 - attu_age_base) * 0.2
+        if (current_slope_rate > -0.01) :
+            current_slope_rate = 0
+    return curve_point
+def curve_calculation_AL(curve_point,slope,attu,age,control_rate):
+    # print(current_slope_rate)
+    current_slope_rate = slope * (1 - attu ) * (1 - control_rate)
+    for i in range(1,len(curve_point)):#(let i = 1; i < age_growth.length; i++) {
+        curve_point[i] = curve_point[i-1] + current_slope_rate
+        current_slope_rate = current_slope_rate * (1 - attu ) * (1 - control_rate)
+        age = age + 1
+    return curve_point  
 #print(language_type)
 table = {}
 sign='R/L'
