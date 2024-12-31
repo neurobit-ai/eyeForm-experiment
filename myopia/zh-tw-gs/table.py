@@ -1,6 +1,6 @@
 from js import sex, age, y1, y2, records, report , language_type, suggestion
-if 'ale' in sex:
-    sex = {'Male': '男', 'Female': '女'}[sex]
+from pyscript import display
+import numpy as np
 import re
 import pickle
 with open('../data_to_plot.pkl', 'rb') as f:
@@ -28,6 +28,7 @@ def _y_m(age,year,sign):
         return f'&nbsp{space01}{m_y}岁{space02}{m.group(2)}个月{sign}'
     else:
         return f'&nbsp{space01}{m_y}y{space02}{m.group(2)}m{sign}'
+    
 def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,control_rate):
     age_index = age - 3
     sd_count = ((-0.5) - curve_point[0]) / 0.5
@@ -52,7 +53,56 @@ def curve_calculation_AL(curve_point,slope,attu,age,control_rate):
         current_slope_rate = current_slope_rate * (1 - attu ) * (1 - control_rate)
         age = age + 1
     return curve_point  
+
+def slope_calculate(age,slope,start_point):
+    age_index = age - 3
+    sd_count = ((-0.5) - start_point) / 0.5
+    sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
+    slope = slope * sd_now
+    return slope
+
+def attu_calculate(age,slope,start_point):
+    age_index = age - 3
+    sd_count = ((-0.5) - start_point) / 0.5
+    sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
+    attu = (slope /  sd_now) *0.0962
+    return -attu
+
+def attu_calculate_AL(attu,start_point):
+    attu = attu + ((start_point - 25) * (-0.003))
+    return attu
+
+growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
+growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
+attu_base =    [ -0.12,-0.08,-0.04, 0,  0.04, 0.133, 0.136,0.269, 0.3, 0.378, 0.439, 0.596,0.7, 0.77]
+attu_interval =  [0.039,0.033,0.044,0.039,0.033, 0.044,0.056, 0.056,0.042, 0.053, 0.04, 0.098,0.17, 0.23]
+agecounter = int(16-x(age))+2
+if agecounter <= 0:
+    agecounter = 1
+od, os = (18, 24) if report == '軸長' else (15, 21)
+odp_first=True
+osp_first=True
+growth_without_control_rate=[0]*agecounter#this is for initial
+growth_with_control_rate=[0]*agecounter#this is for initial
+
+if suggestion == "一般眼鏡":
+    control_rate = 0.13
+elif suggestion == "軟式隱形眼鏡":
+    control_rate = 0.43
+elif suggestion == "周邊離焦鏡片":
+    control_rate = 0.19
+elif suggestion == "雙焦眼鏡":
+    control_rate = 0.50
+elif suggestion == "漸進多焦點眼鏡":
+    control_rate = 0.10
+elif suggestion == "角膜塑型片":
+    control_rate = 0.44
+else :
+    control_rate = 0.13
+
 #print(language_type)
+if 'ale' in sex:
+    sex = {'Male': '男', 'Female': '女'}[sex]
 table = {}
 sign='R/L'
 table['Age　'] = [f'{_y_m(age,0,sign)}']
@@ -73,9 +123,6 @@ else :
 table['OD_m'] = ['-']
 table['OS_m'] = ['-']
 
-def logarithm_calculate_middle(age_index , age_origin): 
-    difference = np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_index)*data_al[report][sex][suggestion]["b1"]) - np.exp(data_al[report][sex][suggestion]["bo"]+np.log(age_origin)*data_al[report][sex][suggestion]["b1"])
-    return difference
 now_age = x(age)
 agecounter = int(16-x(age))+1
 if agecounter <= 0:
@@ -93,6 +140,82 @@ OD_control_data=[0]*agecounter#this is for initial
 OS_control_data=[0]*agecounter#this is for initial
 OD_control_data[0] = y1
 OS_control_data[0] = y2
+
+OD_zero = False
+OS_zero = False
+if len(records)!=0 and round(x(age)) in range(3,17):
+    for record in records:
+        if record[od] != "":
+            if odp_first :
+                if x(age)-x(record[11]) == 0:
+                    current_slope_rate_OD=0
+                    OD_zero=True
+                else:
+                    current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
+                odp_first=False
+            else :
+                if OD_zero ==True and x(age)-x(record[11]) > 0:
+                    current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
+                    current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
+                    OD_zero = False
+            #print("od is : " + str(record[od]) )
+        if record[os] != "":
+            if osp_first :
+                if x(age)-x(record[11]) == 0:
+                    current_slope_rate_OS=0
+                    OS_zero=True
+                else:
+                    current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
+                osp_first=False
+            else :
+                if OS_zero ==True and x(age)-x(record[11]) > 0:
+                    current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
+                    current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+                    OS_zero=False
+    if report =='球面度數':
+        if current_slope_rate_OD > 0 :
+            current_slope_rate_OD = 0
+            current_slope_attu_OD = 0
+        else:
+            current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
+        if current_slope_rate_OS > 0 :
+            current_slope_rate_OS = 0
+            current_slope_attu_OS = 0
+        else:
+            current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+    else:
+        current_slope_attu_OD=0.15
+        current_slope_attu_OS=0.15
+        if current_slope_rate_OD < 0 :
+            current_slope_rate_OD = 0
+            current_slope_attu_OD = 0
+        else:
+            current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,y1)
+        if current_slope_rate_OS < 0 :
+            current_slope_rate_OS = 0
+            current_slope_attu_OS = 0
+        else:
+            current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,y2)
+else : 
+    if report =='球面度數':
+        current_slope_rate_OD=-1.078
+        current_slope_rate_OS=-1.078
+        current_slope_attu_OD=0.1038
+        current_slope_attu_OS=0.1038
+        if  round(x(age)) in range(3,17):
+            current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
+            current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y2)
+    else:
+        current_slope_rate_OD=1.326#1.127
+        current_slope_rate_OS=1.326#1.127
+        current_slope_attu_OD=0.15
+        current_slope_attu_OS=0.15
+        for i in range(round(x(age))-3):
+            current_slope_rate_OD = current_slope_rate_OD * ( 1 - current_slope_attu_OD)
+        current_slope_rate_OS = current_slope_rate_OD
+        current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,y1)
+        current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,y2)
+
 if  round(x(age)) in range(3,17):
     if report == '球面度數':
         OD_no_management_data = curve_calculation(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
@@ -159,7 +282,6 @@ if  round(x(age)) in range(3,17):
 import json
 records = json.loads(records)
 sign='●'
-od, os = (18, 24) if report == '軸長' else (15, 21)
 for record in records:
     if record[od] or record[os]:
         table['Age　'].insert(0, f'{_y_m(record[11],0,sign)}')

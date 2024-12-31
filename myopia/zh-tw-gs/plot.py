@@ -296,8 +296,6 @@ x_age_series=[0]*agecounter#this is for initial
 x_stdu_value_series=[0]*agecounter#this is for initial
 x_stdd_value_series=[0]*agecounter#this is for initial
 x_age_series[0]=x(age)
-odp_first=True
-osp_first=True
 
 for age_index in range(1,agecounter):
     x_age_series[age_index] = x_age_series[age_index-1] + 1
