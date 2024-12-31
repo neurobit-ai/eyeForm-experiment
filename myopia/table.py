@@ -1,6 +1,8 @@
 from js import sex, age, y1, y2, records, report , language_type, suggestion
 if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
+import numpy as np
+from pyscript import display
 import re
 import pickle
 with open('data_to_plot.pkl', 'rb') as f:

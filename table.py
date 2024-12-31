@@ -1,5 +1,6 @@
 from js import sex, age, y1, y2, records, report
- 
+import numpy as np
+from pyscript import display
 import re
 def _y_m(age):
     m = re.match('(\d+)歲(\d+)', age)
