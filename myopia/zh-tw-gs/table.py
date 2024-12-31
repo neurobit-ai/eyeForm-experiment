@@ -71,6 +71,8 @@ def attu_calculate(age,slope,start_point):
 def attu_calculate_AL(attu,start_point):
     attu = attu + ((start_point - 25) * (-0.003))
     return attu
+import json
+records = json.loads(records)
 
 growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
 growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
@@ -275,12 +277,7 @@ if  round(x(age)) in range(3,17):
             else :
                 table['OS_m'].append(f'{OS_new_control:.2f}') 
 #print("*********************")
-#print(type(records))
 
-#print(type(records))
-
-import json
-records = json.loads(records)
 sign='●'
 for record in records:
     if record[od] or record[os]:
