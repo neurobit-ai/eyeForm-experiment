@@ -77,8 +77,6 @@
           success: function(data) {
             if (typeof data === 'object') {
               console.log(data);
-              console.log(data['user_type']);
-              console.log(data['valid']);
             }
             else {
               console.log("Get response fail.");
@@ -86,9 +84,17 @@
             if(data['valid'] =='Valid')
             {
               document.getElementById("uploadform").style.display = "inline-block";
-              document.getElementById("report1").style.display = "none";
               document.getElementById("report2").style.display = "inline-block";
+              document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
             }
+            else if(data['valid'] =='Expired')
+              document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
+            else if(data['valid'] =='Exhausted')
+              document.getElementById("notification01").textContent="已達到使用次數上限，欲繼續使用請聯絡神經元科技";
+            else if(data['valid'] =='Invalid')
+              document.getElementById("notification01").textContent="帳號未註冊，欲使用請聯絡神經元科技";
+            else
+              document.getElementById("notification01").textContent="欲使用請聯絡神經元科技";
           }
         });
         // if(decoded.name !=="Aleistar Chan" && decoded.email !=="neurobit.tech@gmail.com" && decoded.email !=="phoebe40630@gmail.com" && decoded.email !=="utgard1214@gmail.com" && decoded.email !=="ayitgroup@gmail.com") 
@@ -768,7 +774,7 @@
                 <div class="col">
                   <div class="float-end form-group">
                     <p style="display: none;" id = "server_state_text"></p>
-                    <label id="notification01" class="form-label" for="suggestion">提醒您，自動填入的最近就診日期要更新喔👆</label><br>
+                    <label id="notification01" class="form-label" for="suggestion">-</label><br>
                     <input type="submit" id="submit" value="上傳" style="display:none;" class="btn btn-outline-primary btn-rounded py-0 px-4">
                     <span class="submitting"></span>
                     <button type="button" id="suggestion" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
