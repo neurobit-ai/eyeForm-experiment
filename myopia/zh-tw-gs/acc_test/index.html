@@ -83,12 +83,11 @@
             else {
               console.log("Get response fail.");
             }
-            if(data['valid'] !='Valid')
+            if(data['valid'] =='Valid')
             {
-              document.getElementById("suggestion").style.display = "none";
-              document.getElementById("uploadform").style.display = "none";
+              document.getElementById("uploadform").style.display = "block";
               document.getElementById("report1").style.display = "none";
-              document.getElementById("report2").style.display = "none";
+              document.getElementById("report2").style.display = "block";
             }
           }
         });
@@ -778,10 +777,10 @@
                     <button type="button" id="report1" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
                       軸長危險度分析
                     </button>
-                    <button type="button" id="report2" class="btn btn-outline-primary btn-rounded py-0 px-4">
+                    <button type="button" id="report2" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
                       球面度數危險度分析
                     </button>
-                    <button type="button" id="uploadform" onclick="check_submit_form_integrity();" class="btn btn-outline-primary btn-rounded py-0 px-4">
+                    <button type="button" id="uploadform" onclick="check_submit_form_integrity();" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
                       上傳
                     </button>
                   </div>
