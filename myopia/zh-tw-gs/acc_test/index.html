@@ -68,7 +68,6 @@
       function handleCredentialResponse(response) {
         var token = response.credential;
         var decoded = jwt_decode(token);
-        var response_valid='';
         console.log(decoded.name);
         console.log(decoded.email);
         $.ajax({
@@ -80,21 +79,20 @@
               console.log(data);
               console.log(data['user_type']);
               console.log(data['valid']);
-              response_valid = data['valid'];
             }
             else {
               console.log("Get response fail.");
             }
+            if(data['valid'] !='Valid')
+            {
+              document.getElementById("suggestion").style.display = "none";
+              document.getElementById("uploadform").style.display = "none";
+              document.getElementById("report1").style.display = "none";
+              document.getElementById("report2").style.display = "none";
+            }
           }
         });
         // if(decoded.name !=="Aleistar Chan" && decoded.email !=="neurobit.tech@gmail.com" && decoded.email !=="phoebe40630@gmail.com" && decoded.email !=="utgard1214@gmail.com" && decoded.email !=="ayitgroup@gmail.com") 
-        if(response_valid !='Valid')
-        {
-        document.getElementById("suggestion").style.display = "none";
-        document.getElementById("uploadform").style.display = "none";
-        document.getElementById("report1").style.display = "none";
-        document.getElementById("report2").style.display = "none";
-        }
         document.getElementById('name').value = decoded.name;
         document.getElementById('email').value = decoded.email;
         $('#staticBackdrop').modal('hide');
