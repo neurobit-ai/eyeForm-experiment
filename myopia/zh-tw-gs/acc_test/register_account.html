@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>eyeForm - Neurobit AI</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../../../favicon/site.webmanifest">
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Oswald:300,400|Roboto+Mono&display=swap" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="fonts/icomoon/style.css"> -->
+    <link rel="stylesheet" href="../../../css/bootstrap.513.min.css">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <script src="../../../js/jquery-3.3.1.min.js"></script>
+    <script src="../../../js/popper.min.js"></script>
+    <script src="../../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../../js/jquery.validate.min.js"></script>
+    <script src="../../../js/myopia-main.js"></script>
+  </head>
+
+  <body class="bg-light">
+    <script src="../../../js/jwt-decode.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(response) {
+        var token = response.credential;
+        var decoded = jwt_decode(token);
+        console.log(decoded.name);
+        console.log(decoded.email);
+        $.ajax({
+          url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${decoded.email}`,
+          type: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            if (typeof data === 'object') {
+              console.log(data);
+            }
+            else {
+              console.log("Get response fail.");
+            }
+            if(data['user_type'] =='Editor account')
+            {
+              document.getElementById("notification01").textContent="身分認證完成，請開始設定使用者資料，完成後請按註冊";
+              document.getElementById("register_email_text").style.display = "inline-block";
+              document.getElementById("register_email").style.display = "inline-block";
+              document.getElementById("register_type_text").style.display = "inline-block";
+              document.getElementById("resgiter_type_value").style.display = "inline-block";
+              document.getElementById("register_btn").style.display = "inline-block";
+            }
+            else{
+              document.getElementById("notification01").textContent="非授權人員帳號，無法使用";
+              document.getElementById("register_email_text").style.display = "none";
+              document.getElementById("register_email").style.display = "none";
+              document.getElementById("register_type_text").style.display = "none";
+              document.getElementById("resgiter_type_value").style.display = "none";
+              document.getElementById("register_btn").style.display = "none";
+            }
+          }
+        });
+        $('#staticBackdrop').modal('hide');
+      }
+      
+      window.onload = function () {
+        google.accounts.id.initialize({
+          //client_id: "804327021269-tvgs2une4gdpepaslb7niggg1c0pldjp.apps.googleusercontent.com",
+          client_id: "548675093385-83kct4sbdrg4pf538u5i0j973vpcbp1m.apps.googleusercontent.com",
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("buttonDiv"),
+          { theme: "filled_blue", size: "large", text: "continue_with" }  // customization attributes
+        );
+        // google.accounts.id.prompt(); // also display the One Tap dialog
+      }
+    </script>
+    <script type="text/javascript">
+      $(window).on('load', function() {
+          $('#staticBackdrop').modal('show');
+      });
+    </script>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">eyeForm: 學齡兒童近視追蹤</h5>
+            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+          </div>
+          <div class="modal-body" id="buttonDiv">
+            ...
+          </div>
+          <div class="modal-footer">
+            版權聲明 © 2025 神經元科技股份有限公司 版權所有
+            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="display: none;">
+      <div class="col-8 form-group">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px;">
+          <label for="user_email" style="white-space: nowrap;">使用者email</label>
+          <input type="text" id="user_email" style="flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          <button id="user_email_btn" style="padding: 5px 10px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">送出</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8 form-group">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px;">
+          <label for="register_email" id="register_email_text" style="white-space: nowrap; display: none;" >申請者email</label>
+          <input type="text" id="register_email" style="width: 1000px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; display: none;">
+          <label for="register_type" id="register_type_text" style="white-space: nowrap; display: none;">申請帳號類型</label>
+          <select class="form-select" name="resgiter_type_value" id="resgiter_type_value" style="display: none;">
+            <option value=""></option>
+            <option value="time_based">使用期限</option>
+            <option value="usage_based">使用次數</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8 form-group">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px;">
+          <label for="time_type" id="time_type_text" style="white-space: nowrap; display: none;">期限設定(單位 : 月)</label>
+          <select class="form-select" name="time_type_value" id="time_type_value" style="display: none;">
+            <option value=""></option>
+            <option value="time_1">1</option>
+            <option value="time_3">3</option>
+            <option value="time_6">6</option>
+            <option value="time_9">9</option>
+            <option value="time_12">12</option>
+          </select>
+          <label for="usage_type" id="usage_type_text" style="white-space: nowrap; display: none;">次數設定(單位 : 次)</label>
+          <select class="form-select" name="usage_type_value" id="usage_type_value" style="display: none;">
+            <option value=""></option>
+            <option value="usage_100">100</option>
+            <option value="usage_500">500</option>
+            <option value="usage_1000">1000</option>
+            <option value="usage_5000">5000</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8 form-group">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px;">
+          <button id="register_btn" style="padding: 5px 10px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer; display:none;">註冊</button>
+          <label style="white-space: nowrap;" id="notification01">請先登入google帳號</label>
+        </div>
+      </div>
+    </div>
+    <script>
+      // var user_email_btn = document.getElementById("user_email_btn");
+      // user_email_btn.onclick  = async function() {
+      //   console.log("Start calling app scripts with ajax");
+      //   var email =  document.getElementById("user_email").value;
+      //   console.log("Email : " + email);
+      //   $.ajax({
+      //     url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}`,
+      //     type: 'GET',
+      //     dataType: 'json',
+      //     success: function(data) {
+      //       if (typeof data === 'object') {
+      //         console.log(data);
+      //       }
+      //       else {
+      //         console.log("Get response fail.");
+      //       }
+      //       if(data['user_type'] =='Editor account')
+      //       {
+      //         document.getElementById("notification01").textContent="身分認證完成，請開始設定使用者資料，完成後請按註冊";
+      //         document.getElementById("register_email_text").style.display = "inline-block";
+      //         document.getElementById("register_email").style.display = "inline-block";
+      //         document.getElementById("register_type_text").style.display = "inline-block";
+      //         document.getElementById("resgiter_type_value").style.display = "inline-block";
+      //         document.getElementById("register_btn").style.display = "inline-block";
+      //       }
+      //       else{
+      //         document.getElementById("notification01").textContent="請先登入google帳號";
+      //         document.getElementById("register_email_text").style.display = "none";
+      //         document.getElementById("register_email").style.display = "none";
+      //         document.getElementById("register_type_text").style.display = "none";
+      //         document.getElementById("resgiter_type_value").style.display = "none";
+      //         document.getElementById("register_btn").style.display = "none";
+      //       }
+      //     }
+      // });}
+      var register_btn = document.getElementById("register_btn");
+      var resgiter_type = '';
+      var resgiter_time_length = '';
+      var register_email='';
+      document.getElementById("resgiter_type_value").addEventListener("change", handleSelectChange);
+      function handleSelectChange(event) {
+        const selectElement = event.target; // 獲取觸發事件的 <select> 元素
+        const selectedValue = selectElement.value;
+        // const selectedText = selectElement.options[selectElement.selectedIndex].text;
+        // console.log(`您從 ${selectElement.id} 選擇了：${selectedText} (${selectedValue})`);
+        if (selectedValue == 'time_based')
+        {
+          resgiter_type = 'TIME_BASED';
+          document.getElementById("time_type_value").style.display = "inline-block";
+          document.getElementById("time_type_text").style.display = "inline-block";
+          document.getElementById("usage_type_value").style.display = "none";
+          document.getElementById("usage_type_text").style.display = "none";
+        }
+        else if (selectedValue == 'usage_based')
+        {
+          resgiter_type = 'USAGE_BASED';
+          document.getElementById("time_type_value").style.display = "none";
+          document.getElementById("time_type_text").style.display = "none";
+          document.getElementById("usage_type_value").style.display = "inline-block";
+          document.getElementById("usage_type_text").style.display = "inline-block";
+        }
+        else{
+          resgiter_type = '';
+          document.getElementById("time_type_value").style.display = "none";
+          document.getElementById("time_type_text").style.display = "none";
+          document.getElementById("usage_type_value").style.display = "none";
+          document.getElementById("usage_type_text").style.display = "none";
+        }
+      }
+      register_btn.onclick = async function () {
+        console.log("Makesure the form is completed");
+        var selectElement;
+        if(document.getElementById("register_email").value != '' && resgiter_type != ''){
+          register_email = document.getElementById("register_email").value;
+          if (resgiter_type == 'TIME_BASED'){
+            selectElement = document.getElementById("time_type_value");
+            resgiter_time_length = selectElement.options[selectElement.selectedIndex].text;
+            console.log(resgiter_time_length);
+          }
+          else if(resgiter_type == 'USAGE_BASED'){
+            selectElement = document.getElementById("usage_type_value");
+            resgiter_time_length = selectElement.options[selectElement.selectedIndex].text;
+            console.log(resgiter_time_length);
+          }
+          if (resgiter_time_length != ''){
+            console.log('Ready to regist');
+            $.ajax({
+              url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${register_email}&resgiter_type=${resgiter_type}&resgiter_time_length=${resgiter_time_length}`,
+              type: 'POST',
+              dataType: 'json',
+              success: function(data) {
+                if (typeof data === 'object') {
+                  console.log(data);
+                }
+                else {
+                  console.log("Get response fail.");
+                }
+                if(data['valid'] =='Valid')
+                {
+                  document.getElementById("notification01").textContent="註冊完成，需要繼續註冊請重新整理";
+                  document.getElementById("register_email_text").disabled = true;
+                  document.getElementById("register_email").disabled = true;
+                  document.getElementById("register_type_text").disabled = true;
+                  document.getElementById("resgiter_type_value").disabled = true;
+                  document.getElementById("register_btn").disabled = true;
+                  document.getElementById("time_type_value").disabled = true;
+                  document.getElementById("time_type_text").disabled = true;
+                  document.getElementById("usage_type_value").disabled = true;
+                  document.getElementById("usage_type_text").disabled = true;
+                }
+                else if((data['valid'] =='Invalid'))
+                  document.getElementById("notification01").textContent="註冊失敗，請使用其他email再試一次";
+                else{
+                  document.getElementById("notification01").textContent="註冊失敗，請檢查是否有資料遺失";
+                }
+              }
+          });}
+          else{
+            document.getElementById("notification01").textContent="資料有缺請重新檢查";
+          }
+        }
+        else{
+          document.getElementById("notification01").textContent="資料有缺請重新檢查";
+        }
+      }
+    </script>
+  </body>
+</html>
