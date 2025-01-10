@@ -86,7 +86,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">eyeForm: 學齡兒童近視追蹤</h5>
+            <h5 class="modal-title" id="staticBackdropLabel">eyeForm: 使用帳號註冊與設定</h5>
             <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
           </div>
           <div class="modal-body" id="buttonDiv">
@@ -118,6 +118,7 @@
           <select class="form-select" name="resgiter_type_value" id="resgiter_type_value" style="display: none;">
             <option value=""></option>
             <option value="time_based">使用期限</option>
+            <option value="time_based_custom">使用期限(自訂)</option>
             <option value="usage_based">使用次數</option>
           </select>
         </div>
@@ -143,6 +144,8 @@
             <option value="usage_1000">1000</option>
             <option value="usage_5000">5000</option>
           </select>
+          <label for="time_type" id="time_type_custom_text" style="white-space: nowrap; display: none;">期限設定(自訂日期)</label>
+          <input type="date" class="form-control" name="time_type_custom_value" id="time_type_custom_value" style="display: none;" min="">
         </div>
       </div>
     </div>
@@ -155,6 +158,8 @@
       </div>
     </div>
     <script>
+      const today = new Date().toISOString().split('T')[0]; 
+      document.getElementById("time_type_custom_value").setAttribute("min", today);
       // var user_email_btn = document.getElementById("user_email_btn");
       // user_email_btn.onclick  = async function() {
       //   console.log("Start calling app scripts with ajax");
@@ -205,6 +210,18 @@
           resgiter_type = 'TIME_BASED';
           document.getElementById("time_type_value").style.display = "inline-block";
           document.getElementById("time_type_text").style.display = "inline-block";
+          document.getElementById("time_type_custom_value").style.display = "none";
+          document.getElementById("time_type_custom_text").style.display = "none";
+          document.getElementById("usage_type_value").style.display = "none";
+          document.getElementById("usage_type_text").style.display = "none";
+        }
+        else if (selectedValue == 'time_based_custom')
+        {
+          resgiter_type = 'TIME_BASED_CUSTOM';
+          document.getElementById("time_type_value").style.display = "none";
+          document.getElementById("time_type_text").style.display = "none";
+          document.getElementById("time_type_custom_value").style.display = "inline-block";
+          document.getElementById("time_type_custom_text").style.display = "inline-block";
           document.getElementById("usage_type_value").style.display = "none";
           document.getElementById("usage_type_text").style.display = "none";
         }
@@ -213,6 +230,8 @@
           resgiter_type = 'USAGE_BASED';
           document.getElementById("time_type_value").style.display = "none";
           document.getElementById("time_type_text").style.display = "none";
+          document.getElementById("time_type_custom_value").style.display = "none";
+          document.getElementById("time_type_custom_text").style.display = "none";     
           document.getElementById("usage_type_value").style.display = "inline-block";
           document.getElementById("usage_type_text").style.display = "inline-block";
         }
@@ -220,6 +239,8 @@
           resgiter_type = '';
           document.getElementById("time_type_value").style.display = "none";
           document.getElementById("time_type_text").style.display = "none";
+          document.getElementById("time_type_custom_value").style.display = "none";
+          document.getElementById("time_type_custom_text").style.display = "none";  
           document.getElementById("usage_type_value").style.display = "none";
           document.getElementById("usage_type_text").style.display = "none";
         }
@@ -228,10 +249,15 @@
         console.log("Makesure the form is completed");
         var selectElement;
         if(document.getElementById("register_email").value != '' && resgiter_type != ''){
+          document.getElementById("register_btn").disabled = true;
           register_email = document.getElementById("register_email").value;
           if (resgiter_type == 'TIME_BASED'){
             selectElement = document.getElementById("time_type_value");
             resgiter_time_length = selectElement.options[selectElement.selectedIndex].text;
+            console.log(resgiter_time_length);
+          }
+          else if(resgiter_type == 'TIME_BASED_CUSTOM'){
+            resgiter_time_length = document.getElementById("time_type_custom_value").value;
             console.log(resgiter_time_length);
           }
           else if(resgiter_type == 'USAGE_BASED'){
@@ -262,22 +288,29 @@
                   document.getElementById("register_btn").disabled = true;
                   document.getElementById("time_type_value").disabled = true;
                   document.getElementById("time_type_text").disabled = true;
+                  document.getElementById("time_type_custom_value").disabled = true;
+                  document.getElementById("time_type_custom_text").disabled = true;
                   document.getElementById("usage_type_value").disabled = true;
                   document.getElementById("usage_type_text").disabled = true;
                 }
-                else if((data['valid'] =='Invalid'))
+                else if((data['valid'] =='Invalid')){
                   document.getElementById("notification01").textContent="註冊失敗，請使用其他email再試一次";
+                  document.getElementById("register_btn").disabled = false;
+                }
                 else{
                   document.getElementById("notification01").textContent="註冊失敗，請檢查是否有資料遺失";
+                  document.getElementById("register_btn").disabled = false;
                 }
               }
           });}
           else{
             document.getElementById("notification01").textContent="資料有缺請重新檢查";
+            document.getElementById("register_btn").disabled = false;
           }
         }
         else{
           document.getElementById("notification01").textContent="資料有缺請重新檢查";
+          document.getElementById("register_btn").disabled = false;
         }
       }
     </script>
