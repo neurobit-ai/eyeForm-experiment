@@ -87,6 +87,30 @@
               document.getElementById("uploadform").style.display = "inline-block";
               document.getElementById("report2").style.display = "inline-block";
               document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
+            if(data['user_type'] == "Group-time-based account" || data['user_type'] == "Group-usage-based account")
+            {
+              console.log("Start get site name");
+              var dropdown_site_name = document.getElementById("site");
+              var option = document.createElement("option");
+              dropdown_site_name.innerHTML = '<option value=""></option>';
+              dropdown_user_name.innerHTML = '<option value=""></option>';
+              option = document.createElement("option");
+              option.value = data['group_name'];
+              option.text = data['group_name'];
+              dropdown_site_name.add(option);
+              // Get_user_names(data['group_name']);
+              console.log(data['name']);
+              target_url = data['target_url'];
+              target_sheet = data['target_sheet'];
+              console.log("URL : " + target_url + " SHEET : " + target_sheet);
+              for(var index=0;index<data['name'].length;index++)
+              {
+                option = document.createElement("option");
+                option.value = data['name'][index];
+                option.text = data['name'][index];
+                dropdown_user_name.add(option);
+              }
+            }
             }
             else if(data['valid'] =='Expired')
               document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
@@ -170,6 +194,13 @@
                 <div class="col-6 form-group">
                   <label class="form-label" for="site" id="site_info">院所</label>
                   <select class="form-select" name="site" id="site">
+                    <option value=""></option>
+                  </select>
+                  <span class="warning_msg" id="site_warning"> </span>
+                </div>
+                <div class="col-3 form-group">
+                  <label class="form-label" for="user_name" id="user_name_info">名稱</label>
+                  <select class="form-select" name="user_name" id="user_name">
                     <option value=""></option>
                   </select>
                   <span class="warning_msg" id="site_warning"> </span>
