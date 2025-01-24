@@ -69,6 +69,13 @@
       var target_url = "";
       var target_sheet = "";
       var dropdown_user_name = document.getElementById("user_name");
+      dropdown_user_name.onchange = async function() {
+      if(dropdown_user_name.value!="")
+        document.getElementById('name').value = dropdown_user_name.value;
+      else
+        document.getElementById('name').value = decoded_name;
+      console.log("Your choise is :" + document.getElementById('name').value);
+      }
       function handleCredentialResponse(response) {
         var token = response.credential;
         var decoded = jwt_decode(token);
