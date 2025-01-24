@@ -64,96 +64,6 @@
   <body class="bg-light">
     <script src="../../../js/jwt-decode.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>
-      var decoded_name = "Guest";
-      var target_url = "";
-      var target_sheet = "";
-      var dropdown_user_name = document.getElementById("user_name");
-      dropdown_user_name.onchange = async function() {
-      if(dropdown_user_name.value!="")
-        document.getElementById('name').value = dropdown_user_name.value;
-      else
-        document.getElementById('name').value = decoded_name;
-      console.log("Your choise is :" + document.getElementById('name').value);
-      }
-      function handleCredentialResponse(response) {
-        var token = response.credential;
-        var decoded = jwt_decode(token);
-        console.log(decoded.name);
-        console.log(decoded.email);
-        $.ajax({
-          url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${decoded.email}`,
-          type: 'GET',
-          dataType: 'json',
-          success: function(data) {
-            if (typeof data === 'object') {
-              console.log(data);
-            }
-            else {
-              console.log("Get response fail.");
-            }
-            if(data['valid'] =='Valid')
-            {
-              document.getElementById("uploadform").style.display = "inline-block";
-              document.getElementById("report2").style.display = "inline-block";
-              document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
-            if(data['user_type'] == "Group-time-based account" || data['user_type'] == "Group-usage-based account")
-            {
-              console.log("Start get site name");
-              var dropdown_site_name = document.getElementById("site");
-              var option = document.createElement("option");
-              dropdown_site_name.innerHTML = '<option value=""></option>';
-              dropdown_user_name.innerHTML = '<option value=""></option>';
-              option = document.createElement("option");
-              option.value = data['group_name'];
-              option.text = data['group_name'];
-              dropdown_site_name.add(option);
-              // Get_user_names(data['group_name']);
-              console.log(data['name']);
-              target_url = data['target_url'];
-              target_sheet = data['target_sheet'];
-              console.log("URL : " + target_url + " SHEET : " + target_sheet);
-              for(var index=0;index<data['name'].length;index++)
-              {
-                option = document.createElement("option");
-                option.value = data['name'][index];
-                option.text = data['name'][index];
-                dropdown_user_name.add(option);
-              }
-            }
-            }
-            else if(data['valid'] =='Expired')
-              document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
-            else if(data['valid'] =='Exhausted')
-              document.getElementById("notification01").textContent="已達到使用次數上限，欲繼續使用請聯絡神經元科技";
-            else if(data['valid'] =='Invalid')
-              document.getElementById("notification01").textContent="帳號未註冊，欲使用請聯絡神經元科技";
-            else
-              document.getElementById("notification01").textContent="欲使用請聯絡神經元科技";
-          }
-        });
-        document.getElementById('name').value = decoded_name;
-        document.getElementById('email').value = decoded.email;
-        $('#staticBackdrop').modal('hide');
-      }
-      
-      window.onload = function () {
-        google.accounts.id.initialize({
-          client_id: "102543814115-i162ma9jajatt061f6grijqsth2avq3h.apps.googleusercontent.com",
-          callback: handleCredentialResponse
-        });
-        google.accounts.id.renderButton(
-          document.getElementById("buttonDiv"),
-          { theme: "filled_blue", size: "large", text: "continue_with" }  // customization attributes
-        );
-        // google.accounts.id.prompt(); // also display the One Tap dialog
-      }
-    </script>
-    <script type="text/javascript">
-      $(window).on('load', function() {
-          $('#staticBackdrop').modal('show');
-      });
-    </script>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -839,7 +749,96 @@
         </div>
       </div>
     </div>
-    
+    <script>
+      var decoded_name = "Guest";
+      var target_url = "";
+      var target_sheet = "";
+      var dropdown_user_name = document.getElementById("user_name");
+      dropdown_user_name.onchange = async function() {
+      if(dropdown_user_name.value!="")
+        document.getElementById('name').value = dropdown_user_name.value;
+      else
+        document.getElementById('name').value = decoded_name;
+      console.log("Your choise is :" + document.getElementById('name').value);
+      }
+      function handleCredentialResponse(response) {
+        var token = response.credential;
+        var decoded = jwt_decode(token);
+        console.log(decoded.name);
+        console.log(decoded.email);
+        $.ajax({
+          url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${decoded.email}`,
+          type: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            if (typeof data === 'object') {
+              console.log(data);
+            }
+            else {
+              console.log("Get response fail.");
+            }
+            if(data['valid'] =='Valid')
+            {
+              document.getElementById("uploadform").style.display = "inline-block";
+              document.getElementById("report2").style.display = "inline-block";
+              document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
+            if(data['user_type'] == "Group-time-based account" || data['user_type'] == "Group-usage-based account")
+            {
+              console.log("Start get site name");
+              var dropdown_site_name = document.getElementById("site");
+              var option = document.createElement("option");
+              dropdown_site_name.innerHTML = '<option value=""></option>';
+              dropdown_user_name.innerHTML = '<option value=""></option>';
+              option = document.createElement("option");
+              option.value = data['group_name'];
+              option.text = data['group_name'];
+              dropdown_site_name.add(option);
+              // Get_user_names(data['group_name']);
+              console.log(data['name']);
+              target_url = data['target_url'];
+              target_sheet = data['target_sheet'];
+              console.log("URL : " + target_url + " SHEET : " + target_sheet);
+              for(var index=0;index<data['name'].length;index++)
+              {
+                option = document.createElement("option");
+                option.value = data['name'][index];
+                option.text = data['name'][index];
+                dropdown_user_name.add(option);
+              }
+            }
+            }
+            else if(data['valid'] =='Expired')
+              document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
+            else if(data['valid'] =='Exhausted')
+              document.getElementById("notification01").textContent="已達到使用次數上限，欲繼續使用請聯絡神經元科技";
+            else if(data['valid'] =='Invalid')
+              document.getElementById("notification01").textContent="帳號未註冊，欲使用請聯絡神經元科技";
+            else
+              document.getElementById("notification01").textContent="欲使用請聯絡神經元科技";
+          }
+        });
+        document.getElementById('name').value = decoded_name;
+        document.getElementById('email').value = decoded.email;
+        $('#staticBackdrop').modal('hide');
+      }
+      
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: "102543814115-i162ma9jajatt061f6grijqsth2avq3h.apps.googleusercontent.com",
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("buttonDiv"),
+          { theme: "filled_blue", size: "large", text: "continue_with" }  // customization attributes
+        );
+        // google.accounts.id.prompt(); // also display the One Tap dialog
+      }
+    </script>
+    <script type="text/javascript">
+      $(window).on('load', function() {
+          $('#staticBackdrop').modal('show');
+      });
+    </script>
   <script>
     document.getElementById('eyeForm').addEventListener('keydown', function (event) {
       if (event.key === 'Enter') 
