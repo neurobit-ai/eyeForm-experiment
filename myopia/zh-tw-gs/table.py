@@ -74,11 +74,10 @@ def attu_calculate_AL(attu,start_point):
 import json
 records = json.loads(records)
 
-for index in range(len(records)-1):
-    print (records[index][11])
-    if x(records[index][11]) < x(records[index+1][11]):
-        records[index], records[index+1] = records[index+1], records[index]
-        index=0
+for index_i in range(0,len(records)-1):
+    for index_j in range(index_i+1,len(records)):
+        if x(records[index_i][11]) < x(records[index_j][11]):
+            records[index_i], records[index_j] = records[index_j], records[index_i]
         
 growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
 growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
@@ -153,7 +152,7 @@ OD_zero = False
 OS_zero = False
 if len(records)!=0 and round(x(age)) in range(3,17):
     for record in records:
-        if record[od] != "":
+        if record[od] != "" and record[os] != "":
             if odp_first :
                 if x(age)-x(record[11]) == 0:
                     current_slope_rate_OD=0
@@ -167,7 +166,7 @@ if len(records)!=0 and round(x(age)) in range(3,17):
                     current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
                     OD_zero = False
             #print("od is : " + str(record[od]) )
-        if record[os] != "":
+        # if record[os] != "":
             if osp_first :
                 if x(age)-x(record[11]) == 0:
                     current_slope_rate_OS=0
@@ -286,7 +285,7 @@ if  round(x(age)) in range(3,17):
 
 sign='●'
 for record in records:
-    if record[od] and record[os]:
+    if record[od] != "" and record[os] != "":
         table['Age　'].insert(0, f'{_y_m(record[11],0,sign)}')
         if report == '軸長':
             if record[od] == 19.5 :

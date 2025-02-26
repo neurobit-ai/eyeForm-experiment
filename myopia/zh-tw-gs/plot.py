@@ -97,13 +97,13 @@ def plot(sex, report):
         area_0_smooth = moving_average_cal(area['P0'])
         area['P0']=moving_average_cal(area['P0'])
         if language_type == 1:
-            plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='Low Risk')
+            plt.fill_between(area.index, area_50_smooth, 10, color='lightgreen', alpha=0.2, label='Low Risk')
             plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='Medium Risk')
-            plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='High Risk')
+            plt.fill_between(area.index, -10, area_25_smooth, color='red', alpha=0.2, label='High Risk')
         else:
-            plt.fill_between(area.index, area_50_smooth, area_100_smooth, color='lightgreen', alpha=0.2, label='低風險')
+            plt.fill_between(area.index, area_50_smooth, 10, color='lightgreen', alpha=0.2, label='低風險')
             plt.fill_between(area.index, area_25_smooth, area_50_smooth, color='yellow', alpha=0.2, label='中風險')
-            plt.fill_between(area.index, area_0_smooth, area_25_smooth, color='red', alpha=0.2, label='高風險')
+            plt.fill_between(area.index, -10, area_25_smooth, color='red', alpha=0.2, label='高風險')
     #plt.title(f"Trend of {MorF} Children in Taiwan  {db_version}", fontsize=12)
     if language_type== 0 :
         if report == '軸長':
@@ -301,11 +301,10 @@ for age_index in range(1,agecounter):
 import json
 records = json.loads(records)
 
-# for index in range(len(records)-1):
-#     print (records[index][11])
-#     if x(records[index][11]) < x(records[index+1][11]):
-#         records[index], records[index+1] = records[index+1], records[index]
-#         index=0
+# for index_i in range(0,len(records)-1):
+#     for index_j in range(index_i+1,len(records)):
+#         if x(records[index_i][11]) < x(records[index_j][11]):
+#             records[index_i], records[index_j] = records[index_j], records[index_i]
         
 od, os = (18, 24) if report == '軸長' else (15, 21)
 odp_first=True
