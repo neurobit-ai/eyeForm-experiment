@@ -280,7 +280,7 @@ if  round(x(age)) in range(3,17):
 
 sign='●'
 for record in records:
-    if record[od] or record[os]:
+    if record[od] and record[os]:
         table['Age　'].insert(0, f'{_y_m(record[11],0,sign)}')
         if report == '軸長':
             if record[od] == 19.5 :
