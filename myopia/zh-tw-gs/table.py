@@ -94,9 +94,9 @@ growth_with_control_rate=[0]*agecounter#this is for initial
 
 if suggestion == "一般眼鏡":
     control_rate = 0.13
-elif suggestion == "軟式隱形眼鏡":
+elif suggestion == "軟式隱形眼鏡" or suggestion == '近視控制隱形眼鏡':
     control_rate = 0.43
-elif suggestion == "周邊離焦鏡片":
+elif suggestion == '周邊離焦鏡片' or suggestion == '周邊離焦(近視控制)鏡片'::
     control_rate = 0.19
 elif suggestion == "雙焦眼鏡":
     control_rate = 0.50
