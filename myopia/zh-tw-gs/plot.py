@@ -301,10 +301,10 @@ for age_index in range(1,agecounter):
 import json
 records = json.loads(records)
 
-# for index_i in range(0,len(records)-1):
-#     for index_j in range(index_i+1,len(records)):
-#         if x(records[index_i][11]) < x(records[index_j][11]):
-#             records[index_i], records[index_j] = records[index_j], records[index_i]
+for index_i in range(0,len(records)-1):
+    for index_j in range(index_i+1,len(records)):
+        if x(records[index_i][11]) < x(records[index_j][11]):
+            records[index_i], records[index_j] = records[index_j], records[index_i]
         
 od, os = (18, 24) if report == '軸長' else (15, 21)
 odp_first=True
