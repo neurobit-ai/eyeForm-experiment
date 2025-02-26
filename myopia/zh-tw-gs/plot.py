@@ -331,7 +331,7 @@ OD_zero = False
 OS_zero = False
 if len(records)!=0 and round(x(age)) in range(3,17):
     for record in records:
-        if record[od] != "":
+        if record[od] != "" and record[os] != "":
             if odp_first :
                 if language_type !=0:
                     plt.scatter(x(record[11]), record[od], color='red', marker='.' , label='OD in past')
@@ -352,7 +352,7 @@ if len(records)!=0 and round(x(age)) in range(3,17):
             x_age_record.append(x(record[11]))
             y_od_record.append(record[od])
             #print("od is : " + str(record[od]) )
-        if record[os] != "":
+        # if record[os] != "":
             if osp_first :
                 if language_type !=0:
                     plt.scatter(x(record[11]), record[os], color='blue', marker='.', label='OS in past')
