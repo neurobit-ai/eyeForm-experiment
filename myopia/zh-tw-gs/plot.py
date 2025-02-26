@@ -207,7 +207,11 @@ import re
 def x(age):
     m = re.match('(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12
-
+for index in range(len(records)-1):
+    print (records[index][11])
+    if x(records[index][11]) < x(records[index+1][11]):
+        records[index], records[index+1] = records[index+1], records[index]
+        index=0
 if round(x(age)) in range(3, 17):
     if report == '軸長' and language_type == 2:
         p0, p50, p75, p90, p100 = area.loc[round(x(age))]

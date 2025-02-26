@@ -74,6 +74,12 @@ def attu_calculate_AL(attu,start_point):
 import json
 records = json.loads(records)
 
+for index in range(len(records)-1):
+    print (records[index][11])
+    if x(records[index][11]) < x(records[index+1][11]):
+        records[index], records[index+1] = records[index+1], records[index]
+        index=0
+        
 growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
 growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
 attu_base =    [ -0.12,-0.08,-0.04, 0,  0.04, 0.133, 0.136,0.269, 0.3, 0.378, 0.439, 0.596,0.7, 0.77]
