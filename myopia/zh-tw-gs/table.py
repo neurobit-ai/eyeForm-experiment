@@ -4,15 +4,14 @@ import numpy as np
 import re
 import pickle
 with open('../data_to_plot.pkl', 'rb') as f:
-    db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
-#with open('LFC_data_to_plot_20231227.pkl', 'rb') as f:
-    #data_al = pickle.load(f)
+    db_version, slope_groupby, stacked_area , data_al = pickle.load(f)[report]
+
 def x(age):
-    m = re.match('(\d+)歲(\d+)', age)
+    m = re.match(r'(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12
 
 def _y_m(age,year,sign):
-    m = re.match('(\d+)歲(\d+)', age)
+    m = re.match(r'(\d+)歲(\d+)', age)
     if int(m.group(1))+year > 9:
         space01=''
     else :
@@ -37,13 +36,14 @@ def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,cont
     # print(current_slope_rate)
     current_slope_rate = current_slope_rate * (1-control_rate)
     for i in range(1,len(curve_point)):#(let i = 1; i < age_growth.length; i++) {
-        curve_point[i] = curve_point[i-1] + current_slope_rate
+        # curve_point[i] = curve_point[i-1] + current_slope_rate
         if (current_slope_rate < -0.1) :
             current_slope_rate += current_slope_attu * (1-control_rate) * ( 1 + (attu_age_interval*sd_count) )* (1 - attu_age_base)
         else :
             current_slope_rate += current_slope_attu * (1-control_rate) * ( 1 + (attu_age_interval*sd_count) )* (1 - attu_age_base) * 0.2
         if (current_slope_rate > -0.01) :
             current_slope_rate = 0
+        curve_point[i] = curve_point[i-1] + current_slope_rate
     return curve_point
 def curve_calculation_AL(curve_point,slope,attu,age,control_rate):
     # print(current_slope_rate)
@@ -73,30 +73,41 @@ def attu_calculate_AL(attu,start_point):
     return attu
 import json
 records = json.loads(records)
+records_py = records.to_py()
+od, os = (18, 24) if report == '軸長' else (15, 21)
+if len(records_py)!=0:
+    if y1 != "" and y2 != "" and age != "":
+        new_record = [""] * len(records_py[-1])
+        new_record[11]=age
+        new_record[od]=y1
+        new_record[os]=y2
+        # new_record[0]="Latest_Input"
+        records_py.append(new_record)
 
-for index_i in range(0,len(records)-1):
-    for index_j in range(index_i+1,len(records)):
-        if x(records[index_i][11]) < x(records[index_j][11]):
-            records[index_i], records[index_j] = records[index_j], records[index_i]
+    for index_i in range(0,len(records_py)-1):
+        for index_j in range(index_i+1,len(records_py)):
+            if x(records_py[index_i][11]) < x(records_py[index_j][11]):
+                records_py[index_i], records_py[index_j] = records_py[index_j], records_py[index_i]
+else:
+    if y1 != "" and y2 != "" and age != "":
+        new_record = [""] * 25
+        new_record[11]=age
+        new_record[od]=y1
+        new_record[os]=y2
+        # new_record[0]="Latest_Input"
+        records_py=[]
+        records_py.append(new_record)
         
 growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
 growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
 attu_base =    [ -0.12,-0.08,-0.04, 0,  0.04, 0.133, 0.136,0.269, 0.3, 0.378, 0.439, 0.596,0.7, 0.77]
 attu_interval =  [0.039,0.033,0.044,0.039,0.033, 0.044,0.056, 0.056,0.042, 0.053, 0.04, 0.098,0.17, 0.23]
-agecounter = int(16-x(age))+2
-if agecounter <= 0:
-    agecounter = 1
-od, os = (18, 24) if report == '軸長' else (15, 21)
-odp_first=True
-osp_first=True
-growth_without_control_rate=[0]*agecounter#this is for initial
-growth_with_control_rate=[0]*agecounter#this is for initial
 
 if suggestion == "一般眼鏡":
     control_rate = 0.13
 elif suggestion == "軟式隱形眼鏡" or suggestion == '近視控制隱形眼鏡':
     control_rate = 0.43
-elif suggestion == '周邊離焦鏡片' or suggestion == '周邊離焦(近視控制)鏡片':
+elif suggestion == "周邊離焦鏡片" or suggestion == '周邊離焦(近視控制)鏡片':
     control_rate = 0.19
 elif suggestion == "雙焦眼鏡":
     control_rate = 0.50
@@ -110,131 +121,138 @@ else :
 #print(language_type)
 if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
+
+OD_zero = False
+OS_zero = False
+age_new = records_py[0][11]
+OD_new = records_py[0][od]
+OS_new = records_py[0][os]
+agecounter = int(16-x(age_new))+1
+if agecounter <= 0:
+    agecounter = 2
+growth_without_control_rate=[0]*agecounter#this is for initial
+growth_with_control_rate=[0]*agecounter#this is for initial
 table = {}
 sign='R/L'
-table['Age　'] = [f'{_y_m(age,0,sign)}']
-if y1 == 19.5 :
+table['Age　'] = [f'{_y_m(age_new,0,sign)}']
+if OD_new == 19.5 :
     table['OD'] = [f'<20']
-elif y1== 30.5 :
+elif OD_new== 30.5 :
     table['OD'] = [f'>30']
 else :
-    table['OD'] = [f'{y1:.2f}']
+    table['OD'] = [f'{OD_new:.2f}']
 
-if y2 == 19.5 :
+if OS_new == 19.5 :
     table['OS'] = [f'<20']
-elif y2 == 30.5 :
+elif OS_new == 30.5 :
     table['OS'] = [f'>30']
 else :
-    table['OS'] = [f'{y2:.2f}']
+    table['OS'] = [f'{OS_new:.2f}']
 
 table['OD_m'] = ['-']
 table['OS_m'] = ['-']
 
-now_age = x(age)
-agecounter = int(16-x(age))+1
-if agecounter <= 0:
-    agecounter = 2
-OD_new=y1
-OS_new=y2
+
 sign=' '
 
 OD_no_management_data=[0]*agecounter#this is for initial
 OS_no_management_data=[0]*agecounter#this is for initial
-OD_no_management_data[0] = y1
-OS_no_management_data[0] = y2
+OD_no_management_data[0] = OD_new
+OS_no_management_data[0] = OS_new
 
 OD_control_data=[0]*agecounter#this is for initial
 OS_control_data=[0]*agecounter#this is for initial
-OD_control_data[0] = y1
-OS_control_data[0] = y2
+OD_control_data[0] = OD_new
+OS_control_data[0] = OS_new
 
-OD_zero = False
-OS_zero = False
-if len(records)!=0 and round(x(age)) in range(3,17):
-    for record in records:
+current_slope_rate_OD = 0
+current_slope_rate_OS = 0
+if len(records_py)!=0 and round(x(age_new)) in range(3,17):
+    for index,record in enumerate(records_py):
         if record[od] != "" and record[os] != "":
-            if odp_first :
-                if x(age)-x(record[11]) == 0:
+            if index == 1 :
+                if x(age_new)-x(record[11]) == 0:
                     current_slope_rate_OD=0
                     OD_zero=True
-                else:
-                    current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
-                odp_first=False
-            else :
-                if OD_zero ==True and x(age)-x(record[11]) > 0:
-                    current_slope_rate_OD = (y1 - record[od]) / (x(age)-x(record[11]))
-                    current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
-                    OD_zero = False
-            #print("od is : " + str(record[od]) )
-        # if record[os] != "":
-            if osp_first :
-                if x(age)-x(record[11]) == 0:
                     current_slope_rate_OS=0
                     OS_zero=True
                 else:
-                    current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
-                osp_first=False
+                    current_slope_rate_OD = (OD_new - record[od]) / (x(age_new)-x(record[11]))
+                    current_slope_rate_OS = (OS_new - record[os]) / (x(age_new)-x(record[11]))
             else :
-                if OS_zero ==True and x(age)-x(record[11]) > 0:
-                    current_slope_rate_OS = (y2 - record[os]) / (x(age)-x(record[11]))
-                    current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+                if OD_zero ==True and x(age_new)-x(record[11]) > 0:
+                    current_slope_rate_OD = (OD_new - record[od]) / (x(age_new)-x(record[11]))
+                    current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+                    OD_zero = False
+                    current_slope_rate_OS = (OS_new - record[os]) / (x(age_new)-x(record[11]))
+                    current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
                     OS_zero=False
     if report =='球面度數':
-        if current_slope_rate_OD > 0 :
-            current_slope_rate_OD = 0
-            current_slope_attu_OD = 0
-        else:
-            current_slope_attu_OD = attu_calculate(int(x(age)),current_slope_rate_OD,y1)
-        if current_slope_rate_OS > 0 :
-            current_slope_rate_OS = 0
-            current_slope_attu_OS = 0
-        else:
-            current_slope_attu_OS = attu_calculate(int(x(age)),current_slope_rate_OS,y2)
+        if current_slope_rate_OD >= 0 or current_slope_rate_OD < -3:
+            current_slope_rate_OD=-1.078
+            current_slope_attu_OD=0.1038
+            if  round(x(age_new)) in range(3,17):
+                current_slope_rate_OD = slope_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+
+        current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+        if current_slope_rate_OS >= 0 or current_slope_attu_OS < -3:
+            current_slope_rate_OS=-1.078
+            current_slope_attu_OS=0.1038
+            if  round(x(age_new)) in range(3,17):
+                current_slope_rate_OS = slope_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+
+        current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
     else:
         current_slope_attu_OD=0.15
         current_slope_attu_OS=0.15
-        if current_slope_rate_OD < 0 :
-            current_slope_rate_OD = 0
-            current_slope_attu_OD = 0
-        else:
-            current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,y1)
-        if current_slope_rate_OS < 0 :
-            current_slope_rate_OS = 0
-            current_slope_attu_OS = 0
-        else:
-            current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,y2)
+        if current_slope_rate_OD <= 0 :
+            current_slope_rate_OD=1.326#1.127
+            current_slope_attu_OD=0.15
+            for i in range(round(x(age_new))-3):
+                current_slope_rate_OD = current_slope_rate_OD * ( 1 - current_slope_attu_OD)
+            current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,OD_new)
+
+        current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,OD_new)
+        if current_slope_rate_OS <= 0 :
+            current_slope_rate_OS=1.326
+            current_slope_attu_OS=0.15
+            for i in range(round(x(age_new))-3):
+                current_slope_rate_OS = current_slope_rate_OS * ( 1 - current_slope_attu_OS)
+            current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,OS_new)
+ 
+        current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,OS_new)
 else : 
     if report =='球面度數':
         current_slope_rate_OD=-1.078
         current_slope_rate_OS=-1.078
         current_slope_attu_OD=0.1038
         current_slope_attu_OS=0.1038
-        if  round(x(age)) in range(3,17):
-            current_slope_rate_OD = slope_calculate(int(x(age)),current_slope_rate_OD,y1)
-            current_slope_rate_OS = slope_calculate(int(x(age)),current_slope_rate_OS,y2)
+        if  round(x(age_new)) in range(3,17):
+            current_slope_rate_OD = slope_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+            current_slope_rate_OS = slope_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
     else:
         current_slope_rate_OD=1.326#1.127
         current_slope_rate_OS=1.326#1.127
         current_slope_attu_OD=0.15
         current_slope_attu_OS=0.15
-        for i in range(round(x(age))-3):
+        for i in range(round(x(age_new))-3):
             current_slope_rate_OD = current_slope_rate_OD * ( 1 - current_slope_attu_OD)
         current_slope_rate_OS = current_slope_rate_OD
-        current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,y1)
-        current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,y2)
+        current_slope_attu_OD = attu_calculate_AL(current_slope_attu_OD,OD_new)
+        current_slope_attu_OS = attu_calculate_AL(current_slope_attu_OS,OS_new)
 
-if  round(x(age)) in range(3,17):
+if  round(x(age_new)) in range(3,17):
     if report == '球面度數':
-        OD_no_management_data = curve_calculation(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
-        OS_no_management_data = curve_calculation(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+        OD_no_management_data = curve_calculation(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0)
+        OS_no_management_data = curve_calculation(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0)
     else:
-        OD_no_management_data = curve_calculation_AL(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
-        OS_no_management_data = curve_calculation_AL(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)     
-    OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),control_rate)
-    OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),control_rate)
+        OD_no_management_data = curve_calculation_AL(OD_no_management_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0)
+        OS_no_management_data = curve_calculation_AL(OS_no_management_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0)     
+    OD_control_data = curve_calculation(OD_control_data,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),control_rate)
+    OS_control_data = curve_calculation(OS_control_data,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),control_rate)
     
     for age_index in range(1,agecounter):
-        table['Age　'].append(f'{_y_m(age,age_index,sign)}')
+        table['Age　'].append(f'{_y_m(age_new,age_index,sign)}')
         OD_new=OD_no_management_data[age_index]
         OS_new=OS_no_management_data[age_index]
         OD_new_control=OD_control_data[age_index]
@@ -281,41 +299,44 @@ if  round(x(age)) in range(3,17):
                 table['OS_m'].append(f'>5')
             else :
                 table['OS_m'].append(f'{OS_new_control:.2f}') 
-#print("*********************")
 
 sign='●'
-for record in records:
+for record in records_py[1:]:
     if record[od] != "" and record[os] != "":
         table['Age　'].insert(0, f'{_y_m(record[11],0,sign)}')
         if report == '軸長':
-            if record[od] == 19.5 :
-                table['OD'].insert(0, f'<20')
-            elif record[od] == 30.5 :
-                table['OD'].insert(0, f'>30')
-            else :
-                table['OD'].insert(0, f'{record[od]:.2f}')
+            if record[od] !="":
+                if record[od] == 19.5 :
+                    table['OD'].insert(0, f'<20')
+                elif record[od] == 30.5 :
+                    table['OD'].insert(0, f'>30')
+                else :
+                    table['OD'].insert(0, f'{record[od]:.2f}')
 
-            if record[os] == 19.5 :
-                table['OS'].insert(0, f'<20')
-            elif record[os] == 30.5 :
-                table['OS'].insert(0, f'>30')
-            else :
-                table['OS'].insert(0, f'{record[os]:.2f}')
+            if record[os] !="":
+                if record[os] == 19.5 :
+                    table['OS'].insert(0, f'<20')
+                elif record[os] == 30.5 :
+                    table['OS'].insert(0, f'>30')
+                else :
+                    table['OS'].insert(0, f'{record[os]:.2f}')
         else:
-            if record[od] == -9 :
-                table['OD'].insert(0, f'<-9')
-            elif record[od] == 5 :
-                table['OD'].insert(0, f'>5')
-            else :
-                table['OD'].insert(0, f'{record[od]:.2f}')
-            table['OD_m'].insert(0,'-')
-            if record[os] == -9 :
-                table['OS'].insert(0, f'<-9')
-            elif record[os] == 5 :
-                table['OS'].insert(0, f'>5')
-            else :
-                table['OS'].insert(0, f'{record[os]:.2f}')
-            table['OS_m'].insert(0,'-')
+            if record[od] !="":
+                if record[od] == -9 :
+                    table['OD'].insert(0, f'<-9')
+                elif record[od] == 5 :
+                    table['OD'].insert(0, f'>5')
+                else :
+                    table['OD'].insert(0, f'{record[od]:.2f}')
+                table['OD_m'].insert(0,'-')
+            if record[os] !="":
+                if record[os] == -9 :
+                    table['OS'].insert(0, f'<-9')
+                elif record[os] == 5 :
+                    table['OS'].insert(0, f'>5')
+                else :
+                    table['OS'].insert(0, f'{record[os]:.2f}')
+                table['OS_m'].insert(0,'-')
 import pandas as pd
 df = pd.DataFrame(table)
 if report == '軸長':
