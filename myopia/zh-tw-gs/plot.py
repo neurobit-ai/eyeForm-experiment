@@ -1,5 +1,6 @@
 from js import sex, age, y1, y2, records, suggestion, localStorage, report , language_type
 from pyscript import display
+from pyodide.ffi import JsProxy
 if 'ale' in sex:
     sex = {'Male': '男', 'Female': '女'}[sex]
 #print(language_type)
@@ -292,7 +293,10 @@ import json
 records = json.loads(records)
 
 od, os = (18, 24) if report == '軸長' else (15, 21)
-records_py = records.copy()
+if isinstance(records, JsProxy):
+    records_py = records.to_py()
+else:
+    records_py = records.copy()
 if len(records_py)!=0:
     if y1 != "" and y2 != "" and age != "":
         new_record = [""] * len(records_py[-1])

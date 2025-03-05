@@ -1,5 +1,6 @@
 from js import sex, age, y1, y2, records, report , language_type, suggestion
 from pyscript import display
+from pyodide.ffi import JsProxy
 import numpy as np
 import re
 import pickle
@@ -73,7 +74,10 @@ def attu_calculate_AL(attu,start_point):
     return attu
 import json
 records = json.loads(records)
-records_py = records.copy()
+if isinstance(records, JsProxy):
+    records_py = records.to_py()
+else:
+    records_py = records.copy()
 od, os = (18, 24) if report == '軸長' else (15, 21)
 if len(records_py)!=0:
     if y1 != "" and y2 != "" and age != "":
