@@ -73,7 +73,7 @@ def attu_calculate_AL(attu,start_point):
     return attu
 import json
 records = json.loads(records)
-records_py = records.to_py()
+records_py = records.copy()
 od, os = (18, 24) if report == '軸長' else (15, 21)
 if len(records_py)!=0:
     if y1 != "" and y2 != "" and age != "":

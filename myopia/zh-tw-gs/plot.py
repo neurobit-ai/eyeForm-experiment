@@ -292,7 +292,7 @@ import json
 records = json.loads(records)
 
 od, os = (18, 24) if report == '軸長' else (15, 21)
-records_py = records.to_py()
+records_py = records.copy()
 if len(records_py)!=0:
     if y1 != "" and y2 != "" and age != "":
         new_record = [""] * len(records_py[-1])
