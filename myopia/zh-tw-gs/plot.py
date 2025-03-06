@@ -207,73 +207,6 @@ def x(age):
     m = re.match(r'(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12
 
-if round(x(age)) in range(3, 17):
-    if report == '軸長' and language_type == 2:
-        p0, p50, p75, p90, p100 = area.loc[round(x(age))]
-        for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
-            if y < p50:
-                display(f'{eye}{risk[0]}', target='advice')
-                localStorage.setItem(eye, 0)
-            elif y < p75:
-                display(f'{eye}{risk[1]}', target='advice')
-                localStorage.setItem(eye, 1)
-            elif y < p90:
-                display(f'{eye}{risk[2]}', target='advice')
-                localStorage.setItem(eye, 2)
-            else:
-                display(f'{eye}{risk[3]}', target='advice')
-                localStorage.setItem(eye, 3)
-
-    if report == '軸長' and language_type != 2:
-        p0, p50, p75, p90, p100 = area.loc[round(x(age))]
-        eye="ODOS"
-        if y1 < p50 or y2 < p50:
-            display(f'{risk[0]}', target='advice')
-            localStorage.setItem(eye, 0)
-        elif y1 < p75 or y2 < p75:
-            display(f'{risk[1]}', target='advice')
-            localStorage.setItem(eye, 1)
-        elif y1 < p90 or y2 < p90:
-            display(f'{risk[2]}', target='advice')
-            localStorage.setItem(eye, 2)
-        else:
-            display(f'{risk[2]}', target='advice')
-            localStorage.setItem(eye, 2)
-
-    if report == '球面度數'  and language_type == 2:
-        p100, p50, p25, p10, p0 = area.loc[round(x(age))]
-        for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
-            if y > p50:
-                display(f'{eye}{risk[0]}', target='advice')
-                localStorage.setItem(eye, 0)
-            elif y > p25:
-                display(f'{eye}{risk[1]}', target='advice')
-                localStorage.setItem(eye, 1)
-            elif y > p10:
-                display(f'{eye}{risk[2]}', target='advice')
-                localStorage.setItem(eye, 2)
-            else:
-                display(f'{eye}{risk[3]}', target='advice')
-                localStorage.setItem(eye, 3)
-                
-    if report == '球面度數' and language_type != 2:
-            p100, p50, p25, p10, p0 = area.loc[round(x(age))]
-            eye="ODOS"
-            if y1 < p25 or y2 < p25:
-                display(f'{risk[2]}', target='advice')
-                localStorage.setItem(eye, 0)
-            elif y1 < p50 or y2 < p50:
-                display(f'{risk[1]}', target='advice')
-                localStorage.setItem(eye, 1)
-            else:
-                display(f'{risk[0]}', target='advice')
-                localStorage.setItem(eye, 2)
-
-else:
-    display(samples_not_enought, target='advice')
-    localStorage.setItem('右眼', '')
-    localStorage.setItem('左眼', '')
-
 if suggestion == None :
     suggestion='不處置'
 if suggestion == '不處置' :
@@ -297,14 +230,20 @@ if isinstance(records, JsProxy):
     records_py = records.to_py()
 else:
     records_py = records.copy()
+already_exist=False
 if len(records_py)!=0:
     if y1 != "" and y2 != "" and age != "":
-        new_record = [""] * len(records_py[-1])
-        new_record[11]=age
-        new_record[od]=y1
-        new_record[os]=y2
-        # new_record[0]="Latest_Input"
-        records_py.append(new_record)
+        for record in records_py:
+            if x(record[11]) == x(age) and record[od] == y1 and record[os] == y2:
+                already_exist = True
+                break
+        if not already_exist:
+            new_record = [""] * len(records_py[-1])
+            new_record[11]=age
+            new_record[od]=y1
+            new_record[os]=y2
+            # new_record[0]="Latest_Input"
+            records_py.append(new_record)
 
     for index_i in range(0,len(records_py)-1):
         for index_j in range(index_i+1,len(records_py)):
@@ -347,6 +286,73 @@ for age_index in range(1,agecounter):
 # x_age_record.append(x(age))
 # y_od_record.append(y1)
 # y_os_record.append(y2)
+if round(x(age_new)) in range(3, 17):
+    if report == '軸長' and language_type == 2:
+        p0, p50, p75, p90, p100 = area.loc[round(x(age_new))]
+        for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
+            if y < p50:
+                display(f'{eye}{risk[0]}', target='advice')
+                localStorage.setItem(eye, 0)
+            elif y < p75:
+                display(f'{eye}{risk[1]}', target='advice')
+                localStorage.setItem(eye, 1)
+            elif y < p90:
+                display(f'{eye}{risk[2]}', target='advice')
+                localStorage.setItem(eye, 2)
+            else:
+                display(f'{eye}{risk[3]}', target='advice')
+                localStorage.setItem(eye, 3)
+
+    if report == '軸長' and language_type != 2:
+        p0, p50, p75, p90, p100 = area.loc[round(x(age_new))]
+        eye="ODOS"
+        if y1 < p50 or y2 < p50:
+            display(f'{risk[0]}', target='advice')
+            localStorage.setItem(eye, 0)
+        elif y1 < p75 or y2 < p75:
+            display(f'{risk[1]}', target='advice')
+            localStorage.setItem(eye, 1)
+        elif y1 < p90 or y2 < p90:
+            display(f'{risk[2]}', target='advice')
+            localStorage.setItem(eye, 2)
+        else:
+            display(f'{risk[2]}', target='advice')
+            localStorage.setItem(eye, 2)
+
+    if report == '球面度數'  and language_type == 2:
+        p100, p50, p25, p10, p0 = area.loc[round(x(age_new))]
+        for y, eye , ODOS in (y1, eye_word[0],'OD'), (y2, eye_word[1],'OS'):
+            if y > p50:
+                display(f'{eye}{risk[0]}', target='advice')
+                localStorage.setItem(eye, 0)
+            elif y > p25:
+                display(f'{eye}{risk[1]}', target='advice')
+                localStorage.setItem(eye, 1)
+            elif y > p10:
+                display(f'{eye}{risk[2]}', target='advice')
+                localStorage.setItem(eye, 2)
+            else:
+                display(f'{eye}{risk[3]}', target='advice')
+                localStorage.setItem(eye, 3)
+                
+    if report == '球面度數' and language_type != 2:
+            p100, p50, p25, p10, p0 = area.loc[round(x(age_new))]
+            eye="ODOS"
+            if y1 < p25 or y2 < p25:
+                display(f'{risk[2]}', target='advice')
+                localStorage.setItem(eye, 0)
+            elif y1 < p50 or y2 < p50:
+                display(f'{risk[1]}', target='advice')
+                localStorage.setItem(eye, 1)
+            else:
+                display(f'{risk[0]}', target='advice')
+                localStorage.setItem(eye, 2)
+
+else:
+    display(samples_not_enought, target='advice')
+    localStorage.setItem('右眼', '')
+    localStorage.setItem('左眼', '')
+
 
 def slope_calculate(age,slope,start_point):
     age_index = age - 3
@@ -366,7 +372,7 @@ def attu_calculate_AL(attu,start_point):
     return attu
 current_slope_rate_OD = 0
 current_slope_rate_OS = 0
-if len(records_py)!=0 and round(x(age)) in range(3,17):
+if len(records_py)!=0 :#and round(x(age_new)) in range(3,17)
     for index,record in enumerate(records_py):
         if record[od] != "" and record[os] != "":
             if index ==0 :
@@ -403,6 +409,8 @@ if len(records_py)!=0 and round(x(age)) in range(3,17):
                 else:
                     current_slope_rate_OD = (OD_new - record[od]) / (x(age_new)-x(record[11]))
                     current_slope_rate_OS = (OS_new - record[os]) / (x(age_new)-x(record[11]))
+                    current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+                    current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
             else :
                 if OD_zero ==True and x(age_new)-x(record[11]) > 0:
                     current_slope_rate_OD = (OD_new - record[od]) / (x(age_new)-x(record[11]))
@@ -420,15 +428,15 @@ if len(records_py)!=0 and round(x(age)) in range(3,17):
             current_slope_attu_OD=0.1038
             if  round(x(age_new)) in range(3,17):
                 current_slope_rate_OD = slope_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+                current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
 
-        current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
         if current_slope_rate_OS >= 0 or current_slope_rate_OS < -3:
             current_slope_rate_OS=-1.078
             current_slope_attu_OS=0.1038
             if  round(x(age_new)) in range(3,17):
                 current_slope_rate_OS = slope_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
-
-        current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+                current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+                
     else:
         current_slope_attu_OD=0.15
         current_slope_attu_OS=0.15
@@ -462,6 +470,8 @@ else :
         if  round(x(age_new)) in range(3,17):
             current_slope_rate_OD = slope_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
             current_slope_rate_OS = slope_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+            current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+            current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
     else:
         current_slope_rate_OD=1.326#1.127
         current_slope_rate_OS=1.326#1.127
@@ -533,7 +543,7 @@ elif suggestion == "角膜塑型片":
     control_rate = 0.44
 else :
     control_rate = 0.13
-if OD_new != "" and round(x(age)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
+if OD_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = OD_new
     growth_with_control_rate[0] = OD_new
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0)
@@ -544,7 +554,7 @@ if OD_new != "" and round(x(age)) in range(3,17) and report == '球面度數':#a
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制\n成長趨勢')#, alpha=0.7
         plt.plot(x_age_series, growth_with_control_rate, color='#e34fe8', linestyle='--', linewidth=0.9, label='右眼有控制\n成長趨勢')#, alpha=0.7
-if OS_new != "" and round(x(age)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
+if OS_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
     growth_without_control_rate[0] = OS_new
     growth_with_control_rate[0] = OS_new
     growth_without_control_rate = curve_calculation(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0)
@@ -555,18 +565,18 @@ if OS_new != "" and round(x(age)) in range(3,17) and report == '球面度數':#a
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='左眼無控制\n成長趨勢')#, alpha=0.7
         plt.plot(x_age_series, growth_with_control_rate, color='#4FC1E8', linestyle='--', linewidth=0.9, label='左眼有控制\n成長趨勢')#, alpha=0.7  
-if OD_new != "" and round(x(age)) in range(3,17) and report == '軸長':
+if OD_new != "" and round(x(age_new)) in range(3,17) and report == '軸長':
     growth_without_control_rate[0] = OD_new
     # print('OD slope is ',current_slope_rate_OD,y1)
-    growth_without_control_rate = curve_calculation_AL(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age)),0)
+    growth_without_control_rate = curve_calculation_AL(growth_without_control_rate,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0)
     if language_type != 0: 
         plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='OD No treatment')#, alpha=0.7
     else:
         plt.plot(x_age_series, growth_without_control_rate, color='red', linewidth=0.7, label='右眼無控制\n成長趨勢')#, alpha=0.7
-if OS_new != "" and round(x(age)) in range(3,17) and report == '軸長':
+if OS_new != "" and round(x(age_new)) in range(3,17) and report == '軸長':
     growth_without_control_rate[0] = OS_new
     # print('OS slope is ',current_slope_rate_OS,y2)
-    growth_without_control_rate = curve_calculation_AL(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age)),0)
+    growth_without_control_rate = curve_calculation_AL(growth_without_control_rate,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0)
     if language_type != 0: 
         plt.plot(x_age_series, growth_without_control_rate, color='blue', linewidth=0.7, label='OD No treatment')#, alpha=0.7
     else:
@@ -583,7 +593,7 @@ if report == '球面度數':
         plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.55),fontsize=8)
     else:
         plt.legend(loc='center right' , bbox_to_anchor=(1.22, 0.55),fontsize=8,prop=custom_font)
-plt.xticks(range(3, 17 if x(age) + 1 <= 16 else int(x(age)) + 2))
+plt.xticks(range(3, 17 if x(age_new) + 1 <= 16 else int(x(age_new)) + 2))
 plt.yticks(range(20, 30) if report == '軸長' else range(-8, 7))
 if language_type== 0 :
     plt.xlabel("年齡 (歲)", fontproperties=custom_font_s, fontsize=12)
@@ -604,14 +614,14 @@ plt.subplots_adjust(left=0.1, right=0.84, bottom=0.1, top=0.9, wspace=0.8, hspac
 if report == '軸長':
     plt.ylim(21, 29)
     plt.xlim(3, 16)
-    plt.text(16 if x(age) + 1 < 16 else x(age) + 1, 18.8 if sex=='女' else 19.2, f'', horizontalalignment='right', fontsize=8)
+    # plt.text(16 if x(age) + 1 < 16 else x(age) + 1, 18.8 if sex=='女' else 19.2, f'', horizontalalignment='right', fontsize=8)
 if report == '球面度數':
     if language_type== 0 or language_type == 1:
         plt.ylim(2, -8)
     else:
         plt.ylim(-8, 2)
     plt.xlim(3, 16)
-    plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -10.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
+    # plt.text(16 if x(age) + 1 < 16 else x(age) + 1, -10.5 if sex=='女' else -10.5, f'', horizontalalignment='right', fontsize=8)
 plt.grid(alpha=0.2)
 ax = plt.gca()
 if report == '軸長':

@@ -79,14 +79,20 @@ if isinstance(records, JsProxy):
 else:
     records_py = records.copy()
 od, os = (18, 24) if report == '軸長' else (15, 21)
+already_exist=False
 if len(records_py)!=0:
     if y1 != "" and y2 != "" and age != "":
-        new_record = [""] * len(records_py[-1])
-        new_record[11]=age
-        new_record[od]=y1
-        new_record[os]=y2
-        # new_record[0]="Latest_Input"
-        records_py.append(new_record)
+        for record in records_py:
+            if x(record[11]) == x(age) and record[od] == y1 and record[os] == y2:
+                already_exist = True
+                break
+        if not already_exist:
+            new_record = [""] * len(records_py[-1])
+            new_record[11]=age
+            new_record[od]=y1
+            new_record[os]=y2
+            # new_record[0]="Latest_Input"
+            records_py.append(new_record)
 
     for index_i in range(0,len(records_py)-1):
         for index_j in range(index_i+1,len(records_py)):
@@ -183,6 +189,8 @@ if len(records_py)!=0 and round(x(age_new)) in range(3,17):
                 else:
                     current_slope_rate_OD = (OD_new - record[od]) / (x(age_new)-x(record[11]))
                     current_slope_rate_OS = (OS_new - record[os]) / (x(age_new)-x(record[11]))
+                    current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+                    current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
             else :
                 if OD_zero ==True and x(age_new)-x(record[11]) > 0:
                     current_slope_rate_OD = (OD_new - record[od]) / (x(age_new)-x(record[11]))
@@ -197,15 +205,15 @@ if len(records_py)!=0 and round(x(age_new)) in range(3,17):
             current_slope_attu_OD=0.1038
             if  round(x(age_new)) in range(3,17):
                 current_slope_rate_OD = slope_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+                current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
 
-        current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
-        if current_slope_rate_OS >= 0 or current_slope_attu_OS < -3:
+        if current_slope_rate_OS >= 0 or current_slope_rate_OS < -3:
             current_slope_rate_OS=-1.078
             current_slope_attu_OS=0.1038
             if  round(x(age_new)) in range(3,17):
                 current_slope_rate_OS = slope_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
-
-        current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+                current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+                
     else:
         current_slope_attu_OD=0.15
         current_slope_attu_OS=0.15
@@ -234,6 +242,8 @@ else :
         if  round(x(age_new)) in range(3,17):
             current_slope_rate_OD = slope_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
             current_slope_rate_OS = slope_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
+            current_slope_attu_OD = attu_calculate(int(x(age_new)),current_slope_rate_OD,OD_new)
+            current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
     else:
         current_slope_rate_OD=1.326#1.127
         current_slope_rate_OS=1.326#1.127
