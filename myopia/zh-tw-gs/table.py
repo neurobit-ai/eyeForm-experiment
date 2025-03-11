@@ -63,7 +63,12 @@ def slope_calculate(age,slope,start_point):
     return slope
 
 def attu_calculate(age,slope,start_point):
-    age_index = age - 3
+    if age - 3 < 14 and age - 3 >= 0:
+        age_index = age - 3
+    elif age - 3 < 0: 
+        age_index = 0
+    else:
+        age_index = 13
     sd_count = ((-0.5) - start_point) / 0.5
     sd_now = 1 - ( growth_base[age_index] + ( sd_count * growth_interval[age_index]))
     attu = (slope /  sd_now) *0.0962
