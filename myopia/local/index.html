@@ -1,0 +1,1809 @@
+<!doctype html>
+<!-- 此網頁是具有權限設定的版本，要有在指定的google drive sheet上登記才能使用，用此網頁來說明函式的功能 -->
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>eyeForm - Neurobit AI</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../../../favicon/site.webmanifest">
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Oswald:300,400|Roboto+Mono&display=swap" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="fonts/icomoon/style.css"> -->
+    <link rel="stylesheet" href="../../../css/bootstrap.513.min.css">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <script src="../../../js/jquery-3.3.1.min.js"></script>
+    <script src="../../../js/popper.min.js"></script>
+    <script src="../../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../../js/jquery.validate.min.js"></script>
+    <script src="../../../js/myopia-main.js"></script>
+
+    <style>
+      .warning_msg {
+        color: red;
+        font-size: 10px;
+        margin-left: 5px;
+      }
+      datalist {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      }
+
+      option {
+      padding: 0;
+      }
+
+      input[type="range"] {
+      width: 100%;
+      margin: 0;
+      }
+      
+      .right-aligned {
+            text-align: right;
+        }
+
+      #customDate_dateOfBirth::-webkit-calendar-picker-indicator{
+          padding-left: 23px;
+          padding-right:22px;
+
+      }
+      #dateOfVisit::-webkit-calendar-edit,
+      #dateOfBirth::-webkit-calendar-edit{
+          display:none;
+      }
+      #dateOfBirth::-webkit-calendar-picker-indicator{
+          display:none;
+      }
+    </style>
+  </head>
+
+  <body class="bg-light">
+    <script src="../../../js/jwt-decode.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(response) {
+        var token = response.credential;
+        var decoded = jwt_decode(token);
+        console.log(decoded.name);
+        console.log(decoded.email);
+        if(decoded.name !=="Aleistar Chan")
+        {
+        document.getElementById("suggestion").style.display = "none";
+        document.getElementById("uploadform").style.display = "none";
+        }
+        document.getElementById('name').value = decoded.name;
+        document.getElementById('email').value = decoded.email;
+        $('#staticBackdrop').modal('hide');
+        /*呼叫AWS的處置建議model，因為與現在的需求不相符所以註解此段落*/
+        // $.ajax({
+        //   //url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+        //   url: 'https://rlneiq30aa.execute-api.ap-northeast-1.amazonaws.com/DREDGE_LINE/Nautiluz-test',
+        //   type: 'POST',
+        //   dataType: 'json',
+        //   data: JSON.stringify([1,2,3,4,5,6,7,8,9,10,11]),
+        //   complete: function(data) {
+        //     console.log(data['responseText']);
+        //   }
+        // });
+      }
+      /*在local端執行時，因為COOP政策的影響，無法在local端使用google的登入器，所以註解此段落*/
+      /*
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: "102543814115-i162ma9jajatt061f6grijqsth2avq3h.apps.googleusercontent.com",
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("buttonDiv"),
+          { theme: "filled_blue", size: "large", text: "continue_with" }  // customization attributes
+        );
+        // google.accounts.id.prompt(); // also display the One Tap dialog
+      }*/
+    </script>
+    <script type="text/javascript">
+      /*在local端執行時，因為COOP政策的影響，無法在local端使用google的登入器，所以註解此段落*/
+      /*$(window).on('load', function() {
+          $('#staticBackdrop').modal('show');
+      });*/
+    </script>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">eyeForm: 學齡兒童近視追蹤</h5>
+            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+          </div>
+          <div class="modal-body" id="buttonDiv">
+            ...
+          </div>
+          <div class="modal-footer">
+            版權聲明 © 2025 神經元科技股份有限公司 版權所有
+            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="container">
+        <div class="row justify-content-center">
+
+              <div class="col">
+                <div class="float-end form-group form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="darkMode">
+                  <label class="form-check-label" for="darkMode">深色模式</label>
+                </div>
+              </div>
+
+              <form method="post" id="eyeForm" name="eyeForm">
+                <input type="hidden" name="odRisk" id="odRisk">
+                <input type="hidden" name="osRisk" id="osRisk">
+                <input type="hidden" name="name" id="name">
+                <input type="hidden" name="email" id="email">
+
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="medRecNo">病歷號</label>
+                    <input type="text" class="form-control" name="medRecNo" id="medRecNo">
+                    <span class="warning_msg" id="medRecNo_warning"> </span>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="caseNo">案號</label>
+                    <input type="number" class="form-control" name="caseNo" id="caseNo" disabled>
+                  </div>
+                </div>
+                <div class="col-6 form-group">
+                  <label class="form-label" for="site" id="site_info">院所</label>
+                  <select class="form-select" name="site" id="site">
+                    <option value=""></option>
+                    <option value="Neurobit">Neurobit</option>
+                    <option value="TTT">TTT</option>
+                    <option value="HHH">HHH</option>                      
+                    <option value="TPECH-ZX">TPECH-ZX</option>
+                    <option value="FJUH">FJUH</option>
+                  </select>
+                  <span class="warning_msg" id="site_warning"> </span>
+                </div>
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="dateOfVisit">就診西元年/月/日</label>
+                    <input type="date" class="form-control" name="dateOfVisit" id="dateOfVisit">
+                    <span class="warning_msg" id="dateOfVisit_warning"></span>
+                  </div>
+                  <div class="col-5 form-group">
+                    <label class="form-label" for="dateOfBirth">出生西元年/月/日</label>
+                    <input type="date" class="form-control" name="dateOfBirth" id="dateOfBirth">
+                    <span class="warning_msg" id="dateOfBirth_warning"></span>
+                  </div>                  
+                  <div class="col-1 form-group">
+                    <label class="form-label" for="dateOfBirth"></label>
+                    <input type="date" class="form-control" name="customDate_dateOfBirth" id="customDate_dateOfBirth" tabindex="-1">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-3 form-group">
+                    <label class="form-label" for="age">實歲</label>
+                    <input type="text" class="form-control" name="age" id="age" disabled>
+                    <span class="warning_msg" id="ageID_warning"></span>
+                  </div>
+                  <div class="col-3 form-group">
+                    <label class="form-label" for="height">身高(cm)</label>
+                    <input type="text"  class="form-control" name="height" id="height">
+                    <span id="height_errorMsg" class="warning_msg"></span>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="pretermW">早產週數</label>
+                    <div class="row g-0">
+                      <div class="col-5 form-group">
+                        <input type="text"  class="form-control" name="pretermW" id="pretermW">
+                        <span id="week_errorMsg" class="warning_msg"></span>
+                      </div>
+                      <div class="col-1 form-group">
+                        <label class="form-label" for="pretermW">週</label>
+                      </div>
+                      <div class="col-5 form-group">
+                        <input type="text" class="form-control" name="pretermD" id="pretermD" >
+                        <span id="day_errorMsg" class="warning_msg"></span>
+                      </div>
+                      <div class="col-1 form-group">
+                        <label class="form-label" for="pretermD">天</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="sexM">性別</label>
+                    <input type="radio" class="form-check-input" name="sex" id="sexM" value="男">
+                    <label class="form-label" for="sexM">男　</label>
+                    <input type="radio" class="form-check-input" name="sex" id="sexF" value="女">
+                    <label class="form-label" for="sexF">女　</label>
+                    <span class="warning_msg" id="sex_warning"></span>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="birth">胎別</label>
+                    <input type="radio" class="form-check-input" name="birth" id="birth" value="單">
+                    <label class="form-label" for="birth">單　</label>
+                    <input type="radio" class="form-check-input" name="birth" id="births" value="多">
+                    <label class="form-label" for="births">多　</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="fatherD">父：近視度數 ≦ -5D</label>
+                    <input type="text"  class="form-control" name="fatherD" id="fatherD">
+                    <span id="fatherD_errorMsg" class="warning_msg"></span>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="motherD">母：近視度數 ≦ -5D</label>
+                    <input type="text" class="form-control" name="motherD" id="motherD">
+                    <span id="motherD_errorMsg" class="warning_msg"></span>
+                  </div>
+                </div>
+
+                <br><hr style="color:red"><br>
+
+                <div class="row">
+                  <div class="col-6 form-group" style="display: none;">
+                    <label class="form-label" for="od1" >右眼最佳矯正視力</label>
+                    <label class="form-label" for="od0"> ( 戴眼鏡</label>
+                    <input type="checkbox" class="form-check-input" name="od0" id="od0" value="G" text-sm-right>
+                    <label class="form-label" for="od0" text-sm-right> ) :</label>
+                    <span class="form-range-value" id="od1value" style="width: 50px; display: inline-block;"></span>
+                    <span class="warning_msg" id="od1_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="od1" id="od1" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
+                  </div>
+                  <div class="col-6 form-group" style="display: none;">
+                    <label class="form-label" for="os1">左眼最佳矯正視力</label>
+                    <label class="form-label" for="os0"> ( 戴眼鏡</label>
+                    <input type="checkbox" class="form-check-input" name="os0" id="os0" value="G">
+                    <label class="form-label" for="os0"> ) :</label>
+                    <span class="form-range-value" id="os1value" style="width: 50px; display: inline-block;"></span>
+                    <span class="warning_msg" id="os1_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="os1" id="os1" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
+                  </div>
+                </div>
+
+                <div class="row" style="display: none;">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="od6">右眼矯正前視力 <span class="form-range-value" id="od6value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="od6_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="od6" id="od6" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="os6">左眼矯正前視力 <span class="form-range-value" id="os6value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="o62_warning"> </span>
+                    <input type="range" class="form-range" min=0 max=1 step=0.1 name="os6" id="os6" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="0.0"></option>
+                      <option value="10" label="1.0"></option>
+                    </datalist>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="od2">右眼球面度數(D)  : <span class="form-range-value" id="od2value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="od2_warning"> </span>
+                    <input type="range" class="form-range" min=-10 max=10 step=0.25 name="od2" id="od2" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-10"></option>
+                      <option value="10" label="10"></option>
+                    </datalist>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="os2">左眼球面度數(D)  : <span class="form-range-value" id="os2value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="os2_warning"> </span>
+                    <input type="range" class="form-range" min=-10 max=10 step=0.25 name="os2" id="os2" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-10"></option>
+                      <option value="10" label="10"></option>
+                    </datalist>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="od3">右眼散光度數(D)  : <span class="form-range-value" id="od3value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="od3_warning"> </span>
+                    <input type="range" class="form-range" min=-7 max=0 step=0.25 name="od3" id="od3" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-7.0"></option>
+                      <option value="10" label="0.0"></option>
+                    </datalist>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="os3">左眼散光度數(D)  : <span class="form-range-value" id="os3value" style="width: 50px; display: inline-block;"></span></label>
+                    <span class="warning_msg" id="os3_warning"> </span>
+                    <input type="range" class="form-range" min=-7 max=0 step=0.25 name="os3" id="os3" list="tickmarks">
+                    <datalist id="tickmarks">
+                      <option value="1" label="-7.0"></option>
+                      <option value="10" label="0.0"></option>
+                    </datalist>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="od4">右眼軸度(°) </label>
+                    <select class="form-select" name="od4" id="od4">
+                      <option value=""></option>
+                      <optgroup label="常見">
+                        <option value="0">0</option>
+                        <option value="90">90</option>
+                        <option value="180">180</option>
+                        <option value="10">10</option>
+                        <option value="170">170</option>
+                        <option value="20">20</option>
+                        <option value="160">160</option>
+                      </optgroup>
+                      <optgroup label="--------------------">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="35">35</option>
+                        <option value="40">40</option>
+                        <option value="45">45</option>
+                        <option value="50">50</option>
+                        <option value="55">55</option>
+                        <option value="60">60</option>
+                        <option value="65">65</option>
+                        <option value="70">70</option>
+                        <option value="75">75</option>
+                        <option value="80">80</option>
+                        <option value="85">85</option>
+                        <option value="90">90</option>
+                        <option value="95">95</option>
+                        <option value="100">100</option>
+                        <option value="105">105</option>
+                        <option value="110">110</option>
+                        <option value="115">115</option>
+                        <option value="120">120</option>
+                        <option value="125">125</option>
+                        <option value="130">130</option>
+                        <option value="135">135</option>
+                        <option value="140">140</option>
+                        <option value="145">145</option>
+                        <option value="150">150</option>
+                        <option value="155">155</option>
+                        <option value="160">160</option>
+                        <option value="165">165</option>
+                        <option value="170">170</option>
+                        <option value="175">175</option>
+                      </optgroup>
+                    </select>
+                    <span class="warning_msg" id="od4ID_warning"> </span>
+                  </div>
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="os4">左眼軸度(°) </label>
+                    <select class="form-select" name="os4" id="os4">
+                      <option value=""></option>
+                      <optgroup label="常見">
+                        <option value="0">0</option>
+                        <option value="90">90</option>
+                        <option value="180">180</option>
+                        <option value="10">10</option>
+                        <option value="170">170</option>
+                        <option value="20">20</option>
+                        <option value="160">160</option>
+                      </optgroup>
+                      <optgroup label="--------------------">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="35">35</option>
+                        <option value="40">40</option>
+                        <option value="45">45</option>
+                        <option value="50">50</option>
+                        <option value="55">55</option>
+                        <option value="60">60</option>
+                        <option value="65">65</option>
+                        <option value="70">70</option>
+                        <option value="75">75</option>
+                        <option value="80">80</option>
+                        <option value="85">85</option>
+                        <option value="90">90</option>
+                        <option value="95">95</option>
+                        <option value="100">100</option>
+                        <option value="105">105</option>
+                        <option value="110">110</option>
+                        <option value="115">115</option>
+                        <option value="120">120</option>
+                        <option value="125">125</option>
+                        <option value="130">130</option>
+                        <option value="135">135</option>
+                        <option value="140">140</option>
+                        <option value="145">145</option>
+                        <option value="150">150</option>
+                        <option value="155">155</option>
+                        <option value="160">160</option>
+                        <option value="165">165</option>
+                        <option value="170">170</option>
+                        <option value="175">175</option>
+                      </optgroup>
+                    </select>
+                    <span class="warning_msg" id="os4ID_warning"> </span>
+                  </div>
+                </div>
+
+                <div class="row" style="display: none;">
+                  <div class="col-6 form-group">
+                    <label class="form-label" for="od5int">右眼軸長(mm)</label>
+                    <div class="row g-0">
+                      <div class="col-6 form-group">
+                        <select class="form-select" name="od5int" id="od5int">
+                          <option value=""></option>
+                          <option value="< 20">< 20</option>
+                          <option value="20">20</option>
+                          <option value="21">21</option>
+                          <option value="22">22</option>
+                          <option value="23">23</option>
+                          <option value="24">24</option>
+                          <option value="25">25</option>
+                          <option value="26">26</option>
+                          <option value="27">27</option>
+                          <option value="28">28</option>
+                          <option value="29">29</option>
+                          <option value="30">30</option>
+                          <option value="> 30">> 30</option>
+                        </select>
+                        <span class="warning_msg" id="od5int_warning"> </span>
+                      </div>
+                      <div class="col-6 form-group">
+                        <select class="form-select" name="od5dec" id="od5dec">
+                          <option value=".00">.00</option>
+                          <option value=".01">.01</option>
+                          <option value=".02">.02</option>
+                          <option value=".03">.03</option>
+                          <option value=".04">.04</option>
+                          <option value=".05">.05</option>
+                          <option value=".06">.06</option>
+                          <option value=".07">.07</option>
+                          <option value=".08">.08</option>
+                          <option value=".09">.09</option>
+                          <option value=".10">.10</option>
+                          <option value=".11">.11</option>
+                          <option value=".12">.12</option>
+                          <option value=".13">.13</option>
+                          <option value=".14">.14</option>
+                          <option value=".15">.15</option>
+                          <option value=".16">.16</option>
+                          <option value=".17">.17</option>
+                          <option value=".18">.18</option>
+                          <option value=".19">.19</option>
+                          <option value=".20">.20</option>
+                          <option value=".21">.21</option>
+                          <option value=".22">.22</option>
+                          <option value=".23">.23</option>
+                          <option value=".24">.24</option>
+                          <option value=".25">.25</option>
+                          <option value=".26">.26</option>
+                          <option value=".27">.27</option>
+                          <option value=".28">.28</option>
+                          <option value=".29">.29</option>
+                          <option value=".30">.30</option>
+                          <option value=".31">.31</option>
+                          <option value=".32">.32</option>
+                          <option value=".33">.33</option>
+                          <option value=".34">.34</option>
+                          <option value=".35">.35</option>
+                          <option value=".36">.36</option>
+                          <option value=".37">.37</option>
+                          <option value=".38">.38</option>
+                          <option value=".39">.39</option>
+                          <option value=".40">.40</option>
+                          <option value=".41">.41</option>
+                          <option value=".42">.42</option>
+                          <option value=".43">.43</option>
+                          <option value=".44">.44</option>
+                          <option value=".45">.45</option>
+                          <option value=".46">.46</option>
+                          <option value=".47">.47</option>
+                          <option value=".48">.48</option>
+                          <option value=".49">.49</option>
+                          <option value=".50">.50</option>
+                          <option value=".51">.51</option>
+                          <option value=".52">.52</option>
+                          <option value=".53">.53</option>
+                          <option value=".54">.54</option>
+                          <option value=".55">.55</option>
+                          <option value=".56">.56</option>
+                          <option value=".57">.57</option>
+                          <option value=".58">.58</option>
+                          <option value=".59">.59</option>
+                          <option value=".60">.60</option>
+                          <option value=".61">.61</option>
+                          <option value=".62">.62</option>
+                          <option value=".63">.63</option>
+                          <option value=".64">.64</option>
+                          <option value=".65">.65</option>
+                          <option value=".66">.66</option>
+                          <option value=".67">.67</option>
+                          <option value=".68">.68</option>
+                          <option value=".69">.69</option>
+                          <option value=".70">.70</option>
+                          <option value=".71">.71</option>
+                          <option value=".72">.72</option>
+                          <option value=".73">.73</option>
+                          <option value=".74">.74</option>
+                          <option value=".75">.75</option>
+                          <option value=".76">.76</option>
+                          <option value=".77">.77</option>
+                          <option value=".78">.78</option>
+                          <option value=".79">.79</option>
+                          <option value=".80">.80</option>
+                          <option value=".81">.81</option>
+                          <option value=".82">.82</option>
+                          <option value=".83">.83</option>
+                          <option value=".84">.84</option>
+                          <option value=".85">.85</option>
+                          <option value=".86">.86</option>
+                          <option value=".87">.87</option>
+                          <option value=".88">.88</option>
+                          <option value=".89">.89</option>
+                          <option value=".90">.90</option>
+                          <option value=".91">.91</option>
+                          <option value=".92">.92</option>
+                          <option value=".93">.93</option>
+                          <option value=".94">.94</option>
+                          <option value=".95">.95</option>
+                          <option value=".96">.96</option>
+                          <option value=".97">.97</option>
+                          <option value=".98">.98</option>
+                          <option value=".99">.99</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6 form-group" style="display: none;">
+                    <label class="form-label" for="os5int">左眼軸長(mm)</label>
+                    <div class="row g-0">
+                      <div class="col-6 form-group">
+                        <select class="form-select" name="os5int" id="os5int">
+                          <option value=""></option>
+                          <option value="< 20">< 20</option>
+                          <option value="20">20</option>
+                          <option value="21">21</option>
+                          <option value="22">22</option>
+                          <option value="23">23</option>
+                          <option value="24">24</option>
+                          <option value="25">25</option>
+                          <option value="26">26</option>
+                          <option value="27">27</option>
+                          <option value="28">28</option>
+                          <option value="29">29</option>
+                          <option value="30">30</option>
+                          <option value="> 30">> 30</option>
+                        </select>
+                        <span class="warning_msg" id="os5int_warning"></span>
+                      </div>
+                      <div class="col-6 form-group">
+                        <select class="form-select" name="os5dec" id="os5dec">
+                          <option value=".00">.00</option>
+                          <option value=".01">.01</option>
+                          <option value=".02">.02</option>
+                          <option value=".03">.03</option>
+                          <option value=".04">.04</option>
+                          <option value=".05">.05</option>
+                          <option value=".06">.06</option>
+                          <option value=".07">.07</option>
+                          <option value=".08">.08</option>
+                          <option value=".09">.09</option>
+                          <option value=".10">.10</option>
+                          <option value=".11">.11</option>
+                          <option value=".12">.12</option>
+                          <option value=".13">.13</option>
+                          <option value=".14">.14</option>
+                          <option value=".15">.15</option>
+                          <option value=".16">.16</option>
+                          <option value=".17">.17</option>
+                          <option value=".18">.18</option>
+                          <option value=".19">.19</option>
+                          <option value=".20">.20</option>
+                          <option value=".21">.21</option>
+                          <option value=".22">.22</option>
+                          <option value=".23">.23</option>
+                          <option value=".24">.24</option>
+                          <option value=".25">.25</option>
+                          <option value=".26">.26</option>
+                          <option value=".27">.27</option>
+                          <option value=".28">.28</option>
+                          <option value=".29">.29</option>
+                          <option value=".30">.30</option>
+                          <option value=".31">.31</option>
+                          <option value=".32">.32</option>
+                          <option value=".33">.33</option>
+                          <option value=".34">.34</option>
+                          <option value=".35">.35</option>
+                          <option value=".36">.36</option>
+                          <option value=".37">.37</option>
+                          <option value=".38">.38</option>
+                          <option value=".39">.39</option>
+                          <option value=".40">.40</option>
+                          <option value=".41">.41</option>
+                          <option value=".42">.42</option>
+                          <option value=".43">.43</option>
+                          <option value=".44">.44</option>
+                          <option value=".45">.45</option>
+                          <option value=".46">.46</option>
+                          <option value=".47">.47</option>
+                          <option value=".48">.48</option>
+                          <option value=".49">.49</option>
+                          <option value=".50">.50</option>
+                          <option value=".51">.51</option>
+                          <option value=".52">.52</option>
+                          <option value=".53">.53</option>
+                          <option value=".54">.54</option>
+                          <option value=".55">.55</option>
+                          <option value=".56">.56</option>
+                          <option value=".57">.57</option>
+                          <option value=".58">.58</option>
+                          <option value=".59">.59</option>
+                          <option value=".60">.60</option>
+                          <option value=".61">.61</option>
+                          <option value=".62">.62</option>
+                          <option value=".63">.63</option>
+                          <option value=".64">.64</option>
+                          <option value=".65">.65</option>
+                          <option value=".66">.66</option>
+                          <option value=".67">.67</option>
+                          <option value=".68">.68</option>
+                          <option value=".69">.69</option>
+                          <option value=".70">.70</option>
+                          <option value=".71">.71</option>
+                          <option value=".72">.72</option>
+                          <option value=".73">.73</option>
+                          <option value=".74">.74</option>
+                          <option value=".75">.75</option>
+                          <option value=".76">.76</option>
+                          <option value=".77">.77</option>
+                          <option value=".78">.78</option>
+                          <option value=".79">.79</option>
+                          <option value=".80">.80</option>
+                          <option value=".81">.81</option>
+                          <option value=".82">.82</option>
+                          <option value=".83">.83</option>
+                          <option value=".84">.84</option>
+                          <option value=".85">.85</option>
+                          <option value=".86">.86</option>
+                          <option value=".87">.87</option>
+                          <option value=".88">.88</option>
+                          <option value=".89">.89</option>
+                          <option value=".90">.90</option>
+                          <option value=".91">.91</option>
+                          <option value=".92">.92</option>
+                          <option value=".93">.93</option>
+                          <option value=".94">.94</option>
+                          <option value=".95">.95</option>
+                          <option value=".96">.96</option>
+                          <option value=".97">.97</option>
+                          <option value=".98">.98</option>
+                          <option value=".99">.99</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <br><hr style="color:red"><br>
+
+                <div class="row">
+                  <div class="col-9 form-group">
+                    <input type="radio" class="form-check-input" name="treatment" id="treatmentN" value="N" style="display: none;">
+                    <label class="form-label" for="treatmentN" style="display: none;">未治療或觀察　</label>
+                    <input type="radio" class="form-check-input" name="treatment" id="treatmentY" value="Y" checked>
+                    <label class="form-label" for="treatmentY">治療處置　</label>
+                  </div>
+                </div>
+                <br>
+                <div class="row g-2">
+                  <div class="col-4 form-group">
+                    <label class="form-label" for="treatment1">眼鏡</label>
+                    <select class="form-select" name="treatment1" id="treatment1">
+                      <option value=""></option>
+                      <option value="一般眼鏡">一般眼鏡</option>
+                      <option value="漸進多焦點眼鏡">漸進多焦點眼鏡</option>
+                      <option value="雙焦眼鏡">雙焦眼鏡</option>
+                      <option value="周邊離焦鏡片">周邊離焦鏡片</option>
+                      <option value="軟式隱形眼鏡">軟式隱形眼鏡</option>
+                      <option value="近視控制眼鏡_Zeiss_MyoVision" style="display: none;">近視控制眼鏡_Zeiss_MyoVision</option>
+                      <option value="近視控制眼鏡_Hoya_MiyoSmart" style="display: none;">近視控制眼鏡_Hoya_MiyoSmart</option>
+                      <option value="近視控制眼鏡_依視路_星趣控" style="display: none;">近視控制眼鏡_依視路_星趣控</option>
+                      <option value="近視控制隱形眼鏡_酷柏_MiSight" style="display: none;">近視控制隱形眼鏡_酷柏_MiSight</option>
+                    </select>
+                  </div>
+                  <div class="col-4 form-group" style="display: none;">
+                    <label class="form-label" for="treatment2">散瞳劑</label>
+                    <select class="form-select" name="treatment2" id="treatment2" disabled>
+                      <option value=""></option>
+                      <option value="散瞳劑">點散瞳劑</option>
+                      <option value="低散瞳劑">低散瞳劑</option>
+                      <option value="中散瞳劑">中散瞳劑</option>
+                      <option value="高散瞳劑">高散瞳劑</option>
+                    </select>
+                  </div>
+                  <div class="col-4 form-group">
+                    <label class="form-label" for="treatment3">角膜塑型片</label>
+                    <select class="form-select" name="treatment3" id="treatment3">
+                      <option value=""></option>
+                      <option value="角膜塑型片">角膜塑型片</option>
+                    </select>
+                  </div>
+                  <span class="warning_msg" id="treatment_wm"> </span>
+                </div>
+
+                <br><hr style="color:red"><br>
+
+                <div class="col">
+                  <div class="float-end form-group">
+                    <p style="display: none;" id = "server_state_text"></p>
+                    <label id="notification01" class="form-label" for="suggestion">-</label><br>
+                    <input type="submit" id="submit" value="上傳" style="display:none;" class="btn btn-outline-primary btn-rounded py-0 px-4">
+                    <span class="submitting"></span>
+                    <button type="button" id="suggestion" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
+                      處置建議
+                    </button>
+                    <button type="button" id="report1" class="btn btn-outline-primary btn-rounded py-0 px-4">
+                      功能測試按鈕
+                    </button>
+                    <button type="button" id="report2" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
+                      球面度數危險度分析
+                    </button>
+                    <button type="button" id="uploadform" onclick="check_submit_form_integrity();" class="btn btn-outline-primary btn-rounded py-0 px-4" style="display: none;">
+                      上傳
+                    </button>
+                  </div>
+                </div>
+                <br><br>
+
+              </form>
+              <div id="form-message-warning mt-4"></div> 
+              <div id="form-message-success">
+                上傳完畢！
+              </div>
+
+        </div>
+      </div>
+    </div>
+    
+  <script>
+    document.getElementById('eyeForm').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') 
+        //Prevent default submission action.
+        event.preventDefault();
+    });
+    document.getElementById('os1value').textContent="1.0";
+    document.getElementById('os1').value=1.0;
+    document.getElementById('od1value').textContent="1.0";
+    document.getElementById('od1').value=1.0;
+    var darkMode = document.getElementById('darkMode');
+    darkMode.onclick = function() {
+      if (darkMode.checked) {
+        document.body.classList.remove('bg-light');
+        document.body.classList.add('bg-dark');
+        document.body.classList.add('text-light');
+      } else {
+        document.body.classList.remove('bg-dark');
+        document.body.classList.remove('text-light');
+        document.body.classList.add('bg-light');
+      }
+    };
+
+    var medRecNo = document.getElementById("medRecNo");
+    medRecNo.onclick = function() {
+      document.getElementById('site').value = '';
+      document.getElementById('caseNo').value = '';
+    }
+
+    var site = document.getElementById("site");
+    site.onchange = function() {
+      localStorage.clear();
+      document.getElementById('email').value = "aaaaa@gmail.com"
+      if (document.getElementById('email').value)
+    {
+      (document.getElementById('site_info')).textContent="院所(讀取中...)";
+      $.ajax({
+        url: `https://script.google.com/macros/s/AKfycby1eLmiT7l1x7UQ6hB2KxHTlYmXpkm87t3Zn4NH5A2Btqo-knqaC5NzLT09X5mo6Mss/exec?medRecNo=${medRecNo.value}&site=${site.value}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          if (typeof data === 'object') {
+            (document.getElementById('site_info')).textContent="院所(已找到過往病歷資料。)";
+            localStorage.setItem('records', JSON.stringify(data));
+            document.getElementById('caseNo').value = data[0][0];
+            document.getElementById('dateOfBirth').value = new Date(Date.parse(data[0][2])+8*60*60*1000).toISOString().split('T')[0];
+            document.getElementById('dateOfVisit').value = new Date(Date.parse(data[0][10])+8*60*60*1000).toISOString().split('T')[0];
+            document.getElementById('age').value = data[0][11];
+            document.getElementById('height').value = data[0][12];
+            document.getElementById('pretermW').value = data[0][6];
+            document.getElementById('pretermD').value = data[0][7];
+            if (data[0][3] == '男' || data[0][3] == 'Male')
+              document.getElementById('sexM').checked = true;
+            if (data[0][3] == '女' || data[0][3] == 'Female')
+              document.getElementById('sexF').checked = true;
+            if (data[0][4] == '單' || data[0][4] == 'Single')
+              document.getElementById('birth').checked = true;
+            if (data[0][4] == '多' || data[0][4] == 'Multiple')
+              document.getElementById('births').checked = true;
+            document.getElementById('fatherD').value = data[0][8];
+            document.getElementById('motherD').value = data[0][9];
+            if (data[0][13] == 'G')
+              document.getElementById('od0').checked = true;
+            document.getElementById('od1').value = data[0][14];
+            document.getElementById('od2').value = data[0][15];
+            document.getElementById('od3').value = data[0][16];
+            document.getElementById('od4').value = data[0][17];
+            document.getElementById('od5int').value = parseInt(data[0][18]);
+            document.getElementById('od5dec').value = (data[0][18] - parseInt(data[0][18])).toFixed(2).toString().substring(1);
+            if (data[0][19] == 'G')
+              document.getElementById('os0').checked = true;
+            document.getElementById('os1').value = data[0][20];
+            document.getElementById('os2').value = data[0][21];
+            document.getElementById('os3').value = data[0][22];
+            document.getElementById('os4').value = data[0][23];
+            document.getElementById('os5int').value = parseInt(data[0][24]);
+            document.getElementById('os5dec').value = (data[0][24] - parseInt(data[0][24])).toFixed(2).toString().substring(1);
+            outputs['od1value'].innerHTML = (data[0][14] === '')?'❓':data[0][14].toFixed(1);
+            outputs['od2value'].innerHTML = (data[0][15] === '')?'❓':data[0][15].toFixed(2);
+            outputs['od3value'].innerHTML = (data[0][16] === '')?'❓':data[0][16].toFixed(2);
+            outputs['os1value'].innerHTML = (data[0][20] === '')?'❓':data[0][20].toFixed(1);
+            outputs['os2value'].innerHTML = (data[0][21] === '')?'❓':data[0][21].toFixed(2);
+            outputs['os3value'].innerHTML = (data[0][22] === '')?'❓':data[0][22].toFixed(2);
+            document.getElementById('dateOfBirth').oninput();
+          }
+          else {
+            (document.getElementById('site_info')).textContent="院所(請填寫新的病歷資料！)";
+            localStorage.setItem('records', JSON.stringify([]));
+            document.getElementById('caseNo').value = data;
+          }
+          console.log(data)
+        }
+      });
+    }
+    }
+
+    var heightValid=document.getElementById('height');
+    heightValid.addEventListener('input', function() {
+    const pattern=/^(\d{1,4})(\.\d{0,4})?$/;
+    if(this.value == '')
+      height_errorMsg.textContent= '';
+    else if(!pattern.test(this.value))
+    {
+      height_errorMsg.textContent= '請輸入大於或等於 0 的有效數字。';
+      heightValid.value=this.value.slice(0,this.value.length-1);
+    }
+    else 
+    {
+      let [, integerPart, decimalPart] = this.value.match(pattern);
+      if (integerPart.length > 3) 
+      {
+        height_errorMsg.textContent = "整數部分最多3位";
+        heightValid.value=integerPart.slice(0, 3);
+      } 
+      else 
+      {
+        if (decimalPart && decimalPart.length > 3) 
+        {
+          
+          height_errorMsg.textContent = "小數部分最多2位";
+          decimalPart=decimalPart.slice(0, 3);
+          heightValid.value=integerPart+decimalPart;
+        } 
+        else 
+        {
+          height_errorMsg.textContent = "";
+        }
+      }
+    }
+
+    });
+
+    var pretermWValid=document.getElementById('pretermW');
+    pretermWValid.addEventListener('input', function() {
+      const pattern=/^\d{1,2}$/;
+    if(!pattern.test(this.value))
+    {
+      if(isNaN(this.value))
+      {
+        week_errorMsg.textContent= '請輸入有效數字。';
+        pretermWValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else 
+      {
+        if(parseInt(this.value)>42)
+        {
+          week_errorMsg.textContent= '請輸入 0 到 42 之間的整數。';
+          pretermWValid.value='42';
+        }
+        else if(parseInt(this.value)<0)
+        {
+          week_errorMsg.textContent= '請輸入 0 到 42 之間的整數。';
+          pretermWValid.value='0';
+        }
+      }
+    }
+    else
+    {
+
+      if(parseInt(this.value)>42)
+        {
+          week_errorMsg.textContent= '請輸入 0 到 42 之間的整數。';
+          pretermWValid.value='42';
+        }
+        else if(parseInt(this.value)<0)
+        {
+          week_errorMsg.textContent= '請輸入 0 到 42 之間的整數。';
+          pretermWValid.value='0';
+        }
+        else
+          week_errorMsg.textContent= '';
+    }
+  });
+
+    var pretermDValid=document.getElementById('pretermD');
+    pretermDValid.addEventListener('input', function() {
+    const pattern=/^[0-6]$/;
+    if(this.value == '')
+      day_errorMsg.textContent= '';
+    else if(!pattern.test(this.value))
+    {
+      if(isNaN(this.value))
+      {
+        day_errorMsg.textContent= '請輸入有效數字。';
+        pretermDValid.value='';
+      }
+      else 
+      {
+        if(parseInt(this.value)>6)
+        {
+        day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
+        pretermDValid.value='6';
+        }
+        else if (parseInt(this.value)<0)
+        {
+          day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
+          pretermDValid.value='0';
+        }
+        else if (this.value.length>1)
+          pretermDValid.value='0';
+      }
+      //pretermDValid.value=''
+    }
+    else
+    {
+        if(parseInt(this.value)>6)
+        {
+        day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
+        pretermDValid.value='6';
+        }
+        else if (parseInt(this.value)<0)
+        {
+          day_errorMsg.textContent= '請輸入 0 到 6 之間的整數。';
+          pretermDValid.value='0';
+        }
+        else 
+        day_errorMsg.textContent= '';
+      }
+
+  });
+  let timer;
+  var fatherDValid=document.getElementById('fatherD');
+    fatherDValid.addEventListener('input', function() {
+    const pattern=/^([\-])(\d{1,4})(\.\d{0,4})?$/;
+    if(this.value == '')
+      fatherD_errorMsg.textContent= '';
+    else if (this.value != '-')
+    {
+      if(this.value.length==1)
+      {
+        fatherD_errorMsg.textContent= '請以負號( - )當開頭';
+        fatherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else if(!pattern.test(this.value))
+      {
+        fatherD_errorMsg.textContent= '請輸入有效的數字。';
+        //fatherDValid.value=''
+        fatherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else
+      {
+        let [,minusPart, integerPart, decimalPart] = this.value.match(pattern);
+      if (integerPart.length > 3) 
+      {
+        fatherD_errorMsg.textContent = "整數部分最多3位";
+        fatherDValid.value=minusPart+integerPart.slice(0, 3);
+
+      } 
+      else 
+      {
+        if (decimalPart && decimalPart.length > 3) 
+        {
+          
+          fatherD_errorMsg.textContent = "小數部分最多2位";
+          decimalPart=decimalPart.slice(0, 3);
+          fatherDValid.value=minusPart+integerPart+decimalPart;
+        } 
+        else 
+        {
+            if(parseFloat(this.value)>-5)
+            {
+              clearTimeout(timer);
+              timer = setTimeout(function() {
+                if(fatherDValid.value>-5)
+                {
+                  fatherDValid.value=-5;
+                  fatherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+                }
+              }, 2000);
+              //fatherDValid.value=-5;
+              //fatherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+            }
+            else
+              fatherD_errorMsg.textContent =  "";
+        }
+          
+      }
+      }
+      }
+      else
+        fatherD_errorMsg.textContent = "";
+      
+  });
+
+  var motherDValid=document.getElementById('motherD');
+    motherDValid.addEventListener('input', function() {
+      const pattern=/^([\-])(\d{1,4})(\.\d{0,4})?$/;
+    if(this.value == '')
+      motherD_errorMsg.textContent= '';
+    else if (this.value != '-')
+    {
+      if(this.value.length==1)
+      {
+        motherD_errorMsg.textContent= '請以負號( - )當開頭';
+        motherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else if(!pattern.test(this.value))
+      {
+        motherD_errorMsg.textContent= '請輸入有效的數字。';
+        //fatherDValid.value=''
+        motherDValid.value=this.value.slice(0,this.value.length-1);
+      }
+      else
+      {
+        let [,minusPart, integerPart, decimalPart] = this.value.match(pattern);
+      if (integerPart.length > 3) 
+      {
+        motherD_errorMsg.textContent = "整數部分最多3位";
+        motherDValid.value=minusPart+integerPart.slice(0, 3);
+
+      } 
+      else 
+      {
+        if (decimalPart && decimalPart.length > 3) 
+        {
+          
+          motherD_errorMsg.textContent = "小數部分最多2位";
+          decimalPart=decimalPart.slice(0, 3);
+          motherDValid.value=minusPart+integerPart+decimalPart;
+        } 
+        else 
+        {
+            if(parseInt(this.value)>-5)
+            {
+              clearTimeout(timer);
+              timer = setTimeout(function() {
+                if(motherDValid.value>-5)
+                {
+                  motherDValid.value=-5;
+                  motherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+                }
+            }, 2000);
+              //motherDValid.value=-5;
+              //motherD_errorMsg.textContent =  "請輸入小於或等於 -5 的數字";
+            }
+            else
+              motherD_errorMsg.textContent =  "";
+        }
+      }
+      }
+      }
+      else
+      motherD_errorMsg.textContent = "";
+  });
+
+    var dateOfVisit = document.getElementById('dateOfVisit');
+    var dateOfBirth = document.getElementById('dateOfBirth');
+    var customDate_dateOfBirth = document.getElementById('customDate_dateOfBirth');
+      const threeYearsAgo = new Date();
+      const current_day = threeYearsAgo.toISOString().split('T')[0];
+      customDate_dateOfBirth.max = current_day;
+      dateOfBirth.max = current_day;
+      dateOfVisit.max = current_day;
+      threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
+      threeYearsAgo.setMonth(0); 
+      threeYearsAgo.setDate(1); 
+      const formattedDate = threeYearsAgo.toISOString().split('T')[0];
+      customDate_dateOfBirth.value=  formattedDate;
+
+    customDate_dateOfBirth.oninput = function() {
+      if (!isNaN(Date.parse(customDate_dateOfBirth.value)))
+      {
+        dateOfBirth.value=customDate_dateOfBirth.value;
+        dateOfBirth.oninput();
+      }
+    
+    }
+
+    dateOfVisit.oninput = function() {
+      if (!isNaN(Date.parse(dateOfVisit.value)) && !isNaN(Date.parse(dateOfBirth.value))) {
+        var dov = dateOfVisit.value.split('-');
+        var dob = dateOfBirth.value.split('-');
+        year = parseInt(dov[0]) - parseInt(dob[0]);
+        month = parseInt(dov[1]) - parseInt(dob[1]);
+        console.log(year);
+        console.log(month);
+        if (parseInt(dov[2]) - parseInt(dob[2]) < 0) {
+          month--;
+        }
+        if (month < 0) {
+          year--;
+          month += 12;
+        }
+        document.getElementById('age').value = year + '歲' + month + '個月';
+      }
+    }
+    dateOfBirth.oninput = function() {
+      if( !isNaN(Date.parse(dateOfBirth.value)) )
+        customDate_dateOfBirth.value=dateOfBirth.value
+
+      if (!isNaN(Date.parse(dateOfVisit.value)) && !isNaN(Date.parse(dateOfBirth.value))) {
+        var dov = dateOfVisit.value.split('-');
+        var dob = dateOfBirth.value.split('-');
+        year = parseInt(dov[0]) - parseInt(dob[0]);
+        month = parseInt(dov[1]) - parseInt(dob[1]);
+        console.log(year);
+        console.log(month);
+        if (parseInt(dov[2]) - parseInt(dob[2]) < 0) {
+          month--;
+        }
+        if (month < 0) {
+          year--;
+          month += 12;
+        }
+        document.getElementById('age').value = year + '歲' + month + '個月';
+      }
+    }
+
+    var sliders = document.getElementsByClassName("form-range");
+    var outputs = document.getElementsByClassName("form-range-value");
+    for (var i = 0; i < sliders.length; i++) {
+      sliders[i].oninput = function() {
+        var digits = 2;
+        if(this.id[2] == 1) digits = 1;
+        if(this.id[2] == 4) digits = 0;
+        outputs[this.id+'value'].innerHTML = Number.parseFloat(this.value).toFixed(digits);
+      }
+    }
+    
+    var od5int = document.getElementById("od5int");
+    od5int.onchange = function() {
+      $('#od5dec').prop('disabled', (od5int.value >= 20 && od5int.value <= 30)?false:true);
+    }
+    var os5int = document.getElementById("os5int");
+    os5int.onchange = function() {
+      $('#os5dec').prop('disabled', (os5int.value >= 20 && os5int.value <= 30)?false:true);
+    }
+
+    var treatmentN = document.getElementById("treatmentN");
+    treatmentN.onclick = function() {
+      $('#treatment1').prop('disabled', true);
+      $('#treatment2').prop('disabled', true);
+      $('#treatment3').prop('disabled', true);
+    }
+    var treatmentY = document.getElementById("treatmentY");
+    treatmentY.onclick = function() {
+      $('#treatment1').prop('disabled', false);
+      $('#treatment2').prop('disabled', false);
+      $('#treatment3').prop('disabled', false);
+    }
+
+    function treatments(treatment1, treatment2, treatment3) {
+      document.getElementById('treatment1').value = treatment1;
+      document.getElementById('treatment2').value = treatment2;
+      document.getElementById('treatment3').value = treatment3;
+    }
+    
+    var label = document.getElementById("notification01");
+
+    function check_value_func(check_value)
+    {
+      if (check_value == '' || check_value == null) 
+        return true;
+     else 
+        return false;
+    }
+
+    function check_submit_form_integrity()
+    {
+      var check=true;
+      if(check_value_func(document.getElementById('medRecNo').value))
+          { 
+            check=false;
+            (document.getElementById('medRecNo_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('medRecNo_warning')).textContent="";
+          }
+      if(check_value_func(document.getElementById('site').value))
+          { 
+            check=false;
+            (document.getElementById('site_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('site_warning')).textContent="";     
+          }
+          if (isNaN(Date.parse(dateOfVisit.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfVisit_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            if (!isNaN(Date.parse(dateOfBirth.value)))
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️年齡不能是負數";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfVisit_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
+          }
+          if (isNaN(Date.parse(dateOfBirth.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfBirth_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            if (!isNaN(Date.parse(dateOfVisit.value)) )
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️年齡不能是負數";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfBirth_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
+          }
+          (document.getElementById('sex_warning')).textContent="";
+          (document.getElementById('od4ID_warning')).textContent="";
+          (document.getElementById('os4ID_warning')).textContent="";
+          (document.getElementById('od5int_warning')).textContent="";
+          (document.getElementById('os5int_warning')).textContent="";
+
+    var submitbotton=document.getElementById('submit');
+          if(check)
+          submitbotton.click();
+          else
+          window.scrollTo(0, 0);
+      return check;
+    }
+
+    function check_spherical_diopter_form_integrity()
+    {
+      var check=true;
+
+      if(check_value_func(document.getElementById('od4').value))
+          { 
+            check=false;
+            (document.getElementById('od4ID_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od4ID_warning')).textContent="";
+          }       
+      if(check_value_func(document.getElementById('os4').value))
+          { 
+            check=false;
+            (document.getElementById('os4ID_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os4ID_warning')).textContent="";
+          }
+      if(check_value_func(document.getElementById('treatment1').value) & check_value_func(document.getElementById('treatment3').value))
+          { 
+            check=false;
+            (document.getElementById('treatment_wm')).textContent="⚠️請選擇一種處置方式";
+          }
+      else
+          {
+            (document.getElementById('treatment_wm')).textContent="";
+          }
+      (document.getElementById('od5int_warning')).textContent="";
+      (document.getElementById('os5int_warning')).textContent="";
+      return check;
+    }
+
+    function check_axial_length_form_integrity()
+    {
+      var check=true;
+
+      (document.getElementById('od4ID_warning')).textContent="";
+      (document.getElementById('os4ID_warning')).textContent="";
+      if(check_value_func(document.getElementById('od5int').value))
+      { 
+            check=false;
+            (document.getElementById('od5int_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od5int_warning')).textContent="";
+          }  
+      if(check_value_func(document.getElementById('os5int').value))
+      { 
+            check=false;
+            (document.getElementById('os5int_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os5int_warning')).textContent="";
+          }  
+
+       return check;
+    }
+
+    function check_form_integrity()
+    {
+      var check=true;
+      if(check_value_func(document.getElementById('medRecNo').value))
+          { 
+            check=false;
+            (document.getElementById('medRecNo_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('medRecNo_warning')).textContent="";
+          }
+      if(check_value_func(document.getElementById('site').value))
+          { 
+            check=false;
+            (document.getElementById('site_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('site_warning')).textContent="";     
+          }
+
+          if (isNaN(Date.parse(dateOfVisit.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfVisit_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            if (!isNaN(Date.parse(dateOfBirth.value)))
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfVisit_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️年齡不能是負數";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfVisit_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
+          }
+          if (isNaN(Date.parse(dateOfBirth.value)))
+      { 
+            check=false;
+            (document.getElementById('dateOfBirth_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            if (!isNaN(Date.parse(dateOfVisit.value)) )
+            {
+              if (year >= 0)
+              {
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="";
+              }
+              else
+              {
+                check=false;
+                (document.getElementById('dateOfBirth_warning')).textContent="";
+                (document.getElementById('ageID_warning')).textContent="⚠️年齡不能是負數";
+              }
+            }
+            else
+            {
+              (document.getElementById('dateOfBirth_warning')).textContent="";
+              (document.getElementById('ageID_warning')).textContent="";
+            }
+          }
+      hasChecked = Array.from(document.querySelectorAll('input[name="sex"]')).some(function(element) {
+        return element.checked;
+      });
+      if(!hasChecked)
+          { 
+            check=false;
+            (document.getElementById('sex_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('sex_warning')).textContent="";
+          }
+
+      if (check_value_func(document.getElementById('od1value').textContent))
+      { 
+            check=false;
+            (document.getElementById('od1_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od1_warning')).textContent="";
+          }
+          if (check_value_func(document.getElementById('os1value').textContent))
+      { 
+            check=false;
+            (document.getElementById('os1_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os1_warning')).textContent="";
+          }
+
+          if (check_value_func(document.getElementById('od2value').textContent))
+      { 
+            check=false;
+            (document.getElementById('od2_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od2_warning')).textContent="";
+          }
+          if (check_value_func(document.getElementById('os2value').textContent))
+      { 
+            check=false;
+            (document.getElementById('os2_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os2_warning')).textContent="";
+          }
+
+          if (check_value_func(document.getElementById('od3value').textContent))
+      { 
+            check=false;
+            (document.getElementById('od3_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('od3_warning')).textContent="";
+          }
+          if (check_value_func(document.getElementById('os3value').textContent))
+      { 
+            check=false;
+            (document.getElementById('os3_warning')).textContent="⚠️必填";
+          }
+      else
+          {
+            (document.getElementById('os3_warning')).textContent="";
+          }
+          
+      return check;
+    }
+
+    // var server_state_t=document.getElementById('server_state_text');
+
+    /*check_server_live 在與AWS的model互動時，會遇到model在休眠的情況，此函式可以確認並呼叫model離開休眠狀態*/
+    // async function check_server_live()
+    // {
+    //   var counter = 0;
+    //   server_state_t.textContent="true";
+    //   console.log(' 分析前狀態    ', server_state_t.textContent);
+    //   while (counter < 3 )
+    //   {
+    //     try{
+    //     await $.ajax({
+    //       url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+    //       type: 'POST',
+    //       dataType: 'json',
+    //       data: JSON.stringify([1,2,3,4,5,6,7,8,9,10]),
+    //       complete: function(data) {
+    //         suggestion = data['responseText'];
+    //         console.log(suggestion);
+    //         if(suggestion.indexOf('{"message":"Internal Server Error"}')!== -1)//"{\"message\":\"Internal Server Error\"}"
+    //         {
+    //           $('#server_state_text').text('false');
+    //           console.log("Server is going to live.",$('#server_state_text').text());
+    //         }
+    //         else
+    //           $('#server_state_text').text('true');
+    //       }
+    //   });
+    //   }
+    //   catch (error_message) {
+    //     //$('#server_state_text').text('false');
+    //     console.log("Server state is  " , error_message );
+    //   }
+    //   console.log(" check_server_live 單次分析結尾" , server_state_t.textContent);
+    //   if(server_state_t.textContent === "true")
+    //     counter = counter + 3;
+    //   else
+    //   {
+    //     await delay(5000);
+    //     counter = counter + 1;
+    //     label.textContent = "伺服器分析中";
+    //     console.log(" check_server_live 單次分析結尾",server_state_t.textContent);
+    //   }
+    //   }
+    //   return 0;
+    // }
+
+    // function delay(ms) {
+    // return new Promise(resolve => setTimeout(resolve, ms));
+    // }
+
+    /*suggestion.onclick 處置建議按鈕點擊後會呼叫檢查用的check_form_integrity與check_spherical_diopter_form_integrity確認
+    資料是否完整，並且也同時確認AWS上model的狀態*/
+    // var suggestion = document.getElementById("suggestion");
+    // suggestion.onclick = async function() {
+    // if(check_form_integrity() & check_spherical_diopter_form_integrity())
+    // {
+    //   features = [];
+    //   if (document.getElementById('sexM').checked) features.push(1);
+    //   if (document.getElementById('sexF').checked) features.push(0);
+    //   if (document.getElementById('age').value) features.push(year + month/12);
+    //   features.push(parseFloat(document.getElementById('od1').value));
+    //   features.push(parseFloat(document.getElementById('od2').value));
+    //   features.push(parseFloat(document.getElementById('od3').value));
+    //   if (document.getElementById('od4').value)
+    //   features.push(parseFloat(document.getElementById('od4').value));
+    //   features.push(parseFloat(document.getElementById('os1').value));
+    //   features.push(parseFloat(document.getElementById('os2').value));
+    //   features.push(parseFloat(document.getElementById('os3').value));
+    //   if (document.getElementById('os4').value)
+    //   features.push(parseFloat(document.getElementById('os4').value));
+
+    // await check_server_live();
+
+      // if (features.length == 10)
+      // $.ajax({
+      //   url: 'https://aw7c8d4hh6.execute-api.ap-east-1.amazonaws.com/suggestion',
+      //     //url: 'https://rlneiq30aa.execute-api.ap-northeast-1.amazonaws.com/DREDGE_LINE/Nautiluz-test',
+      //   type: 'POST',
+      //   dataType: 'json',
+      //   data: JSON.stringify(features),
+      //   complete: function(data) {
+      //     suggestion = data['responseText'];
+      //     console.log(suggestion);
+      //     $('#treatmentY').prop('checked', true);
+      //     $('#treatment1').prop('disabled', false);
+      //     $('#treatment2').prop('disabled', false);
+      //     $('#treatment3').prop('disabled', false);
+          
+      //     if (suggestion == '不處置') treatments('', '', '');
+      //     else if (suggestion == '一般眼鏡') treatments('一般眼鏡', '', '');
+      //     else if (suggestion == '散瞳劑') treatments('', '散瞳劑', '');
+      //     else if (suggestion == '一般眼鏡散瞳劑') treatments('一般眼鏡', '散瞳劑', '');
+      //     else if (suggestion == '角膜塑型片') treatments('', '', '角膜塑型片');
+      //     else treatments('', '', '');        
+    //     }
+    //   });
+    //   label.textContent = "資料填寫完整，提供醫療處置建議";
+    // }
+    // else
+    //   {
+    //     window.scrollTo(0, 0);
+    //     label.textContent = "再檢查一下，確保資料沒有漏填";
+    //   }
+    // }
+
+    var treatment1 = document.getElementById("treatment1");
+    var treatment3 = document.getElementById("treatment3");
+    treatment1.onclick = function(){
+      treatment3.value=''
+    }
+    treatment3.onclick = function(){
+      treatment1.value=''
+    }
+    /*report1修改成檢查目前的使用者email是否有效，但是因為在loacl端，所以無法從google登入器獲得email資訊，所以
+    在這個函式中自行輸入email資訊來模擬實際上線的情況*/
+    var report1 = document.getElementById("report1");
+    report1.onclick =async function() {
+      console.log("Start calling app scripts with ajax");
+      var email = "ffffffffff@gmail.com";
+      var response_valid = '';
+      $.ajax({
+        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          if (typeof data === 'object') {
+            console.log(data);
+            console.log(data['user_type']);
+            console.log(data['valid']);
+            response_valid = data['valid'];
+          }
+          else {
+            console.log("Get response fail.");
+          }
+          if(data['valid'] =='Valid')
+          {
+            document.getElementById("uploadform").style.display = "inline-block";
+            document.getElementById("report2").style.display = "inline-block";
+            document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
+          }
+          else if(data['valid'] =='Expired')
+            document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
+          else if(data['valid'] =='Exhausted')
+            document.getElementById("notification01").textContent="已達到使用次數上限，欲繼續使用請聯絡神經元科技";
+          else if(data['valid'] =='Invalid')
+            document.getElementById("notification01").textContent="帳號未註冊，欲使用請聯絡神經元科技";
+          else
+            document.getElementById("notification01").textContent="欲使用請聯絡神經元科技";
+          }
+      });
+      /*下面這段註解掉的網頁是原本的功能，用來產生軸長危險度的報告*/
+      // if(check_form_integrity() & check_axial_length_form_integrity())
+      // {
+      //   localStorage.setItem('medRecNo', medRecNo.value);
+      //   localStorage.setItem('site', site.value);
+      //   localStorage.setItem('age', document.getElementById('age').value);
+      //   localStorage.setItem('sex', document.querySelector('input[name="sex"]:checked').value);
+      //   localStorage.setItem('od1', document.getElementById('od1').value);
+      //   localStorage.setItem('os1', document.getElementById('os1').value);
+      //   localStorage.setItem('od2', document.getElementById('od2').value);
+      //   localStorage.setItem('os2', document.getElementById('os2').value);
+      //   localStorage.setItem('od3', document.getElementById('od3').value);
+      //   localStorage.setItem('os3', document.getElementById('os3').value);
+      //   localStorage.setItem('od4', document.getElementById('od4').value);
+      //   localStorage.setItem('os4', document.getElementById('os4').value);
+
+      //   if(document.getElementById('od5int').value == "< 20")
+      //   localStorage.setItem('od5', '19.5');
+      // else if (document.getElementById('od5int').value == "> 30")
+      //   localStorage.setItem('od5', '30.5');
+      // else
+      //   localStorage.setItem('od5',od5int.value+od5dec.value);
+
+      // if(document.getElementById('os5int').value  == "< 20")
+      //  localStorage.setItem('os5', '19.5');
+      // else if (document.getElementById('os5int').value == "> 30")
+      //   localStorage.setItem('os5', '30.5');
+      // else
+      //   localStorage.setItem('os5',os5int.value+os5dec.value);
+
+      //   localStorage.setItem('Y', year);
+      //   localStorage.setItem('M', month);
+      //   localStorage.setItem('report', '軸長');
+      //   label.textContent = "資料填寫完整，開啟軸長危險度分析";
+      //   window.open('report.html');
+      // }
+      // else
+      // {
+      //   window.scrollTo(0, 0);
+      //   label.textContent = "再檢查一下，確保資料沒有漏填";
+      // }
+    }
+    /*report2的功能是用來產生球面度數危險度的報告*/
+    var report2 = document.getElementById("report2");
+    report2.onclick =async function() {
+      if(check_form_integrity() & check_spherical_diopter_form_integrity())
+      {
+        // await check_server_live();
+        localStorage.setItem('medRecNo', medRecNo.value);
+        localStorage.setItem('site', site.value);
+        localStorage.setItem('age', document.getElementById('age').value);
+        localStorage.setItem('sex', document.querySelector('input[name="sex"]:checked').value);
+        if (document.getElementById('os0').checked || document.getElementById('od0').checked ) 
+          localStorage.setItem('glasses', 1);
+        else 
+          localStorage.setItem('glasses', 0);
+        localStorage.setItem('od1', document.getElementById('od1').value);
+        localStorage.setItem('os1', document.getElementById('os1').value);
+        localStorage.setItem('od2', document.getElementById('od2').value);
+        localStorage.setItem('os2', document.getElementById('os2').value);
+        localStorage.setItem('od3', document.getElementById('od3').value);
+        localStorage.setItem('os3', document.getElementById('os3').value);
+        localStorage.setItem('od4', document.getElementById('od4').value);
+        localStorage.setItem('os4', document.getElementById('os4').value);
+
+
+        if(document.getElementById('od5int').value == "< 20")
+        localStorage.setItem('od5', '19.5');
+      else if (document.getElementById('od5int').value == "> 30")
+        localStorage.setItem('od5', '30.5');
+      else
+        localStorage.setItem('od5',od5int.value+od5dec.value);
+
+      if(document.getElementById('os5int').value  == "< 20")
+       localStorage.setItem('os5', '19.5');
+      else if (document.getElementById('os5int').value == "> 30")
+        localStorage.setItem('os5', '30.5');
+      else
+        localStorage.setItem('os5',os5int.value+os5dec.value);
+
+        localStorage.setItem('Y', year);
+        localStorage.setItem('M', month);
+        localStorage.setItem('report', '球面度數');
+        if (treatment1.value !=''){
+          localStorage.setItem('suggestion', treatment1.value);
+          // alert(treatment1.value)
+        }
+        else{
+          localStorage.setItem('suggestion', treatment3.value);
+          // alert(treatment3.value)
+        }
+        label.textContent = "資料填寫完整，開啟球面度數危險度分析";
+        window.open('report.html');
+        
+      }
+      else
+      {
+        window.scrollTo(0, 0);
+        label.textContent = "再檢查一下，確保資料沒有漏填";
+      }
+    }
+  </script>
+  </body>
+</html>

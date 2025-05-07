@@ -1,9 +1,33 @@
 from js import sex, age, y1, y2, records, suggestion, localStorage, report , language_type
+# import os as os_e
 from pyscript import display
 from pyodide.ffi import JsProxy
+# from pyscript import display
+# current_dir = os_e.getcwd()
+# print(f' plot.py at {current_dir}')
+# items = os_e.listdir(current_dir)
+# for item in items:
+#     print(f'plot.py同資料夾內的文件{item}')
+
+#local端的py檔案無法與html共用localStorage，所以大部分變數要先在此宣告
+sex='男'
+report="球面度數"#球面度數#軸長
+age="18歲7個月"
+# age="17歲1個月"
+suggestion = "角膜塑型片"
 if 'ale' in sex and sex !="":
     sex = {'Male': '男', 'Female': '女'}[sex]
-#print(language_type)
+# y1 = -0.5
+# y2 = 0.5
+y1 = -2.5
+y2 = -3.25
+# y1 = -4
+# y2 = -4
+# y1 = -1.25
+# y2 = -1.5
+# y1 = 25.08
+# y2 = 25.47
+
 #根據VHBI設定的衰退曲線係數
 growth_base   = [ -0.246, -0.164, -0.082, 0,  0.082,0.184, 0.239,0.323, 0.378,0.434, 0.471,0.508, 0.527,0.536]
 growth_interval = [-0.018,-0.014,-0.01,-0.006,-0.0022,0.0014,0.0028,0.0092,0.0143,0.0172,0.0228,0.0257,0.0307,0.0335]
@@ -13,7 +37,7 @@ attu_interval =  [0.039,0.033,0.044,0.039,0.033, 0.044,0.056, 0.056,0.042, 0.053
 import pandas as pd
 import numpy as np
 import pickle
-with open('../data_to_plot.pkl', 'rb') as f:
+with open('../data_to_plot_20240507.pkl', 'rb') as f:
     db_version, slope_groupby, stacked_area , data_al= pickle.load(f)[report]
 
 from datetime import datetime
@@ -141,10 +165,9 @@ def plot(sex, report):
             plt.title(f"Trend in spherical diopter of {MorF} children", fontsize=16)
     return area
 
-
+#邏輯回歸的係數設定，目前已經沒有使用
 risk = [...] * 4
 eye_word = [...] * 2
-#邏輯回歸的係數設定，目前已經沒有使用
 #x_label=[ "ortho-k" ,"glasses" ,"multiple treatment" ,"no treatment", "atropine" ]
 sdl_coef=[ -0.54 ,-0.357 ,-0.392 , -0.696 , -0.424 ]
 sdl_coef_d=[ 0.944 ,0.968 ,0.694 , 1.007 , 0.73 ]
@@ -214,24 +237,6 @@ def x(age):
     m = re.match(r'(\d+)歲(\d+)', age)
     return int(m.group(1)) + int(m.group(2)) / 12
 
-def _y_m(age,year,sign):
-    m = re.match(r'(\d+)歲(\d+)', age)
-    if int(m.group(1))+year > 9:
-        space01=''
-    else :
-        space01='&nbsp'
-    if int(m.group(2)) > 9:
-        space02=''
-    else :
-        space02='&nbsp'
-    m_y=str(int(m.group(1))+year)
-    if language_type== 0 :
-        return f'{m_y}歲{m.group(2)}個月{sign}'
-    elif language_type== 2:
-        return f'{m_y}岁{m.group(2)}个月{sign}'
-    else:
-        return f'{m_y}y{m.group(2)}m{sign}'
-
 if suggestion == None :
     suggestion='不處置'
 if suggestion == '不處置' :
@@ -247,8 +252,54 @@ elif suggestion == '一般眼鏡散瞳劑' :
 else :
     label_index = 0
 
-import json
-records = json.loads(records)
+"""#age with logarithmic calculations
+data_al = [
+    ["性別", "目標", "處置方式", "bo", "b1", "con_025", "con_975", "x_025", "x_975"],
+    ["男", "軸長", "一般眼鏡", 2.9481, 0.1034, 2.923, 2.973, 0.091,0.116],
+    ["男", "軸長", "角膜塑型片", 3.0351, 0.0716, 2.9, 3.17, 0.017, 0.126],
+    ["男", "軸長", "不處置", 2.983, 0.0818, 2.972, 2.993, 0.076, 0.087],
+    ["男", "軸長", "散瞳劑", 3.0975, 0.0443, 3.08, 3.115, 0.036, 0.052],
+    ["男", "軸長", "一般眼鏡散瞳劑", 3.0647, 0.0673, 3.035, 3.094, 0.054, 0.081],
+
+    ["女", "軸長", "一般眼鏡", 2.9752, 0.0708, 2.950, 3, 0.058, 0.084],
+    ["女", "軸長", "角膜塑型片", 3.2655, -0.0198, 3.144, 3.387, -0.068, 0.029],
+    ["女", "軸長", "不處置", 2.9600, 0.0847, 2.949, 2.971, 0.079, 0.09],
+    ["女", "軸長", "散瞳劑", 3.0568, 0.0517, 3.024, 3.09, 0.037, 0.066],
+    ["女", "軸長", "一般眼鏡散瞳劑", 3.0482, 0.0622, 3.01, 3.086, 0.045, 0.079],
+
+    ["男", "球面度數", "一般眼鏡", 3.3251, -0.3325, 3.454, 3.196, -0.271, -0.394],
+    ["男", "球面度數", "角膜塑型片", 3.0864, -0.1941, 3.407, 2.766, -0.330, -0.058],
+    ["男", "球面度數", "不處置", 2.877, -0.1109, 2.907, 2.848, -0.096, -0.126],
+    ["男", "球面度數", "散瞳劑", 2.8545, -0.1321, 2.948, 2.761, -0.090, -0.174],
+    ["男", "球面度數", "一般眼鏡散瞳劑", 2.6366, -0.1012, 2.802, 2.471, -0.028, -0.175],
+
+    ["女", "球面度數", "一般眼鏡", 2.9953, -0.1713, 3.097, 2.894, -0.121, -0.221],
+    ["女", "球面度數", "角膜塑型片", 3.7620, -0.5258, 4.172, 3.352, -0.352, -0.7],
+    ["女", "球面度數", "不處置", 2.91, -0.1201, 2.937, 2.883, -0.107, -0.134],
+    ["女", "球面度數", "散瞳劑", 2.4921, 0.0354, 2.635, 2.35, 0.100, -0.029],
+    ["女", "球面度數", "一般眼鏡散瞳劑", 2.6968, -0.1122, 2.861, 2.533, -0.041, -0.183]
+]
+"""
+# suggestion = "散瞳劑"
+if suggestion == '低散瞳劑' or suggestion == '中散瞳劑' or suggestion == '高散瞳劑' :
+    indices = [index for index, row in enumerate(data_al) if row[0] == sex and row[1] == report and row[2] == "散瞳劑"]
+    # print(hi)
+else :
+    indices = [index for index, row in enumerate(data_al) if row[0] == sex and row[1] == report and row[2] == suggestion]
+#target_index = data_al[indices[0]]
+
+#y1 = np.exp(target_index[3]+np.log(age_index)*target_index[4])
+#y2 = np.exp(target_index[3]+np.log(age_index)*target_index[4])
+#y1 = 0.8
+#y1 = 25.08
+#y2 = 0.8
+#y2 = 25.31
+#y1 = -2.5
+#y2 = -2.75
+#由於local端的py檔案無法與html共用localStorage，所以改成用變數傳遞的方式，無須再給json讀取
+#避免json發生無法讀取的狀態
+#import json
+#records = json.loads(records)
 
 #使用改版後的pyscripts時會需要用到以下設定
 od, os = (18, 24) if report == '軸長' else (15, 21)
@@ -287,7 +338,6 @@ else:
         records_py=[]
         records_py.append(new_record)
 x_age_record=[]
-x_age_record_text =[]
 y_od_record=[]
 y_os_record=[]
 # print('OD ',records_py[0][od] , ' OS ',records_py[0][os] ,' age ',records_py[0][11])
@@ -303,15 +353,13 @@ x_age_series=[0]*agecounter#this is for initial
 x_stdu_value_series=[0]*agecounter#this is for initial
 x_stdd_value_series=[0]*agecounter#this is for initial
 x_age_series[0]=x(age_new)
-x_age_series_text=[]
-x_age_series_text.append(_y_m(records_py[0][11],0,'○'))#age_new,age_index,sign
 OD_zero = False
 OS_zero = False
 
 
 for age_index in range(1,agecounter):
     x_age_series[age_index] = x_age_series[age_index-1] + 1
-    x_age_series_text.append(_y_m(records_py[0][11],age_index,''))
+
 
 # if 
 # x_age_record.append(x(age))
@@ -463,7 +511,6 @@ if len(records_py)!=0 :#and round(x(age_new)) in range(3,17)
                     current_slope_attu_OS = attu_calculate(int(x(age_new)),current_slope_rate_OS,OS_new)
                     OS_zero=False
             x_age_record.append(x(record[11]))
-            x_age_record_text.append(_y_m(record[11],0,'●'))
             y_od_record.append(record[od])
             y_os_record.append(record[os])
     if report =='球面度數':
@@ -564,7 +611,6 @@ def curve_calculation(curve_point,current_slope_rate,current_slope_attu,age,cont
             current_slope_rate = 0
         curve_point[i] = curve_point[i-1] + current_slope_rate
     return curve_point
-
 #依照得到的斜率與衰減率計算未來軸長的成長數據
 def curve_calculation_AL(curve_point,slope,attu,age,control_rate):
     # print(current_slope_rate)
@@ -686,292 +732,4 @@ else :
     ax.set_aspect(aspect='auto')
 
 #把圖放在html中
-# display(plt, target='plot')
-
-import json
-from js import Bokeh, JSON
-from bokeh.embed import json_item
-from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, NumberFormatter, CheckboxGroup, CustomJS, Legend, PanTool, Range1d
-from bokeh.layouts import column, row
-
-#############右眼部分
-# 繪圖區域設定與工具設定
-if report == '球面度數':
-    y_range = Range1d(start=2, end=-8)
-    y_range.max_interval = 10 
-    x_range = Range1d(start=3, end=16)
-    x_range.max_interval = 10 
-    p = figure(width=650, height=650,x_range=x_range,y_range=y_range,title=f"{sex}童右眼球面度數成長趨勢",x_axis_label="年紀(歲)",y_axis_label="度 (D)",)
-else:
-    y_range = Range1d(start=21, end=29)
-    y_range.max_interval = 10 
-    p = figure(width=650, height=650,x_range=(3, 16),y_range=(21, 29),title=f"{sex}童右眼軸長成長趨勢",x_axis_label="年紀(歲)",y_axis_label="軸長 (mm)")
-
-p.title.text_font_size = "16pt"
-p.title.align = "center"
-original_pan = p.select_one(PanTool)
-p.tools.remove(original_pan)
-pan_y = PanTool(dimensions="height")
-p.add_tools(pan_y)
-p.toolbar.active_drag = pan_y
-
-# 根據讀取進來的資料設定低中高風險的位置與畫出歷史資料的紀錄
-area = stacked_area.loc[sex].loc[3:16]
-area_25_smooth = moving_average_cal(area['P25'])
-area_50_smooth = moving_average_cal(area['P50'])
-varea_low_OD = p.varea(x=area.index, y1=area_50_smooth, y2=10, fill_color="lightgreen", fill_alpha=0.2)#,legend_label='低風險'
-varea_medium_OD = p.varea(x=area.index, y1=area_25_smooth, y2=area_50_smooth, fill_color="yellow", fill_alpha=0.2)#,legend_label='中風險'
-varea_high_OD = p.varea(x=area.index, y1=-10, y2=area_25_smooth, fill_color="red", fill_alpha=0.2)#,legend_label='高風險'
-if len(y_od_record)>1:
-    line_history_OD = p.line(x_age_record, y_od_record, line_width=1, color="red")#,  legend_label="右眼歷史紀錄"
-    p.circle(x_age_record[1:], y_od_record[1:], size=8, color="firebrick")
-p.circle(x_age_record[0], y_od_record[0], line_color="firebrick", fill_color = '#e34fe8', line_width=2, size=8)
-
-# 做不同處置方式的初始設定
-growth_without_control_rate_OD=[0]*agecounter#this is for initial
-# growth_with_control_rate_OD=[0]*agecounter#this is for initial
-growth_with_RG_control_rate_OD=[0]*agecounter#一般眼鏡 Regular glasses
-growth_with_PAS_control_rate_OD=[0]*agecounter#漸進多焦點眼鏡 Progressive addition spectacles
-growth_with_EB_control_rate_OD=[0]*agecounter#雙焦眼鏡 Executive bifocals
-growth_with_PDS_control_rate_OD=[0]*agecounter#周邊離焦鏡片 Peripheral defocus spectacles
-growth_with_SCLFMC_control_rate_OD=[0]*agecounter#軟式隱形眼鏡 Soft contact lens for myopia control
-growth_with_OKL_control_rate_OD=[0]*agecounter#角膜塑型片 Ortho_K_lenses
-
-# 計算不同處置方式的未來發展趨勢並畫在圖上
-if OD_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
-    growth_without_control_rate_OD[0] = OD_new
-    growth_with_RG_control_rate_OD[0] = growth_with_PAS_control_rate_OD[0] = growth_with_EB_control_rate_OD[0] = growth_with_PDS_control_rate_OD[0] = growth_with_SCLFMC_control_rate_OD[0] = growth_with_OKL_control_rate_OD[0] = OD_new
-    growth_without_control_rate_OD = curve_calculation(growth_without_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0)
-    growth_with_RG_control_rate_OD = curve_calculation(growth_with_RG_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.13)
-    growth_with_PAS_control_rate_OD = curve_calculation(growth_with_PAS_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.43)
-    growth_with_EB_control_rate_OD = curve_calculation(growth_with_EB_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.19)
-    growth_with_PDS_control_rate_OD = curve_calculation(growth_with_PDS_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.50)
-    growth_with_SCLFMC_control_rate_OD = curve_calculation(growth_with_SCLFMC_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.10)
-    growth_with_OKL_control_rate_OD = curve_calculation(growth_with_OKL_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.44)
-
-    line_without_control_OD = p.line(x_age_series, growth_without_control_rate_OD, line_width=1.5, color="red", line_dash="dotted")#, alpha=0.7,  legend_label="無控制"
-    line_RG_OD = p.line(x_age_series, growth_with_RG_control_rate_OD, line_width=1.5, color="#1f77b4", line_dash="dashed")#, alpha=0.7, legend_label="一般眼鏡"
-    line_PAS_OD = p.line(x_age_series, growth_with_PAS_control_rate_OD, line_width=1.5, color="#d62728", line_dash="dotdash")#, alpha=0.7, legend_label="漸進多焦點眼鏡"
-    line_EB_OD = p.line(x_age_series, growth_with_EB_control_rate_OD, line_width=1.5, color="#2ca02c", line_dash="dotted")#, alpha=0.7, legend_label="雙焦眼鏡"
-    line_PDS_OD = p.line(x_age_series, growth_with_PDS_control_rate_OD, line_width=1.5, color="#9467bd", line_dash="dotted")#, alpha=0.7, legend_label="周邊離焦鏡片"
-    line_SCLFMC_OD = p.line(x_age_series, growth_with_SCLFMC_control_rate_OD, line_width=1.5, color="#8c564b", line_dash="dotdash")#, alpha=0.7, legend_label="軟式隱形眼鏡"
-    line_OKL_OD = p.line(x_age_series, growth_with_OKL_control_rate_OD, line_width=1.5, color="#7f7f7f", line_dash="dashdot")#, alpha=0.7, legend_label="角膜塑型片"
-    
-    line_RG_OD.visible = line_PAS_OD.visible = line_EB_OD.visible = line_PDS_OD.visible = line_SCLFMC_OD.visible = line_OKL_OD.visible = False
-
-# 做標籤的設定
-legend_items_line1 = []
-legend_items_line1.append(("低風險", [varea_low_OD]))
-legend_items_line1.append(("中風險", [varea_medium_OD]))
-legend_items_line1.append(("高風險", [varea_high_OD]))
-legend_items_line1.append(("右眼歷史紀錄", [line_history_OD]))
-legend_items_line1.append(("無控制", [line_without_control_OD]))
-legend_items_line2 = []
-legend_items_line2.append(("一般眼鏡", [line_RG_OD]))
-legend_items_line2.append(("漸進多焦點眼鏡", [line_PAS_OD]))
-legend_items_line2.append(("雙焦眼鏡", [line_EB_OD]))
-legend_items_line2.append(("周邊離焦鏡片", [line_PDS_OD]))
-legend_items_line2.append(("軟式隱形眼鏡", [line_SCLFMC_OD]))
-legend_items_line2.append(("角膜塑型片", [line_OKL_OD]))
-
-# 從這邊設定要不要顯示指定的處置方式發展趨勢
-checkbox_OD = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[])
-checkbox_OD.js_on_change("active", CustomJS(args=dict(l_RG_OD=line_RG_OD, l_PAS_OD=line_PAS_OD, l_EB_OD=line_EB_OD, l_PDS_OD=line_PDS_OD, l_SCLFMC_OD=line_SCLFMC_OD, l_OKL_OD=line_OKL_OD), code="""
-    l_RG_OD.visible = cb_obj.active.includes(0);
-    l_PAS_OD.visible = cb_obj.active.includes(1);
-    l_EB_OD.visible = cb_obj.active.includes(2);
-    l_PDS_OD.visible = cb_obj.active.includes(3);
-    l_SCLFMC_OD.visible = cb_obj.active.includes(4);
-    l_OKL_OD.visible = cb_obj.active.includes(5);                                     
-"""))
-if len(y_od_record)>1:
-    df = pd.DataFrame({
-        # '年紀': x_age_record[::-1] + x_age_series[1:-1],
-        '年紀': x_age_record_text[:0:-1] + x_age_series_text[:-1],
-        '無控制': y_od_record[:0:-1] + growth_without_control_rate_OD[:-1],
-        '一般眼鏡': y_od_record[:0:-1] + growth_with_RG_control_rate_OD[:-1],
-        '漸進多焦點眼鏡': y_od_record[:0:-1] + growth_with_PAS_control_rate_OD[:-1],
-        '雙焦眼鏡': y_od_record[:0:-1] + growth_with_EB_control_rate_OD[:-1],
-        '一般周邊離焦鏡片眼鏡': y_od_record[:0:-1] + growth_with_PDS_control_rate_OD[:-1],
-        '軟式隱形眼鏡': y_od_record[:0:-1] + growth_with_SCLFMC_control_rate_OD[:-1],
-        '角膜塑型片': y_od_record[:0:-1] + growth_with_OKL_control_rate_OD[:-1]
-    })
-else:
-    df = pd.DataFrame({
-        # '年紀': x_age_record[::-1] + x_age_series[1:-1],
-        '年紀': x_age_record_text+ x_age_series_text[:-1],
-        '無控制': y_od_record + growth_without_control_rate_OD[:-1],
-        '一般眼鏡': y_od_record + growth_with_RG_control_rate_OD[:-1],
-        '漸進多焦點眼鏡': y_od_record + growth_with_PAS_control_rate_OD[:-1],
-        '雙焦眼鏡': y_od_record + growth_with_EB_control_rate_OD[:-1],
-        '一般周邊離焦鏡片眼鏡': y_od_record + growth_with_PDS_control_rate_OD[:-1],
-        '軟式隱形眼鏡': y_od_record + growth_with_SCLFMC_control_rate_OD[:-1],
-        '角膜塑型片': y_od_record + growth_with_OKL_control_rate_OD[:-1]
-    })
-
-# 建立一個table並把全部的數據放進去
-columns = [
-    TableColumn(field="年紀", title="年紀"),
-    TableColumn(field="無控制", title="無控制", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="一般眼鏡", title="一般眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="漸進多焦點眼鏡", title="漸進多焦點眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="雙焦眼鏡", title="雙焦眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="一般周邊離焦鏡片眼鏡", title="一般周邊離焦鏡片眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="軟式隱形眼鏡", title="軟式隱形眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="角膜塑型片", title="角膜塑型片一般眼鏡", formatter=NumberFormatter(format="0.00"))
-]
-source = ColumnDataSource(df)
-data_table = DataTable(source=source, columns=columns, width=550, height=600, index_position=None)
-legend_1 = Legend(items=legend_items_line1, location="bottom_center", orientation="horizontal")
-legend_2 = Legend(items=legend_items_line2, location="bottom_center", orientation="horizontal")
-
-# 最後整理排版並輸出結果
-p.add_layout(legend_1, 'below')
-p.add_layout(legend_2, 'below')
-layout = row(column(p , checkbox_OD), data_table)
-p_json = json.dumps(json_item(layout, "plot"))
-
-Bokeh.embed.embed_item(JSON.parse(p_json))
-
-#############左眼部分
-# 繪圖區域設定與工具設定
-if report == '球面度數':
-    y_range = Range1d(start=2, end=-8)
-    y_range.max_interval = 10 
-    x_range = Range1d(start=3, end=16)
-    x_range.max_interval = 10 
-    p = figure(width=650, height=650,x_range=(3, 16),y_range=(2, -8),title=f"{sex}童左眼球面度數成長趨勢",x_axis_label="年紀(歲)",y_axis_label="度 (D)")
-else:
-    y_range = Range1d(start=21, end=29)
-    y_range.max_interval = 10 
-    x_range = Range1d(start=3, end=16)
-    x_range.max_interval = 10 
-    p = figure(width=650, height=650,x_range=(3, 16),y_range=(21, 29),title=f"{sex}童左眼軸長成長趨勢",x_axis_label="年紀(歲)",y_axis_label="軸長 (mm)")
-
-p.title.text_font_size = "16pt"
-p.title.align = "center"
-original_pan = p.select_one(PanTool)
-p.tools.remove(original_pan)
-pan_y = PanTool(dimensions="height")
-p.add_tools(pan_y)
-p.toolbar.active_drag = pan_y
-
-# 根據讀取進來的資料設定低中高風險的位置與畫出歷史資料的紀錄
-area = stacked_area.loc[sex].loc[3:16]
-area_25_smooth = moving_average_cal(area['P25'])
-area_50_smooth = moving_average_cal(area['P50'])
-varea_low_OS = p.varea(x=area.index, y1=area_50_smooth, y2=10, fill_color="lightgreen", fill_alpha=0.2)#,legend_label='低風險'
-varea_medium_OS = p.varea(x=area.index, y1=area_25_smooth, y2=area_50_smooth, fill_color="yellow", fill_alpha=0.2)#,legend_label='中風險'
-varea_high_OS = p.varea(x=area.index, y1=-10, y2=area_25_smooth, fill_color="red", fill_alpha=0.2)#,legend_label='高風險'
-if len(y_os_record)>1:
-    line_history_OS = p.line(x_age_record, y_os_record, line_width=1, color="blue")#, legend_label="左眼歷史紀錄"
-    p.circle(x_age_record[1:], y_os_record[1:], size=8, color="navy")
-p.circle(x_age_record[0], y_os_record[0], line_color="navy", fill_color = '#4FC1E8', line_width=2,  size=8)
-
-# 做不同處置方式的初始設定
-growth_without_control_rate_OS=[0]*agecounter#this is for initial
-# growth_with_control_rate_OS=[0]*agecounter#this is for initial
-growth_with_RG_control_rate_OS=[0]*agecounter#一般眼鏡 Regular glasses
-growth_with_PAS_control_rate_OS=[0]*agecounter#漸進多焦點眼鏡 Progressive addition spectacles
-growth_with_EB_control_rate_OS=[0]*agecounter#雙焦眼鏡 Executive bifocals
-growth_with_PDS_control_rate_OS=[0]*agecounter#周邊離焦鏡片 Peripheral defocus spectacles
-growth_with_SCLFMC_control_rate_OS=[0]*agecounter#軟式隱形眼鏡 Soft contact lens for myopia control
-growth_with_OKL_control_rate_OS=[0]*agecounter#角膜塑型片 Ortho_K_lenses
-
-# 計算不同處置方式的未來發展趨勢並畫在圖上
-if OS_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
-    growth_without_control_rate_OS[0] = OS_new
-    growth_with_RG_control_rate_OS[0] = growth_with_PAS_control_rate_OS[0] = growth_with_EB_control_rate_OS[0] = growth_with_PDS_control_rate_OS[0] = growth_with_SCLFMC_control_rate_OS[0] = growth_with_OKL_control_rate_OS[0] = OS_new
-    growth_without_control_rate_OS = curve_calculation(growth_without_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0)
-    growth_with_RG_control_rate_OS = curve_calculation(growth_with_RG_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.13)
-    growth_with_PAS_control_rate_OS = curve_calculation(growth_with_PAS_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.43)
-    growth_with_EB_control_rate_OS = curve_calculation(growth_with_EB_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.19)
-    growth_with_PDS_control_rate_OS = curve_calculation(growth_with_PDS_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.50)
-    growth_with_SCLFMC_control_rate_OS = curve_calculation(growth_with_SCLFMC_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.10)
-    growth_with_OKL_control_rate_OS = curve_calculation(growth_with_OKL_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.44)
-    
-    line_without_control_OS = p.line(x_age_series, growth_without_control_rate_OS, line_width=1.5, color="blue", line_dash="dotted")#, alpha=0.7,  legend_label="無控制"
-    line_RG_OS = p.line(x_age_series, growth_with_RG_control_rate_OS, line_width=1.5, color="#1f77b4", line_dash="dashed")#, alpha=0.7, legend_label="一般眼鏡"
-    line_PAS_OS = p.line(x_age_series, growth_with_PAS_control_rate_OS, line_width=1.5, color="#d62728", line_dash="dotdash")#, alpha=0.7, legend_label="漸進多焦點眼鏡"
-    line_EB_OS = p.line(x_age_series, growth_with_EB_control_rate_OS, line_width=1.5, color="#2ca02c", line_dash="dotted")#, alpha=0.7, legend_label="雙焦眼鏡"
-    line_PDS_OS = p.line(x_age_series, growth_with_PDS_control_rate_OS, line_width=1.5, color="#9467bd", line_dash="dotted")#, alpha=0.7, legend_label="周邊離焦鏡片"
-    line_SCLFMC_OS = p.line(x_age_series, growth_with_SCLFMC_control_rate_OS, line_width=1.5, color="#8c564b", line_dash="dotdash")#, alpha=0.7, legend_label="軟式隱形眼鏡"
-    line_OKL_OS = p.line(x_age_series, growth_with_OKL_control_rate_OS, line_width=1.5, color="#7f7f7f", line_dash="dashdot")#, alpha=0.7, legend_label="角膜塑型片"
-    
-    line_RG_OS.visible = line_PAS_OS.visible = line_EB_OS.visible = line_PDS_OS.visible = line_SCLFMC_OS.visible = line_OKL_OS.visible = False
-
-# 做標籤的設定
-legend_items_line1 = []
-legend_items_line1.append(("低風險", [varea_low_OS]))
-legend_items_line1.append(("中風險", [varea_medium_OS]))
-legend_items_line1.append(("高風險", [varea_high_OS]))
-legend_items_line1.append(("右眼歷史紀錄", [line_history_OS]))
-legend_items_line1.append(("無控制", [line_without_control_OS]))
-legend_items_line2 = []
-legend_items_line2.append(("一般眼鏡", [line_RG_OS]))
-legend_items_line2.append(("漸進多焦點眼鏡", [line_PAS_OS]))
-legend_items_line2.append(("雙焦眼鏡", [line_EB_OS]))
-legend_items_line2.append(("周邊離焦鏡片", [line_PDS_OS]))
-legend_items_line2.append(("軟式隱形眼鏡", [line_SCLFMC_OS]))
-legend_items_line2.append(("角膜塑型片", [line_OKL_OS]))
-
-# 從這邊設定要不要顯示指定的處置方式發展趨勢
-checkbox_OS = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[])
-checkbox_OS.js_on_change("active", CustomJS(args=dict(l_RG_OS=line_RG_OS, l_PAS_OS=line_PAS_OS, l_EB_OS=line_EB_OS, l_PDS_OS=line_PDS_OS, l_SCLFMC_OS=line_SCLFMC_OS, l_OKL_OS=line_OKL_OS), code="""
-    l_RG_OS.visible = cb_obj.active.includes(0);
-    l_PAS_OS.visible = cb_obj.active.includes(1);
-    l_EB_OS.visible = cb_obj.active.includes(2);
-    l_PDS_OS.visible = cb_obj.active.includes(3);
-    l_SCLFMC_OS.visible = cb_obj.active.includes(4);
-    l_OKL_OS.visible = cb_obj.active.includes(5);                                     
-"""))
-if len(y_os_record)>1:
-    df = pd.DataFrame({
-        # '年紀': x_age_record[::-1] + x_age_series[1:-1],
-        '年紀': x_age_record_text[:0:-1] + x_age_series_text[:-1],
-        '無控制': y_os_record[:0:-1] + growth_without_control_rate_OS[:-1],
-        '一般眼鏡': y_os_record[:0:-1] + growth_with_RG_control_rate_OS[:-1],
-        '漸進多焦點眼鏡': y_os_record[:0:-1] + growth_with_PAS_control_rate_OS[:-1],
-        '雙焦眼鏡': y_os_record[:0:-1] + growth_with_EB_control_rate_OS[:-1],
-        '一般周邊離焦鏡片眼鏡': y_os_record[:0:-1] + growth_with_PDS_control_rate_OS[:-1],
-        '軟式隱形眼鏡': y_os_record[:0:-1] + growth_with_SCLFMC_control_rate_OS[:-1],
-        '角膜塑型片': y_os_record[:0:-1] + growth_with_OKL_control_rate_OS[:-1]
-    })
-else:
-    df = pd.DataFrame({
-        # '年紀': x_age_record[::-1] + x_age_series[1:-1],
-        '年紀': x_age_record_text + x_age_series_text[:-1],
-        '無控制': y_os_record + growth_without_control_rate_OS[:-1],
-        '一般眼鏡': y_os_record + growth_with_RG_control_rate_OS[:-1],
-        '漸進多焦點眼鏡': y_os_record + growth_with_PAS_control_rate_OS[:-1],
-        '雙焦眼鏡': y_os_record + growth_with_EB_control_rate_OS[:-1],
-        '一般周邊離焦鏡片眼鏡': y_os_record + growth_with_PDS_control_rate_OS[:-1],
-        '軟式隱形眼鏡': y_os_record + growth_with_SCLFMC_control_rate_OS[:-1],
-        '角膜塑型片': y_os_record + growth_with_OKL_control_rate_OS[:-1]
-    })
-
-# 建立一個table並把全部的數據放進去
-columns = [
-    TableColumn(field="年紀", title="年紀"),
-    TableColumn(field="無控制", title="無控制", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="一般眼鏡", title="一般眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="漸進多焦點眼鏡", title="漸進多焦點眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="雙焦眼鏡", title="雙焦眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="一般周邊離焦鏡片眼鏡", title="一般周邊離焦鏡片眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="軟式隱形眼鏡", title="軟式隱形眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="角膜塑型片", title="角膜塑型片一般眼鏡", formatter=NumberFormatter(format="0.00"))
-]
-
-
-source = ColumnDataSource(df)
-data_table = DataTable(source=source, columns=columns, width=550, height=600, index_position=None)
-legend_1 = Legend(items=legend_items_line1, location="bottom_center", orientation="horizontal")
-legend_2 = Legend(items=legend_items_line2, location="bottom_center", orientation="horizontal")
-p.add_layout(legend_1, 'below')
-p.add_layout(legend_2, 'below')
-
-# 最後整理排版並輸出結果
-layout = row(column(p , checkbox_OS), data_table)
-p_json = json.dumps(json_item(layout, "table"))
-Bokeh.embed.embed_item(JSON.parse(p_json))
+display(plt, target='plot')
