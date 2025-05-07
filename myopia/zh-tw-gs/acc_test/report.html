@@ -19,6 +19,15 @@
     <script src="../../../js/jquery.validate.min.js"></script>
     <script src="../../../js/main.js"></script>
 
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.2.2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.2.2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.2.2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.2.2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.2.2.min.js"></script>
+    
+    <!-- 目前最適合使用的pyscript版本是2023.05.1，在這之後的版本有大更新，不好維護 -->
+    <!-- <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+    <script  type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script> -->
     <link rel="stylesheet" href="https://pyscript.net/releases/2023.05.1/pyscript.css" />
     <script  type="module" src="https://pyscript.net/releases/2023.05.1/pyscript.js"></script>
     <py-config>
@@ -65,20 +74,20 @@
         .justified-text {
         text-align: justify;
           }
-      @media only screen and (max-width: 850px) {
+          @media only screen and (max-width: 1250px) {
       .scale_down {
-        transform: scale(0.7);
+        transform: scale(0.65);
         transform-origin: left;
       }
       #plot {
         height: 450px;
       }
       .scale_down_table {
-        transform: scale(0.6);
+        transform: scale(0.65);
         transform-origin: left;
       }
       }
-      @media only screen and (max-width: 600px) {
+      @media only screen and (max-width: 850px) {
       .scale_down {
         transform: scale(0.55);
         transform-origin: left;
@@ -87,24 +96,11 @@
         height: 350px;
       }
       .scale_down_table {
-        transform: scale(0.525);
+        transform: scale(0.55);
         transform-origin: left;
       }
       }
-      @media only screen and (max-width: 500px) {
-      .scale_down {
-        transform: scale(0.4);
-        transform-origin: left;
-      }
-      #plot {
-        height: 250px;
-      }
-      .scale_down_table {
-        transform: scale(0.45);
-        transform-origin: left;
-      }
-      }
-      @media only screen and (max-width: 450px) {
+      @media only screen and (max-width: 725px) {
       .scale_down {
         transform: scale(0.35);
         transform-origin: left;
@@ -113,7 +109,20 @@
         height: 150px;
       }
       .scale_down_table {
-        transform: scale(0.37);
+        transform: scale(0.35);
+        transform-origin: left;
+      }
+      }
+      @media only screen and (max-width: 450px) {
+      .scale_down {
+        transform: scale(0.34);
+        transform-origin: left;
+      }
+      #plot {
+        height: 150px;
+      }
+      .scale_down_table {
+        transform: scale(0.34);
         transform-origin: left;
       }
       }
@@ -133,10 +142,14 @@
       }
       .scale_down {
         transform: scale(0.75);
-        transform-origin: top;
+        transform-origin: left;
+      }
+      .scale_down_table {
+        transform: scale(0.75);
+        transform-origin: left;
       }
       #plot {
-        height: 450px;      
+        height: 555px;
       }
       .page-break { page-break-before: always; }
       .fixed-footer {
@@ -465,8 +478,9 @@
       // });
       language_type=0;// 0 : traditional chinese , 1 : english , 2 : simple chinese
       records = localStorage.getItem('records');
+      // console.log(records);
     </script>
     <py-script src="../plot.py"></py-script>
-    <py-script src="../table.py" ></py-script>
+    <!-- <py-script src="../table.py" ></py-script> -->
   </body>
 </html>
