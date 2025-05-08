@@ -765,7 +765,8 @@ legend_items_line1 = []
 legend_items_line1.append(("低風險", [varea_low_OD]))
 legend_items_line1.append(("中風險", [varea_medium_OD]))
 legend_items_line1.append(("高風險", [varea_high_OD]))
-legend_items_line1.append(("右眼歷史紀錄", [line_history_OD]))
+if len(y_od_record)>1:
+    legend_items_line1.append(("右眼歷史紀錄", [line_history_OD]))
 legend_items_line1.append(("無控制", [line_without_control_OD]))
 legend_items_line2 = []
 legend_items_line2.append(("一般眼鏡", [line_RG_OD]))
@@ -906,7 +907,8 @@ legend_items_line1 = []
 legend_items_line1.append(("低風險", [varea_low_OS]))
 legend_items_line1.append(("中風險", [varea_medium_OS]))
 legend_items_line1.append(("高風險", [varea_high_OS]))
-legend_items_line1.append(("右眼歷史紀錄", [line_history_OS]))
+if len(y_os_record)>1:
+    legend_items_line1.append(("右眼歷史紀錄", [line_history_OS]))
 legend_items_line1.append(("無控制", [line_without_control_OS]))
 legend_items_line2 = []
 legend_items_line2.append(("一般眼鏡", [line_RG_OS]))
