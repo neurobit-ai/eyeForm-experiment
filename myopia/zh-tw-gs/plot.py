@@ -577,20 +577,28 @@ def curve_calculation_AL(curve_point,slope,attu,age,control_rate):
 ##################################
 growth_without_control_rate=[0]*agecounter#this is for initial
 growth_with_control_rate=[0]*agecounter#this is for initial
+suggestion_active = 0
 if suggestion == "一般眼鏡":
     control_rate = 0.13
+    suggestion_active = 0
 elif suggestion == "軟式隱形眼鏡" or suggestion == '近視控制隱形眼鏡':
     control_rate = 0.43
+    suggestion_active = 4
 elif suggestion == "周邊離焦鏡片" or suggestion == '周邊離焦(近視控制)鏡片':
     control_rate = 0.19
+    suggestion_active = 3
 elif suggestion == "雙焦眼鏡":
     control_rate = 0.50
+    suggestion_active = 2
 elif suggestion == "漸進多焦點眼鏡":
     control_rate = 0.10
+    suggestion_active = 1
 elif suggestion == "角膜塑型片":
     control_rate = 0.44
+    suggestion_active = 5
 else :
     control_rate = 0.13
+    suggestion_active = 0
 
 #把過去、現在與未來的資料畫在圖上
 if OD_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數':#and slope_groupby[sex].get(suggestion)
@@ -777,7 +785,19 @@ legend_items_line2.append(("軟式隱形眼鏡", [line_SCLFMC_OD]))
 legend_items_line2.append(("角膜塑型片", [line_OKL_OD]))
 
 # 從這邊設定要不要顯示指定的處置方式發展趨勢
-checkbox_OD = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[])
+checkbox_OD = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[suggestion_active])
+if suggestion_active == 0:
+    line_RG_OD.visible = True
+elif suggestion_active == 1:
+    line_PAS_OD.visible = True
+elif suggestion_active == 2:
+    line_EB_OD.visible = True
+elif suggestion_active == 3:
+    line_PDS_OD.visible = True
+elif suggestion_active == 4:
+    line_SCLFMC_OD.visible = True
+elif suggestion_active == 5:
+    line_OKL_OD.visible = True
 checkbox_OD.js_on_change("active", CustomJS(args=dict(l_RG_OD=line_RG_OD, l_PAS_OD=line_PAS_OD, l_EB_OD=line_EB_OD, l_PDS_OD=line_PDS_OD, l_SCLFMC_OD=line_SCLFMC_OD, l_OKL_OD=line_OKL_OD), code="""
     l_RG_OD.visible = cb_obj.active.includes(0);
     l_PAS_OD.visible = cb_obj.active.includes(1);
@@ -919,7 +939,19 @@ legend_items_line2.append(("軟式隱形眼鏡", [line_SCLFMC_OS]))
 legend_items_line2.append(("角膜塑型片", [line_OKL_OS]))
 
 # 從這邊設定要不要顯示指定的處置方式發展趨勢
-checkbox_OS = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[])
+checkbox_OS = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[suggestion_active])
+if suggestion_active == 0:
+    line_RG_OS.visible = True
+elif suggestion_active == 1:
+    line_PAS_OS.visible = True
+elif suggestion_active == 2:
+    line_EB_OS.visible = True
+elif suggestion_active == 3:
+    line_PDS_OS.visible = True
+elif suggestion_active == 4:
+    line_SCLFMC_OS.visible = True
+elif suggestion_active == 5:
+    line_OKL_OS.visible = True
 checkbox_OS.js_on_change("active", CustomJS(args=dict(l_RG_OS=line_RG_OS, l_PAS_OS=line_PAS_OS, l_EB_OS=line_EB_OS, l_PDS_OS=line_PDS_OS, l_SCLFMC_OS=line_SCLFMC_OS, l_OKL_OS=line_OKL_OS), code="""
     l_RG_OS.visible = cb_obj.active.includes(0);
     l_PAS_OS.visible = cb_obj.active.includes(1);
