@@ -72,8 +72,9 @@
         var decoded = jwt_decode(token);
         console.log(decoded.name);
         console.log(decoded.email);
+        var patient_id_defult = '';
         $.ajax({
-        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${patient_id_defult}`,
+        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${decoded.email}&patient_id=${patient_id_defult}`,
         type: 'GET',
         dataType: 'json',
         success: function(data) {
