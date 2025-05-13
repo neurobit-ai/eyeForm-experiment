@@ -121,7 +121,6 @@
           }
           }
       });
-        // if(decoded.name !=="Aleistar Chan" && decoded.email !=="neurobit.tech@gmail.com" && decoded.email !=="phoebe40630@gmail.com" && decoded.email !=="utgard1214@gmail.com" && decoded.email !=="ayitgroup@gmail.com") 
         document.getElementById('name').value = decoded.name;
         document.getElementById('email').value = decoded.email;
         $('#staticBackdrop').modal('hide');
@@ -921,7 +920,7 @@
       if(user_type == 'Usage' & user_status == 'Exhausted')
       {
         $.ajax({
-        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${medRecNo.value}`,
+        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${document.getElementById('email').value}&patient_id=${medRecNo.value}`,
         type: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -1824,15 +1823,8 @@
       label.textContent = "資料填寫完整，開啟球面度數危險度分析";
       window.open('report.html');
 
-    }
-      else
-      {
-        window.scrollTo(0, 0);
-        label.textContent = "再檢查一下，確保資料沒有漏填";
-      }
-      console.log("GO sheet");
       $.ajax({
-      url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${medRecNo.value}`,
+      url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${document.getElementById('email').value}&patient_id=${medRecNo.value}`,
       type: 'GET',
       dataType: 'json',
       success: function(data) {
@@ -1844,6 +1836,12 @@
         }
         }
       });
+    }
+    else
+    {
+      window.scrollTo(0, 0);
+      label.textContent = "再檢查一下，確保資料沒有漏填";
+    }
     }
   </script>
   </body>
