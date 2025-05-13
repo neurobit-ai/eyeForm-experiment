@@ -1830,7 +1830,7 @@
         window.scrollTo(0, 0);
         label.textContent = "再檢查一下，確保資料沒有漏填";
       }
-
+      console.log("GO sheet");
       $.ajax({
       url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${medRecNo.value}`,
       type: 'GET',
