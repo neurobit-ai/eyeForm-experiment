@@ -1401,7 +1401,22 @@
 
     var submitbotton=document.getElementById('submit');
           if(check)
-          submitbotton.click();
+          {
+            submitbotton.click();
+            $.ajax({
+            url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${document.getElementById('email').value}&patient_id=${medRecNo.value}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+              if (typeof data === 'object') {
+                response_valid = data['valid'];
+              }
+              else {
+                console.log("Get response fail.");
+              }
+              }
+            });
+          }
           else
           window.scrollTo(0, 0);
       return check;
