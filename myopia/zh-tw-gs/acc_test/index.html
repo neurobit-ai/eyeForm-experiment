@@ -65,38 +65,61 @@
     <script src="../../../js/jwt-decode.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
+      var user_status = 'default';
+      var user_type = 'default';
       function handleCredentialResponse(response) {
         var token = response.credential;
         var decoded = jwt_decode(token);
         console.log(decoded.name);
         console.log(decoded.email);
         $.ajax({
-          url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${decoded.email}`,
-          type: 'GET',
-          dataType: 'json',
-          success: function(data) {
-            if (typeof data === 'object') {
-              console.log(data);
-            }
-            else {
-              console.log("Get response fail.");
-            }
-            if(data['valid'] =='Valid')
-            {
-              document.getElementById("uploadform").style.display = "inline-block";
-              document.getElementById("report2").style.display = "inline-block";
-              document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
-            }
-            else if(data['valid'] =='Expired')
-              document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
-            else if(data['valid'] =='Exhausted')
-              document.getElementById("notification01").textContent="已達到使用次數上限，欲繼續使用請聯絡神經元科技";
-            else if(data['valid'] =='Invalid')
-              document.getElementById("notification01").textContent="帳號未註冊，欲使用請聯絡神經元科技";
-            else
-              document.getElementById("notification01").textContent="欲使用請聯絡神經元科技";
+        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${patient_id_defult}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          if (typeof data === 'object') {
+            console.log(data);
+            console.log(data['user_type']);
+            console.log(data['valid']);
+            response_valid = data['valid'];
           }
-        });
+          else {
+            console.log("Get response fail.");
+          }
+          if(data['valid'] =='Valid' )
+          {
+            document.getElementById("uploadform").style.display = "inline-block";
+            document.getElementById("report2").style.display = "inline-block";
+            document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
+            user_status = 'Valid';
+            user_type = 'Valid';
+          }
+          else if(data['valid'] =='Expired')
+          {
+            document.getElementById("notification01").textContent="已超過使用期限，欲繼續使用請聯絡神經元科技";
+            user_status = 'Expired';
+            user_type = 'Time';
+          }
+          else if(data['valid'] =='Exhausted')
+          {
+            document.getElementById("notification01").textContent="已達到使用次數上限，除今日已使用的患者外，欲繼續使用請聯絡神經元科技";
+            user_status = 'Exhausted';
+            user_type = 'Usage';
+          }
+          else if(data['valid'] =='Invalid')
+          {
+            document.getElementById("notification01").textContent="帳號未註冊，欲使用請聯絡神經元科技";
+            user_status = 'Invalid';
+            user_type = 'Invalid';
+          }
+          else
+          {
+            document.getElementById("notification01").textContent="欲使用請聯絡神經元科技";
+            user_status = 'Invalid';
+            user_type = 'Invalid';
+          }
+          }
+      });
         // if(decoded.name !=="Aleistar Chan" && decoded.email !=="neurobit.tech@gmail.com" && decoded.email !=="phoebe40630@gmail.com" && decoded.email !=="utgard1214@gmail.com" && decoded.email !=="ayitgroup@gmail.com") 
         document.getElementById('name').value = decoded.name;
         document.getElementById('email').value = decoded.email;
@@ -894,6 +917,43 @@
         }
       });
       }
+      if(user_type == 'Usage' & user_status == 'Exhausted')
+      {
+        $.ajax({
+        url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${medRecNo.value}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          if (typeof data === 'object') {
+            console.log(data);
+            console.log(data['user_type']);
+            console.log(data['valid']);
+            response_valid = data['valid'];
+          }
+          else {
+            console.log("Get response fail.");
+          }
+          if(data['valid'] =='Valid' )
+          {
+            document.getElementById("uploadform").style.display = "inline-block";
+            document.getElementById("report2").style.display = "inline-block";
+            document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
+          }
+          else if (data['valid'] =='Exhausted' )
+          {
+            document.getElementById("uploadform").style.display = "none";
+            document.getElementById("report2").style.display = "none";
+            document.getElementById("notification01").textContent="此帳號已達到使用次數上限且此名患者今日無使用紀錄，欲繼續使用請聯絡神經元科技";
+          }
+          else
+          {
+            document.getElementById("uploadform").style.display = "none";
+            document.getElementById("report2").style.display = "none";
+            document.getElementById("notification01").textContent="欲繼續使用請聯絡神經元科技";
+          }
+          }
+      });
+      }
     }
 
   var heightValid=document.getElementById('height');
@@ -1195,8 +1255,8 @@
         var dob = dateOfBirth.value.split('-');
         year = parseInt(dov[0]) - parseInt(dob[0]);
         month = parseInt(dov[1]) - parseInt(dob[1]);
-        console.log(year);
-        console.log(month);
+        // console.log(year);
+        // console.log(month);
         if (parseInt(dov[2]) - parseInt(dob[2]) < 0) {
           month--;
         }
@@ -1769,6 +1829,20 @@
         window.scrollTo(0, 0);
         label.textContent = "再檢查一下，確保資料沒有漏填";
       }
+
+      $.ajax({
+      url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${medRecNo.value}`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        if (typeof data === 'object') {
+          response_valid = data['valid'];
+        }
+        else {
+          console.log("Get response fail.");
+        }
+        }
+      });
     }
   </script>
   </body>

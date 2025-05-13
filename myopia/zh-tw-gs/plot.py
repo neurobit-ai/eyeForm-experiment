@@ -700,7 +700,7 @@ import json
 from js import Bokeh, JSON
 from bokeh.embed import json_item
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, NumberFormatter, CheckboxGroup, CustomJS, Legend, PanTool, Range1d
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, NumberFormatter, CheckboxGroup, CustomJS, Legend, PanTool, Range1d, Slider
 from bokeh.layouts import column, row
 
 #############右眼部分
@@ -758,13 +758,13 @@ if OD_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數
     growth_with_SCLFMC_control_rate_OD = curve_calculation(growth_with_SCLFMC_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.10)
     growth_with_OKL_control_rate_OD = curve_calculation(growth_with_OKL_control_rate_OD,current_slope_rate_OD,current_slope_attu_OD,int(x(age_new)),0.44)
 
-    line_without_control_OD = p.line(x_age_series, growth_without_control_rate_OD, line_width=1.5, color="red", line_dash="dotted")#, alpha=0.7,  legend_label="無控制"
-    line_RG_OD = p.line(x_age_series, growth_with_RG_control_rate_OD, line_width=1.5, color="#1f77b4", line_dash="dashed")#, alpha=0.7, legend_label="一般眼鏡"
-    line_PAS_OD = p.line(x_age_series, growth_with_PAS_control_rate_OD, line_width=1.5, color="#d62728", line_dash="dotdash")#, alpha=0.7, legend_label="漸進多焦點眼鏡"
-    line_EB_OD = p.line(x_age_series, growth_with_EB_control_rate_OD, line_width=1.5, color="#2ca02c", line_dash="dotted")#, alpha=0.7, legend_label="雙焦眼鏡"
-    line_PDS_OD = p.line(x_age_series, growth_with_PDS_control_rate_OD, line_width=1.5, color="#9467bd", line_dash="dotted")#, alpha=0.7, legend_label="周邊離焦鏡片"
-    line_SCLFMC_OD = p.line(x_age_series, growth_with_SCLFMC_control_rate_OD, line_width=1.5, color="#8c564b", line_dash="dotdash")#, alpha=0.7, legend_label="軟式隱形眼鏡"
-    line_OKL_OD = p.line(x_age_series, growth_with_OKL_control_rate_OD, line_width=1.5, color="#7f7f7f", line_dash="dashdot")#, alpha=0.7, legend_label="角膜塑型片"
+    line_without_control_OD = p.line(x_age_series, growth_without_control_rate_OD, line_width=2, color="red", line_dash="dotted")#, alpha=0.7,  legend_label="無控制"
+    line_RG_OD = p.line(x_age_series, growth_with_RG_control_rate_OD, line_width=2, color="#1f77b4", line_dash="dashed")#, alpha=0.7, legend_label="一般眼鏡"
+    line_PAS_OD = p.line(x_age_series, growth_with_PAS_control_rate_OD, line_width=2, color="#d62728", line_dash="dotdash")#, alpha=0.7, legend_label="漸進多焦點眼鏡"
+    line_EB_OD = p.line(x_age_series, growth_with_EB_control_rate_OD, line_width=2, color="#2ca02c", line_dash="dotted")#, alpha=0.7, legend_label="雙焦眼鏡"
+    line_PDS_OD = p.line(x_age_series, growth_with_PDS_control_rate_OD, line_width=2, color="#9467bd", line_dash="dotted")#, alpha=0.7, legend_label="周邊離焦鏡片"
+    line_SCLFMC_OD = p.line(x_age_series, growth_with_SCLFMC_control_rate_OD, line_width=2, color="#8c564b", line_dash="dotdash")#, alpha=0.7, legend_label="軟式隱形眼鏡"
+    line_OKL_OD = p.line(x_age_series, growth_with_OKL_control_rate_OD, line_width=2, color="#7f7f7f", line_dash="dashdot")#, alpha=0.7, legend_label="角膜塑型片"
     
     line_RG_OD.visible = line_PAS_OD.visible = line_EB_OD.visible = line_PDS_OD.visible = line_SCLFMC_OD.visible = line_OKL_OD.visible = False
 
@@ -781,11 +781,11 @@ legend_items_line2.append(("一般眼鏡", [line_RG_OD]))
 legend_items_line2.append(("漸進多焦點眼鏡", [line_PAS_OD]))
 legend_items_line2.append(("雙焦眼鏡", [line_EB_OD]))
 legend_items_line2.append(("周邊離焦鏡片", [line_PDS_OD]))
-legend_items_line2.append(("軟式隱形眼鏡", [line_SCLFMC_OD]))
+legend_items_line2.append(("近視控制隱形眼鏡", [line_SCLFMC_OD]))
 legend_items_line2.append(("角膜塑型片", [line_OKL_OD]))
 
 # 從這邊設定要不要顯示指定的處置方式發展趨勢
-checkbox_OD = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[suggestion_active])
+checkbox_OD = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","近視控制隱形眼鏡","角膜塑型片"], active=[suggestion_active])
 if suggestion_active == 0:
     line_RG_OD.visible = True
 elif suggestion_active == 1:
@@ -806,6 +806,10 @@ checkbox_OD.js_on_change("active", CustomJS(args=dict(l_RG_OD=line_RG_OD, l_PAS_
     l_SCLFMC_OD.visible = cb_obj.active.includes(4);
     l_OKL_OD.visible = cb_obj.active.includes(5);                                     
 """))
+slider_RG_OD = Slider(start=1, end=3, value=1, step=0.1, title="一般眼鏡線條粗細")
+slider_RG_OD.js_on_change("value", CustomJS(args=dict(line=line_RG_OD), code="""
+    line.glyph.line_width = cb_obj.value;
+"""))
 if len(y_od_record)>1:
     df = pd.DataFrame({
         # '年紀': x_age_record[::-1] + x_age_series[1:-1],
@@ -814,7 +818,7 @@ if len(y_od_record)>1:
         '一般眼鏡': y_od_record[:0:-1] + growth_with_RG_control_rate_OD[:-1],
         '漸進多焦點眼鏡': y_od_record[:0:-1] + growth_with_PAS_control_rate_OD[:-1],
         '雙焦眼鏡': y_od_record[:0:-1] + growth_with_EB_control_rate_OD[:-1],
-        '一般周邊離焦鏡片眼鏡': y_od_record[:0:-1] + growth_with_PDS_control_rate_OD[:-1],
+        '周邊離焦鏡片': y_od_record[:0:-1] + growth_with_PDS_control_rate_OD[:-1],
         '軟式隱形眼鏡': y_od_record[:0:-1] + growth_with_SCLFMC_control_rate_OD[:-1],
         '角膜塑型片': y_od_record[:0:-1] + growth_with_OKL_control_rate_OD[:-1]
     })
@@ -826,7 +830,7 @@ else:
         '一般眼鏡': y_od_record + growth_with_RG_control_rate_OD[:-1],
         '漸進多焦點眼鏡': y_od_record + growth_with_PAS_control_rate_OD[:-1],
         '雙焦眼鏡': y_od_record + growth_with_EB_control_rate_OD[:-1],
-        '一般周邊離焦鏡片眼鏡': y_od_record + growth_with_PDS_control_rate_OD[:-1],
+        '周邊離焦鏡片': y_od_record + growth_with_PDS_control_rate_OD[:-1],
         '軟式隱形眼鏡': y_od_record + growth_with_SCLFMC_control_rate_OD[:-1],
         '角膜塑型片': y_od_record + growth_with_OKL_control_rate_OD[:-1]
     })
@@ -838,9 +842,9 @@ columns = [
     TableColumn(field="一般眼鏡", title="一般眼鏡", formatter=NumberFormatter(format="0.00")),
     TableColumn(field="漸進多焦點眼鏡", title="漸進多焦點眼鏡", formatter=NumberFormatter(format="0.00")),
     TableColumn(field="雙焦眼鏡", title="雙焦眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="一般周邊離焦鏡片眼鏡", title="一般周邊離焦鏡片眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="軟式隱形眼鏡", title="軟式隱形眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="角膜塑型片", title="角膜塑型片一般眼鏡", formatter=NumberFormatter(format="0.00"))
+    TableColumn(field="周邊離焦鏡片", title="周邊離焦鏡片", formatter=NumberFormatter(format="0.00")),
+    TableColumn(field="軟式隱形眼鏡", title="近視控制隱形眼鏡", formatter=NumberFormatter(format="0.00")),
+    TableColumn(field="角膜塑型片", title="角膜塑型片", formatter=NumberFormatter(format="0.00"))
 ]
 source = ColumnDataSource(df)
 data_table = DataTable(source=source, columns=columns, width=550, height=600, index_position=None)
@@ -912,13 +916,13 @@ if OS_new != "" and round(x(age_new)) in range(3,17) and report == '球面度數
     growth_with_SCLFMC_control_rate_OS = curve_calculation(growth_with_SCLFMC_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.10)
     growth_with_OKL_control_rate_OS = curve_calculation(growth_with_OKL_control_rate_OS,current_slope_rate_OS,current_slope_attu_OS,int(x(age_new)),0.44)
     
-    line_without_control_OS = p.line(x_age_series, growth_without_control_rate_OS, line_width=1.5, color="blue", line_dash="dotted")#, alpha=0.7,  legend_label="無控制"
-    line_RG_OS = p.line(x_age_series, growth_with_RG_control_rate_OS, line_width=1.5, color="#1f77b4", line_dash="dashed")#, alpha=0.7, legend_label="一般眼鏡"
-    line_PAS_OS = p.line(x_age_series, growth_with_PAS_control_rate_OS, line_width=1.5, color="#d62728", line_dash="dotdash")#, alpha=0.7, legend_label="漸進多焦點眼鏡"
-    line_EB_OS = p.line(x_age_series, growth_with_EB_control_rate_OS, line_width=1.5, color="#2ca02c", line_dash="dotted")#, alpha=0.7, legend_label="雙焦眼鏡"
-    line_PDS_OS = p.line(x_age_series, growth_with_PDS_control_rate_OS, line_width=1.5, color="#9467bd", line_dash="dotted")#, alpha=0.7, legend_label="周邊離焦鏡片"
-    line_SCLFMC_OS = p.line(x_age_series, growth_with_SCLFMC_control_rate_OS, line_width=1.5, color="#8c564b", line_dash="dotdash")#, alpha=0.7, legend_label="軟式隱形眼鏡"
-    line_OKL_OS = p.line(x_age_series, growth_with_OKL_control_rate_OS, line_width=1.5, color="#7f7f7f", line_dash="dashdot")#, alpha=0.7, legend_label="角膜塑型片"
+    line_without_control_OS = p.line(x_age_series, growth_without_control_rate_OS, line_width=2, color="blue", line_dash="dotted")#, alpha=0.7,  legend_label="無控制"
+    line_RG_OS = p.line(x_age_series, growth_with_RG_control_rate_OS, line_width=2, color="#1f77b4", line_dash="dashed")#, alpha=0.7, legend_label="一般眼鏡"
+    line_PAS_OS = p.line(x_age_series, growth_with_PAS_control_rate_OS, line_width=2, color="#d62728", line_dash="dotdash")#, alpha=0.7, legend_label="漸進多焦點眼鏡"
+    line_EB_OS = p.line(x_age_series, growth_with_EB_control_rate_OS, line_width=2, color="#2ca02c", line_dash="dotted")#, alpha=0.7, legend_label="雙焦眼鏡"
+    line_PDS_OS = p.line(x_age_series, growth_with_PDS_control_rate_OS, line_width=2, color="#9467bd", line_dash="dotted")#, alpha=0.7, legend_label="周邊離焦鏡片"
+    line_SCLFMC_OS = p.line(x_age_series, growth_with_SCLFMC_control_rate_OS, line_width=2, color="#8c564b", line_dash="dotdash")#, alpha=0.7, legend_label="軟式隱形眼鏡"
+    line_OKL_OS = p.line(x_age_series, growth_with_OKL_control_rate_OS, line_width=2, color="#7f7f7f", line_dash="dashdot")#, alpha=0.7, legend_label="角膜塑型片"
     
     line_RG_OS.visible = line_PAS_OS.visible = line_EB_OS.visible = line_PDS_OS.visible = line_SCLFMC_OS.visible = line_OKL_OS.visible = False
 
@@ -935,11 +939,11 @@ legend_items_line2.append(("一般眼鏡", [line_RG_OS]))
 legend_items_line2.append(("漸進多焦點眼鏡", [line_PAS_OS]))
 legend_items_line2.append(("雙焦眼鏡", [line_EB_OS]))
 legend_items_line2.append(("周邊離焦鏡片", [line_PDS_OS]))
-legend_items_line2.append(("軟式隱形眼鏡", [line_SCLFMC_OS]))
+legend_items_line2.append(("近視控制隱形眼鏡", [line_SCLFMC_OS]))
 legend_items_line2.append(("角膜塑型片", [line_OKL_OS]))
 
 # 從這邊設定要不要顯示指定的處置方式發展趨勢
-checkbox_OS = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","軟式隱形眼鏡","角膜塑型片"], active=[suggestion_active])
+checkbox_OS = CheckboxGroup(labels=[ "一般眼鏡","漸進多焦點眼鏡","雙焦眼鏡","周邊離焦鏡片","近視控制隱形眼鏡","角膜塑型片"], active=[suggestion_active])
 if suggestion_active == 0:
     line_RG_OS.visible = True
 elif suggestion_active == 1:
@@ -968,7 +972,7 @@ if len(y_os_record)>1:
         '一般眼鏡': y_os_record[:0:-1] + growth_with_RG_control_rate_OS[:-1],
         '漸進多焦點眼鏡': y_os_record[:0:-1] + growth_with_PAS_control_rate_OS[:-1],
         '雙焦眼鏡': y_os_record[:0:-1] + growth_with_EB_control_rate_OS[:-1],
-        '一般周邊離焦鏡片眼鏡': y_os_record[:0:-1] + growth_with_PDS_control_rate_OS[:-1],
+        '周邊離焦鏡片': y_os_record[:0:-1] + growth_with_PDS_control_rate_OS[:-1],
         '軟式隱形眼鏡': y_os_record[:0:-1] + growth_with_SCLFMC_control_rate_OS[:-1],
         '角膜塑型片': y_os_record[:0:-1] + growth_with_OKL_control_rate_OS[:-1]
     })
@@ -980,7 +984,7 @@ else:
         '一般眼鏡': y_os_record + growth_with_RG_control_rate_OS[:-1],
         '漸進多焦點眼鏡': y_os_record + growth_with_PAS_control_rate_OS[:-1],
         '雙焦眼鏡': y_os_record + growth_with_EB_control_rate_OS[:-1],
-        '一般周邊離焦鏡片眼鏡': y_os_record + growth_with_PDS_control_rate_OS[:-1],
+        '周邊離焦鏡片': y_os_record + growth_with_PDS_control_rate_OS[:-1],
         '軟式隱形眼鏡': y_os_record + growth_with_SCLFMC_control_rate_OS[:-1],
         '角膜塑型片': y_os_record + growth_with_OKL_control_rate_OS[:-1]
     })
@@ -992,9 +996,9 @@ columns = [
     TableColumn(field="一般眼鏡", title="一般眼鏡", formatter=NumberFormatter(format="0.00")),
     TableColumn(field="漸進多焦點眼鏡", title="漸進多焦點眼鏡", formatter=NumberFormatter(format="0.00")),
     TableColumn(field="雙焦眼鏡", title="雙焦眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="一般周邊離焦鏡片眼鏡", title="一般周邊離焦鏡片眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="軟式隱形眼鏡", title="軟式隱形眼鏡", formatter=NumberFormatter(format="0.00")),
-    TableColumn(field="角膜塑型片", title="角膜塑型片一般眼鏡", formatter=NumberFormatter(format="0.00"))
+    TableColumn(field="周邊離焦鏡片", title="周邊離焦鏡片", formatter=NumberFormatter(format="0.00")),
+    TableColumn(field="軟式隱形眼鏡", title="近視控制隱形眼鏡", formatter=NumberFormatter(format="0.00")),
+    TableColumn(field="角膜塑型片", title="角膜塑型片", formatter=NumberFormatter(format="0.00"))
 ]
 
 

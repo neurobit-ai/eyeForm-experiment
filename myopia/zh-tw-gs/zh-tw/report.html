@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="https://pyscript.net/releases/2023.05.1/pyscript.css" />
     <script  type="module" src="https://pyscript.net/releases/2023.05.1/pyscript.js"></script>
     <py-config>
-      packages = ["pandas", "matplotlib", "Jinja2", "numpy", "scipy" ,"pyscript", "bokeh", "xyzservices"]
+      packages = ["pandas", "matplotlib", "Jinja2", "numpy", "scipy" ,"pyscript"]
 
       [[fetch]]
       files = ["../data_to_plot.pkl","msjhbd.ttc","msjh.ttc"]
@@ -141,15 +141,15 @@
         display: none;
       }
       .scale_down {
-        transform: scale(0.75);
+        transform: scale(0.825);
         transform-origin: left;
       }
       .scale_down_table {
-        transform: scale(0.75);
+        transform: scale(0.825);
         transform-origin: left;
       }
       #plot {
-        height: 555px;
+        height: 600px;
       }
       .page-break { page-break-before: always; }
       .fixed-footer {
@@ -182,7 +182,7 @@
                   <td style="border-top: none; border-bottom: none;" colspan="3" align="center" ><div id="plot" class="drawing-area"></div></td>
                 </tr>
                 <tr class="custom-row no-border scale_down_table">
-                  <td class="no-border" colspan="3" align="center"><div id="table" class="plot-div ptable-div"></div></td>
+                  <td class="no-border; border-bottom: none;" colspan="3" align="center"><div id="table" class="plot-div ptable-div"></div></td>
                 </tr>
               </thead>
             </table>
@@ -238,7 +238,7 @@
             </tbody>
           </table>
           </div>
-          <div id="risk_content"></div>
+          <div id="risk_content" class="justified-text"></div>
           <p>名詞解釋</p>
           <ul class="justified-text">
             <li>球面度數(D)：是用來矯正兒童近視或遠視的度數，以屈光度 (Diopter, D) 為單位。對於兒童，球面度數的範圍通常從 -0.50 D 到 -6.00 D 以矯正近視，以及 +0.50 D 到 +4.00 D 以矯正遠視。每 1.00 屈光度 (D) 對應的焦距約為 1 米，負數表示近視，正數表示遠視。球面度數可能隨著兒童的成長而變化。</li>
