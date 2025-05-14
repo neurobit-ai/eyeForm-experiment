@@ -951,6 +951,41 @@
             (document.getElementById('site_info')).textContent="院所(請填寫新的病歷資料！)";
             localStorage.setItem('records', JSON.stringify([]));
             document.getElementById('caseNo').value = data;
+
+            $.ajax({
+                url: `https://script.google.com/macros/s/AKfycbx3b5zkydUXM1wyF_sUC-vh6Js2tSq7c2YU3nwOiwCcKO6c--qyFPgQLrsoS6KP3F3-/exec?email=${email}&patient_id=${medRecNo.value}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                  if (typeof data === 'object') {
+                    console.log(data);
+                    console.log(data['user_type']);
+                    console.log(data['valid']);
+                    response_valid = data['valid'];
+                  }
+                  else {
+                    console.log("Get response fail.");
+                  }
+                  if(data['valid'] =='Valid' )
+                  {
+                    document.getElementById("uploadform").style.display = "inline-block";
+                    document.getElementById("report2").style.display = "inline-block";
+                    document.getElementById("notification01").textContent="提醒您，自動填入的最近就診日期要更新喔👆";
+                  }
+                  else if (data['valid'] =='Exhausted' )
+                  {
+                    document.getElementById("uploadform").style.display = "none";
+                    document.getElementById("report2").style.display = "none";
+                    document.getElementById("notification01").textContent="此帳號已達到使用次數上限且此名患者今日無使用紀錄，欲繼續使用請聯絡神經元科技";
+                  }
+                  else
+                  {
+                    document.getElementById("uploadform").style.display = "none";
+                    document.getElementById("report2").style.display = "none";
+                    document.getElementById("notification01").textContent="欲繼續使用請聯絡神經元科技";
+                  }
+                  }
+              });
           }
         }
       });
